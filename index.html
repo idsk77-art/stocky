@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stocky [주도섹터 / 대금상위 / 거래량상위 모니터]</title>
+  <title>주도섹터 / 대금상위 모니터</title>
   <style>
     :root {
       /* 다크 테마 (기본) */
@@ -19,6 +19,31 @@
       --green: #3bc26b;
       --yellow: #f5b700;
       --hover: rgba(255,255,255,0.03);
+
+      /* 테마별 파스텔톤 배경 및 텍스트 컬러 (다크모드용 연한 배경) */
+      --bg-cat-mlcc: rgba(59, 130, 246, 0.12);      /* 파랑 */
+      --tx-cat-mlcc: #60a5fa;
+      --bg-cat-battery: rgba(34, 197, 94, 0.12);    /* 초록 */
+      --tx-cat-battery: #4ade80;
+      --bg-cat-space: rgba(168, 85, 247, 0.12);     /* 보라 */
+      --tx-cat-space: #c084fc;
+      --bg-cat-quantum: rgba(239, 68, 68, 0.12);    /* 빨강 */
+      --tx-cat-quantum: #f87171;
+      --bg-cat-pcb: rgba(20, 184, 166, 0.12);       /* 청록 */
+      --tx-cat-pcb: #2dd4bf;
+      --bg-cat-fuel: rgba(234, 179, 8, 0.12);       /* 노랑/주황 */
+      --tx-cat-fuel: #facc15;
+      --bg-cat-optic: rgba(99, 102, 241, 0.12);     /* 남색 */
+      --tx-cat-optic: #818cf8;
+      --bg-cat-led: rgba(6, 182, 212, 0.12);        /* 시안 */
+      --tx-cat-led: #22d3ee;
+      --bg-cat-ai: rgba(236, 72, 153, 0.12);        /* 핑크 */
+      --tx-cat-ai: #f472b6;
+      --bg-cat-semi: rgba(139, 92, 246, 0.12);      /* 짙은보라 */
+      --tx-cat-semi: #a78bfa;
+      
+      --bg-cat-default: rgba(100, 116, 139, 0.12);  /* 기본(회색) */
+      --tx-cat-default: #94a3b8;
     }
 
     [data-theme="light"] {
@@ -35,6 +60,31 @@
       --green: #22c55e;
       --yellow: #eab308;
       --hover: rgba(0,0,0,0.02);
+
+      /* 라이트모드용 은은한 배경 */
+      --bg-cat-mlcc: rgba(37, 99, 235, 0.08);
+      --tx-cat-mlcc: #2563eb;
+      --bg-cat-battery: rgba(22, 163, 74, 0.08);
+      --tx-cat-battery: #16a34a;
+      --bg-cat-space: rgba(147, 51, 234, 0.08);
+      --tx-cat-space: #9333ea;
+      --bg-cat-quantum: rgba(220, 38, 38, 0.08);
+      --tx-cat-quantum: #dc2626;
+      --bg-cat-pcb: rgba(13, 148, 136, 0.08);
+      --tx-cat-pcb: #0d9488;
+      --bg-cat-fuel: rgba(202, 138, 4, 0.08);
+      --tx-cat-fuel: #ca8a04;
+      --bg-cat-optic: rgba(79, 70, 229, 0.08);
+      --tx-cat-optic: #4f46e5;
+      --bg-cat-led: rgba(8, 145, 178, 0.08);
+      --tx-cat-led: #0891b2;
+      --bg-cat-ai: rgba(219, 39, 119, 0.08);
+      --tx-cat-ai: #db2777;
+      --bg-cat-semi: rgba(124, 58, 237, 0.08);
+      --tx-cat-semi: #7c3aed;
+
+      --bg-cat-default: rgba(71, 85, 105, 0.08);
+      --tx-cat-default: #475569;
     }
 
     *{box-sizing:border-box}
@@ -44,8 +94,9 @@
       color:var(--text);
       font-family:Apple SD Gothic Neo, Malgun Gothic, sans-serif;
       transition: background 0.3s, color 0.3s;
+      font-size: 16px; 
     }
-    button,input,select{font:inherit}
+    button,input,select{font:inherit; outline:none;}
     
     .app{
       max-width:860px;
@@ -54,6 +105,7 @@
       background:var(--bg);
       position: relative;
     }
+
     .topbar{
       position:sticky;
       top:0;
@@ -61,43 +113,47 @@
       display:flex;
       justify-content:space-between;
       align-items:center;
-      gap:12px;
-      padding:14px 16px;
+      padding:12px 16px;
       background:var(--panel);
       border-bottom:1px solid var(--line);
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
-    .brand{
+    
+    .tabs{
       display:flex;
-      align-items:center;
-      gap:10px;
-      font-size:18px;
-      font-weight:700;
+      gap:16px;
     }
-    .status{
-      font-size:12px;
-      padding:4px 8px;
-      border-radius:999px;
-      border:1px solid #244a31;
-      color:#79e29f;
-      background:#13241a;
+    .tab{
+      border:none;
+      background:none;
+      color:var(--sub);
+      padding:10px 4px;
+      cursor:pointer;
+      font-size: 17px;
+      border-bottom:3px solid transparent;
+      transition: all 0.2s;
     }
+    .tab:hover { color: var(--text); }
+    .tab.active{
+      color:var(--text);
+      border-bottom-color:var(--accent);
+      font-weight:800;
+    }
+
     .top-actions{
       display:flex;
       align-items:center;
-      gap:8px;
-    }
-    .countdown{
-      font-size:12px;
-      color:var(--sub);
+      gap:10px;
     }
     .btn{
       border:1px solid var(--line);
       background:var(--panel-2);
       color:var(--text);
-      padding:8px 12px;
+      padding:8px 14px;
       border-radius:10px;
       cursor:pointer;
+      font-weight: 600;
+      font-size: 15px;
       transition: all 0.2s;
     }
     .btn:hover { filter: brightness(1.1); }
@@ -105,194 +161,219 @@
       border-color:rgba(255,122,47,.45);
       color:var(--accent);
     }
+    .btn.refresh { min-width: 130px; text-align:center; }
 
-    /* 통합 카테고리 & 탭 영역 */
+    /* 통합 카테고리 바 */
     .shared-header {
-      background: var(--panel);
-      border-bottom: 1px solid var(--line);
+      background: var(--bg);
       position: sticky;
-      top: 61px; /* topbar 높이 추정치 */
+      top: 61px; 
       z-index: 15;
     }
-
-    .tabs{
-      display:flex;
-      gap:4px;
-      padding:0 14px;
-      border-bottom:1px solid var(--line);
-    }
-    .tab{
-      border:none;
-      background:none;
-      color:var(--sub);
-      padding:14px 10px;
-      cursor:pointer;
-      border-bottom:2px solid transparent;
-    }
-    .tab.active{
-      color:var(--text);
-      border-bottom-color:var(--accent);
-      font-weight:700;
-    }
-
     .chip-row{
       display:flex;
-      gap:8px;
+      gap:10px;
       overflow-x:auto;
-      padding:12px 14px;
-      scrollbar-width: none; /* Firefox */
+      padding:14px 16px;
+      scrollbar-width: none;
+      border-bottom: 1px solid var(--line);
     }
     .chip-row::-webkit-scrollbar { display: none; }
+    
     .chip{
       white-space:nowrap;
       border:1px solid var(--line);
       background:var(--panel-2);
       color:var(--sub);
       border-radius:999px;
-      padding:9px 14px;
+      padding:10px 18px;
       cursor:pointer;
+      font-size: 15px;
+      font-weight: 600;
       transition: all 0.2s;
     }
-    .chip.active { 
-      background: var(--text); 
-      border-color: var(--text); 
-      color: var(--bg); 
-      font-weight:700;
-    }
+    .chip:hover { border-color: var(--sub); }
+    
+    /* 선택된 칩: 컬러 매핑 */
+    .chip.active { font-weight:800; border-color:transparent; }
+    .chip.active[data-color="MLCC"] { background: var(--bg-cat-mlcc); color: var(--tx-cat-mlcc); border:1px solid var(--tx-cat-mlcc); }
+    .chip.active[data-color="2차전지"] { background: var(--bg-cat-battery); color: var(--tx-cat-battery); border:1px solid var(--tx-cat-battery); }
+    .chip.active[data-color="우주태양광"] { background: var(--bg-cat-space); color: var(--tx-cat-space); border:1px solid var(--tx-cat-space); }
+    .chip.active[data-color="양자암호"] { background: var(--bg-cat-quantum); color: var(--tx-cat-quantum); border:1px solid var(--tx-cat-quantum); }
+    .chip.active[data-color="반도체기판"] { background: var(--bg-cat-pcb); color: var(--tx-cat-pcb); border:1px solid var(--tx-cat-pcb); }
+    .chip.active[data-color="고체산화물연료전지"] { background: var(--bg-cat-fuel); color: var(--tx-cat-fuel); border:1px solid var(--tx-cat-fuel); }
+    .chip.active[data-color="광통신"] { background: var(--bg-cat-optic); color: var(--tx-cat-optic); border:1px solid var(--tx-cat-optic); }
+    .chip.active[data-color="LED장비"] { background: var(--bg-cat-led); color: var(--tx-cat-led); border:1px solid var(--tx-cat-led); }
+    .chip.active[data-color="AI"] { background: var(--bg-cat-ai); color: var(--tx-cat-ai); border:1px solid var(--tx-cat-ai); }
+    .chip.active[data-color="반도체"] { background: var(--bg-cat-semi); color: var(--tx-cat-semi); border:1px solid var(--tx-cat-semi); }
+    /* 매핑되지 않은 기본 active */
+    .chip.active[data-color="default"] { background: var(--text); color: var(--bg); }
 
-    .section{
-      padding:14px;
-    }
+    .section{ padding:16px; }
 
     .filter-box{
       display:flex;
-      gap:8px;
+      gap:10px;
       flex-wrap:wrap;
       align-items:center;
       background:var(--panel-2);
       border:1px solid var(--line);
       border-radius:14px;
-      padding:12px;
+      padding:14px;
     }
     .mini-chip{
       border:1px solid var(--line);
       background:var(--panel);
       color:var(--sub);
       border-radius:999px;
-      padding:6px 12px;
+      padding:8px 14px;
       cursor:pointer;
-      font-size:13px;
+      font-size:14px;
+      font-weight: 600;
     }
     .mini-chip.active{
       border-color:var(--accent);
       background:rgba(255,122,47,0.1);
       color:var(--accent);
     }
-    .right{
-      margin-left:auto;
-    }
+    .right{ margin-left:auto; }
     .select{
       background:var(--panel);
       border:1px solid var(--line);
       color:var(--text);
       border-radius:10px;
-      padding:8px 10px;
+      padding:10px 12px;
+      font-size: 15px;
     }
 
     .head-row{
-      margin-top:14px;
+      margin-top:20px;
       display:flex;
       justify-content:space-between;
-      align-items:center;
+      align-items:flex-end;
       color:var(--sub);
-      font-size:13px;
+      font-size:14px;
     }
     .head-row .title{
       color:var(--text);
-      font-weight:700;
+      font-weight:800;
+      font-size: 18px;
     }
 
     .list{
-      margin-top:10px;
+      margin-top:12px;
       display:flex;
       flex-direction:column;
-      gap:8px;
+      gap:10px;
     }
     
-    /* 리스트 아이템 & 슬라이드 미리보기 */
+    /* 리스트 아이템 박스 */
     .item-container {
       background:var(--panel-2);
-      border:1px solid var(--line);
-      border-radius:14px;
+      border:1px solid transparent; 
+      border-radius:16px;
       overflow: hidden;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
     }
-    .item-container.limit { border-color:var(--yellow); background:rgba(245,183,0,0.03); }
-    .item-container.expanded { border-color:var(--accent); }
+    
+    /* 아이템 배경 파스텔톤 컬러 매핑 (주도섹터 탭에서만 활성화됨) */
+    .item-container.cat-MLCC { background: var(--bg-cat-mlcc); }
+    .item-container.cat-2차전지 { background: var(--bg-cat-battery); }
+    .item-container.cat-우주태양광 { background: var(--bg-cat-space); }
+    .item-container.cat-양자암호 { background: var(--bg-cat-quantum); }
+    .item-container.cat-반도체기판 { background: var(--bg-cat-pcb); }
+    .item-container.cat-고체산화물연료전지 { background: var(--bg-cat-fuel); }
+    .item-container.cat-광통신 { background: var(--bg-cat-optic); }
+    .item-container.cat-LED장비 { background: var(--bg-cat-led); }
+    .item-container.cat-AI { background: var(--bg-cat-ai); }
+    .item-container.cat-반도체 { background: var(--bg-cat-semi); }
+    .item-container.cat-default { background: var(--panel-2); border:1px solid var(--line); }
+
+    .item-container.limit { border-color:var(--yellow); }
+    .item-container.expanded { border-color:var(--text); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
     .item{
       display:grid;
       grid-template-columns:1fr auto auto auto;
-      gap:12px;
+      gap:16px;
       align-items:center;
-      padding:14px;
+      padding:18px 16px;
       cursor:pointer;
-      transition: background 0.15s;
     }
     .item:hover { background: var(--hover); }
     
     .name-wrap{ min-width:0; }
     .line1{
       display:flex;
-      gap:6px;
+      gap:8px;
       align-items:center;
       min-width:0;
     }
     .rank{
-      width:22px;
+      width:24px;
       color:var(--sub);
-      font-size:13px;
-      font-weight:700;
+      font-size:15px;
+      font-weight:800;
       flex:0 0 auto;
     }
     .name{
-      font-weight:700;
+      font-weight:800;
+      font-size: 18px;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
+      color: var(--text);
     }
+
     .badge{
       flex:0 0 auto;
-      font-size:10px;
-      font-weight:700;
-      padding:3px 6px;
+      font-size:12px;
+      font-weight:800;
+      padding:4px 8px;
       border-radius:6px;
       background:var(--yellow);
       color:#181818;
     }
     .meta{
-      margin-top:4px;
-      font-size:12px;
+      margin-top:6px;
+      font-size:14px;
       color:var(--sub);
+      display:flex;
+      align-items:center;
+      gap:8px;
     }
+    /* 텍스트 컬러 매핑 */
+    .meta-cat-MLCC { color: var(--tx-cat-mlcc); font-weight: 700; }
+    .meta-cat-2차전지 { color: var(--tx-cat-battery); font-weight: 700; }
+    .meta-cat-우주태양광 { color: var(--tx-cat-space); font-weight: 700; }
+    .meta-cat-양자암호 { color: var(--tx-cat-quantum); font-weight: 700; }
+    .meta-cat-반도체기판 { color: var(--tx-cat-pcb); font-weight: 700; }
+    .meta-cat-고체산화물연료전지 { color: var(--tx-cat-fuel); font-weight: 700; }
+    .meta-cat-광통신 { color: var(--tx-cat-optic); font-weight: 700; }
+    .meta-cat-LED장비 { color: var(--tx-cat-led); font-weight: 700; }
+    .meta-cat-AI { color: var(--tx-cat-ai); font-weight: 700; }
+    .meta-cat-반도체 { color: var(--tx-cat-semi); font-weight: 700; }
+    
     .price{
       color:var(--text);
       font-weight:800;
-      font-size:18px;
+      font-size:22px;
       text-align:right;
     }
     .change{
-      min-width:72px;
+      min-width:85px;
       text-align:right;
-      font-weight:700;
+      font-weight:800;
+      font-size: 17px;
       color:var(--red);
     }
     .change.down{ color:var(--blue); }
     .vol{
-      min-width:76px;
+      min-width:85px;
       text-align:right;
       color:var(--sub);
-      font-size:14px;
+      font-size:16px;
+      font-weight: 600;
     }
 
     /* 슬라이드 미리보기 (Accordion) */
@@ -300,40 +381,37 @@
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.35s ease;
-      background: var(--panel);
+      background: transparent;
       border-top: 1px solid transparent;
     }
     .item-container.expanded .preview-wrap {
-      max-height: 200px; /* 충분한 높이 */
-      border-top-color: var(--line);
+      max-height: 250px; 
+      border-top-color: rgba(150,150,150,0.15); /* 은은한 구분선 */
     }
     .preview-content {
-      padding: 16px;
+      padding: 20px 16px;
       display: flex;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 20px;
       cursor: pointer;
     }
-    .preview-content:hover {
-      background: var(--hover);
-    }
+    .preview-content:hover { background: var(--hover); }
     .preview-content .p-col {
       flex: 1;
-      min-width: 100px;
+      min-width: 110px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
     }
-    .p-col span { font-size: 12px; color: var(--sub); }
-    .p-col strong { font-size: 14px; color: var(--text); font-weight: 600; }
-    .p-col.highlight strong { color: var(--accent); }
+    .p-col span { font-size: 14px; color: var(--sub); }
+    .p-col strong { font-size: 16px; color: var(--text); font-weight: 700; }
     
     .p-guide {
       width: 100%;
       text-align: right;
-      font-size: 11px;
+      font-size: 13px;
       color: var(--sub);
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     .hidden{display:none !important;}
@@ -342,152 +420,108 @@
     .modal-wrap{
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,.6);
+      background:rgba(0,0,0,.7);
       display:none;
       align-items:center;
       justify-content:center;
-      padding:18px;
+      padding:20px;
       z-index:50;
     }
     .modal-wrap.open{display:flex}
     .modal{
-      width:min(100%,560px);
-      max-height:88vh;
+      width:min(100%,600px);
+      max-height:90vh;
       display:flex;
       flex-direction:column;
-      border-radius:18px;
+      border-radius:20px;
       border:1px solid var(--line);
       background:var(--panel);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     .modal-head{
       flex:0 0 auto;
       display:flex;
       justify-content:space-between;
       align-items:center;
-      padding:16px 18px;
+      padding:20px;
       border-bottom:1px solid var(--line);
     }
-    .modal-title{ font-weight:800; font-size:17px; }
+    .modal-title{ font-weight:800; font-size:20px; }
     .modal-body{
       flex:1 1 auto;
       overflow-y:auto;
-      padding:18px;
+      padding:20px;
     }
     
     .group{
-      margin-bottom:22px;
+      margin-bottom:24px;
       border:1px solid var(--line);
       background:var(--panel-2);
-      border-radius:14px;
-      padding:14px;
+      border-radius:16px;
+      padding:18px;
     }
     .group h4{
-      margin:0 0 12px;
+      margin:0 0 16px;
       color:var(--accent);
-      font-size:14px;
+      font-size:16px;
+      font-weight: 800;
     }
+    
+    .cat-selector-wrap { margin-bottom: 16px; }
+    .cat-editor-list { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+    .cat-edit-item {
+      display:flex; align-items:center; gap:10px; background:var(--panel); padding:10px 14px;
+      border-radius:10px; border:1px solid var(--line);
+    }
+    .cat-edit-item span { flex:1; font-size:15px; font-weight:600; }
+    .cat-btn {
+      background:none; border:none; color:var(--sub); cursor:pointer; padding:6px; border-radius:6px;
+    }
+    .cat-btn:hover { background:var(--line); color:var(--text); }
+    .cat-add-row { display:flex; gap:10px; margin-bottom: 12px; }
+    .preset-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .preset-chip {
+      background: var(--panel); border: 1px solid var(--line); padding: 6px 12px;
+      border-radius: 20px; font-size: 13px; color: var(--text); cursor: pointer;
+    }
+    .preset-chip:hover { border-color: var(--accent); color: var(--accent); }
+
     .row{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:14px;
-      margin-bottom:12px;
+      display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:16px;
     }
     .row:last-child{margin-bottom:0}
     .label{ flex:1; min-width:0; }
-    .label .t{ font-size:14px; font-weight:600; }
-    .label .s{ margin-top:2px; color:var(--sub); font-size:12px; }
+    .label .t{ font-size:16px; font-weight:700; }
+    .label .s{ margin-top:4px; color:var(--sub); font-size:13px; }
     .input, .input-full{
-      background:var(--panel);
-      border:1px solid var(--line);
-      color:var(--text);
-      border-radius:10px;
-      padding:9px 10px;
+      background:var(--panel); border:1px solid var(--line); color:var(--text);
+      border-radius:10px; padding:12px 14px;
     }
-    .input{width:140px;text-align:right}
-    .input-full{width:100%;margin-bottom:8px}
+    .input{width:150px;text-align:right}
+    .input-full{width:100%;margin-bottom:10px}
     
-    /* 카테고리 에디터 UI */
-    .cat-editor-list {
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      margin-bottom:12px;
-    }
-    .cat-edit-item {
-      display:flex;
-      align-items:center;
-      gap:8px;
-      background:var(--panel);
-      padding:8px 12px;
-      border-radius:8px;
-      border:1px solid var(--line);
-    }
-    .cat-edit-item span { flex:1; font-size:14px; }
-    .cat-btn {
-      background:none; border:none; color:var(--sub); cursor:pointer; padding:4px; border-radius:4px;
-    }
-    .cat-btn:hover { background:var(--line); color:var(--text); }
-    .cat-add-row { display:flex; gap:8px; }
-
-    .toggle{
-      position:relative;
-      width:46px;
-      height:26px;
-      flex:0 0 auto;
-    }
+    .toggle{ position:relative; width:52px; height:28px; flex:0 0 auto; }
     .toggle input{display:none}
     .slider{
-      position:absolute;
-      inset:0;
-      border-radius:999px;
-      background:#4a5568;
-      cursor:pointer;
-      transition:.2s;
+      position:absolute; inset:0; border-radius:999px; background:#4a5568;
+      cursor:pointer; transition:.2s;
     }
     .slider:before{
-      content:"";
-      position:absolute;
-      width:20px;
-      height:20px;
-      border-radius:50%;
-      background:#fff;
-      left:3px;
-      top:3px;
-      transition:.2s;
+      content:""; position:absolute; width:22px; height:22px; border-radius:50%;
+      background:#fff; left:3px; top:3px; transition:.2s;
     }
     .toggle input:checked + .slider{ background:var(--accent); }
-    .toggle input:checked + .slider:before{ transform:translateX(20px); }
+    .toggle input:checked + .slider:before{ transform:translateX(24px); }
     
     .modal-foot{
-      flex:0 0 auto;
-      display:flex;
-      gap:8px;
-      padding:16px 18px;
-      border-top:1px solid var(--line);
+      flex:0 0 auto; display:flex; gap:12px; padding:20px; border-top:1px solid var(--line);
     }
     .btn-block{
-      flex:1;
-      border:none;
-      border-radius:12px;
-      padding:12px 14px;
-      cursor:pointer;
-      font-weight:700;
+      flex:1; border:none; border-radius:12px; padding:14px; cursor:pointer;
+      font-weight:800; font-size: 16px;
     }
     .btn-save{ background:var(--accent); color:#fff; }
     .btn-reset{ background:var(--panel-2); color:var(--sub); border:1px solid var(--line); }
-    
-    .api-status{ font-size:12px; margin-top:6px; color:var(--sub); }
-    .empty{
-      margin-top:12px;
-      text-align:center;
-      color:var(--sub);
-      padding:50px 20px;
-      background:var(--panel-2);
-      border:1px solid var(--line);
-      border-radius:14px;
-    }
 
     /* 전체화면 상세 보기 */
     .fullscreen-view {
@@ -501,112 +535,95 @@
     }
     .fullscreen-view.open { display: flex; }
     .fs-header {
-      position: sticky;
-      top: 0;
-      background: var(--panel);
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid var(--line);
-      z-index: 10;
+      position: sticky; top: 0; background: var(--panel); padding: 16px;
+      display: flex; align-items: center; gap: 16px; border-bottom: 1px solid var(--line); z-index: 10;
     }
     .fs-back {
-      background: none; border: none; color: var(--text); font-size: 20px; cursor: pointer; padding: 4px;
+      background: none; border: none; color: var(--text); font-size: 24px; cursor: pointer; padding: 4px;
     }
-    .fs-title { font-size: 18px; font-weight: 700; flex: 1; }
+    .fs-title { font-size: 22px; font-weight: 800; flex: 1; }
     .fs-body {
-      padding: 20px;
-      max-width: 860px;
-      margin: 0 auto;
-      width: 100%;
+      padding: 24px; max-width: 860px; margin: 0 auto; width: 100%;
     }
     .fs-top-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 24px;
+      display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;
     }
-    .fs-price { font-size: 32px; font-weight: 800; color: var(--text); }
-    .fs-change { font-size: 18px; font-weight: 700; color: var(--red); }
+    .fs-price { font-size: 40px; font-weight: 800; color: var(--text); }
+    .fs-change { font-size: 22px; font-weight: 800; color: var(--red); margin-top: 6px;}
     .fs-change.down { color: var(--blue); }
-    .fs-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .fs-card {
+    
+    /* 캔버스 차트 영역 */
+    .fs-chart-container {
+      width: 100%;
+      height: 280px;
       background: var(--panel-2);
       border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 16px;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
     }
-    .fs-card span { display: block; font-size: 13px; color: var(--sub); margin-bottom: 6px; }
-    .fs-card strong { display: block; font-size: 16px; color: var(--text); }
-    .fs-chart-placeholder {
-      height: 250px;
-      background: var(--panel-2);
-      border: 1px dashed var(--line);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--sub);
-      margin-bottom: 24px;
+    .fs-chart-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
+    .fs-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 30px;
+    }
+    .fs-card {
+      background: var(--panel-2); border: 1px solid var(--line); border-radius: 16px; padding: 20px;
+    }
+    .fs-card span { display: block; font-size: 14px; color: var(--sub); margin-bottom: 8px; }
+    .fs-card strong { display: block; font-size: 18px; color: var(--text); font-weight: 700; }
+
     .toast{
-      position:fixed;
-      left:50%;
-      bottom:20px;
-      transform:translateX(-50%);
-      background:#1c2230;
-      color:#fff;
-      border:1px solid #3b4556;
-      padding:10px 14px;
-      border-radius:10px;
-      z-index:200;
-      font-size:13px;
+      position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:#1c2230;
+      color:#fff; border:1px solid #3b4556; padding:12px 18px; border-radius:12px;
+      z-index:200; font-size:15px; font-weight: 600;
+    }
+    .empty{
+      margin-top:16px; text-align:center; color:var(--sub); padding:60px 20px;
+      background:var(--panel-2); border:1px solid var(--line); border-radius:16px; font-size: 16px;
     }
 
     @media (max-width:640px){
-      .item{ grid-template-columns:1fr auto auto; }
+      .item{ grid-template-columns:1fr auto auto; padding:16px 12px; }
       .vol{ display:none; }
       .fs-grid { grid-template-columns: 1fr; }
+      .topbar { padding: 12px; }
+      .tabs { gap: 10px; }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- 상단 바 -->
+    <!-- 상단 탭 및 설정 -->
     <div class="topbar">
-      <div class="brand">
-        <span>📊 Stocky 모니터</span>
-      </div>
-      <div class="top-actions">
-        <button class="btn" id="themeBtn">☀️ <span>라이트</span></button>
-        <button class="btn" id="refreshBtn">새로고침</button>
-        <button class="btn orange" id="openSettingsBtn">환경설정</button>
-      </div>
-    </div>
-
-    <!-- 탭 및 통합 카테고리 바 -->
-    <div class="shared-header">
       <div class="tabs">
         <button class="tab active" data-tab="sector">주도섹터</button>
         <button class="tab" data-tab="volume">대금상위</button>
         <button class="tab" data-tab="qty">거래량상위</button>
       </div>
+      <div class="top-actions">
+        <button class="btn" id="themeBtn">☀️ <span>라이트</span></button>
+        <button class="btn refresh" id="refreshBtn">새로고침 30s</button>
+        <button class="btn orange" id="openSettingsBtn">⚙️ 설정</button>
+      </div>
+    </div>
+
+    <!-- 통합 카테고리 바 -->
+    <div class="shared-header">
       <div class="chip-row" id="categoryMenu">
-        <!-- JS로 동적 생성됨 -->
+        <!-- JS 렌더링 -->
       </div>
     </div>
 
     <!-- 주도섹터 탭 -->
     <div class="section" id="tab-sector">
       <div class="filter-box">
-        <span style="font-size:12px;color:var(--sub)">등락률</span>
+        <span style="font-size:14px;color:var(--sub); font-weight:700;">등락률 필터</span>
         <button class="mini-chip active" data-change="4">4%↑</button>
         <button class="mini-chip" data-change="3">3%↑</button>
         <button class="mini-chip" data-change="2">2%↑</button>
@@ -628,14 +645,8 @@
 
     <!-- 대금상위 탭 -->
     <div class="section hidden" id="tab-volume">
-      <div class="filter-box">
-        <span style="font-size:12px;color:var(--sub)">시장 구분 (예시)</span>
-        <button class="mini-chip active">전체</button>
-        <button class="mini-chip">KOSPI</button>
-        <button class="mini-chip">KOSDAQ</button>
-      </div>
       <div class="head-row">
-        <div class="title">거래대금 TOP</div>
+        <div class="title">거래대금 상위 (4% 이상 상승)</div>
         <div id="updateTime2">업데이트: --:--:--</div>
       </div>
       <div class="list" id="volumeList"></div>
@@ -643,14 +654,8 @@
 
     <!-- 거래량상위 탭 -->
     <div class="section hidden" id="tab-qty">
-      <div class="filter-box">
-        <span style="font-size:12px;color:var(--sub)">시장 구분 (예시)</span>
-        <button class="mini-chip active">전체</button>
-        <button class="mini-chip">KOSPI</button>
-        <button class="mini-chip">KOSDAQ</button>
-      </div>
       <div class="head-row">
-        <div class="title">거래량 TOP</div>
+        <div class="title">거래량 상위 TOP</div>
         <div id="updateTime3">업데이트: --:--:--</div>
       </div>
       <div class="list" id="qtyList"></div>
@@ -664,19 +669,38 @@
         <div class="modal-title">환경설정</div>
         <button class="btn" id="closeSettingsBtn">닫기</button>
       </div>
-
       <div class="modal-body">
-        <!-- 카테고리 편집 영역 -->
         <div class="group">
-          <h4>카테고리(테마) 설정</h4>
-          <div class="cat-editor-list" id="catEditorList">
-            <!-- JS 렌더링 -->
+          <h4>카테고리(테마) 관리</h4>
+          <div class="cat-selector-wrap">
+            <select class="select" id="targetTabSelect" style="width:100%;">
+              <option value="sector">주도섹터 탭 카테고리 편집</option>
+              <option value="volume">대금상위 탭 카테고리 편집</option>
+              <option value="qty">거래량상위 탭 카테고리 편집</option>
+            </select>
           </div>
+          
+          <div class="cat-editor-list" id="catEditorList"></div>
+          
           <div class="cat-add-row">
-            <input type="text" class="input-full" id="newCatInput" placeholder="새 테마 입력" style="margin:0;">
+            <input type="text" class="input-full" id="newCatInput" placeholder="직접 테마명 입력" style="margin:0;">
             <button class="btn" onclick="addCategory()">추가</button>
           </div>
-          <div style="font-size:11px; color:var(--sub); margin-top:8px;">* 추가한 카테고리는 상단 필터에 즉시 반영됩니다.</div>
+          
+          <div style="font-size:13px; color:var(--text); margin-bottom:6px; font-weight:700;">인기 분류 추가하기</div>
+          <div class="preset-chips">
+            <button class="preset-chip" onclick="addPresetCat('코스피')">+ 코스피</button>
+            <button class="preset-chip" onclick="addPresetCat('코스닥')">+ 코스닥</button>
+            <button class="preset-chip" onclick="addPresetCat('MLCC')">+ MLCC</button>
+            <button class="preset-chip" onclick="addPresetCat('2차전지')">+ 2차전지</button>
+            <button class="preset-chip" onclick="addPresetCat('우주태양광')">+ 우주태양광</button>
+            <button class="preset-chip" onclick="addPresetCat('양자암호')">+ 양자암호</button>
+            <button class="preset-chip" onclick="addPresetCat('반도체기판')">+ 반도체기판</button>
+            <button class="preset-chip" onclick="addPresetCat('고체산화물연료전지')">+ 고체산화물연료전지</button>
+            <button class="preset-chip" onclick="addPresetCat('광통신')">+ 광통신</button>
+            <button class="preset-chip" onclick="addPresetCat('LED장비')">+ LED장비</button>
+            <button class="preset-chip" onclick="addPresetCat('AI')">+ AI</button>
+          </div>
         </div>
 
         <div class="group">
@@ -684,40 +708,20 @@
           <input class="input-full" id="accountNo" type="text" placeholder="계좌번호 예: 44614025-01" />
           <input class="input-full" id="appKey" type="text" placeholder="App Key" />
           <input class="input-full" id="appSecret" type="password" placeholder="App Secret" />
-          <div class="row" style="margin-top:12px;">
-            <div class="label">
-              <div class="t">모의투자 모드</div>
-              <div class="s">모의 도메인 사용</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="mockMode" checked />
-              <span class="slider"></span>
-            </label>
-          </div>
-          <button class="btn" id="testApiBtn" style="margin-top:8px;">연결 테스트</button>
-          <div class="api-status" id="apiStatus">API 미연결</div>
         </div>
 
         <div class="group">
           <h4>데이터 갱신 및 표시</h4>
           <div class="row">
-            <div class="label">
-              <div class="t">자동 갱신</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="autoRefresh" checked />
-              <span class="slider"></span>
-            </label>
+            <div class="label"><div class="t">자동 갱신 (30초)</div></div>
+            <label class="toggle"><input type="checkbox" id="autoRefresh" checked /><span class="slider"></span></label>
           </div>
           <div class="row">
-            <div class="label">
-              <div class="t">최대 표시 종목 수</div>
-            </div>
+            <div class="label"><div class="t">최대 표시 종목 수</div></div>
             <input class="input" id="maxItems" type="number" min="5" max="50" value="20" />
           </div>
         </div>
       </div>
-
       <div class="modal-foot">
         <button class="btn-block btn-reset" id="resetBtn">초기화</button>
         <button class="btn-block btn-save" id="saveBtn">저장 적용</button>
@@ -739,40 +743,23 @@
           <div class="fs-change" id="fsChange">0.00%</div>
         </div>
         <div style="text-align:right;">
-          <span class="badge" id="fsSector" style="background:var(--accent);color:#fff;">섹터</span>
+          <span class="badge" id="fsSector" style="background:var(--accent);color:#fff; font-size:14px; padding:6px 10px;">섹터</span>
         </div>
       </div>
       
-      <div class="fs-chart-placeholder">
-        📈 차트 영역 (API 연동 시 제공)
+      <!-- 차트 렌더링 영역 -->
+      <div class="fs-chart-container">
+        <canvas id="fsChartCanvas" class="fs-chart-canvas"></canvas>
       </div>
 
-      <h4 style="margin-bottom:12px; font-size:16px;">상세 정보</h4>
+      <h4 style="margin-bottom:16px; font-size:18px; font-weight:800;">상세 투자 정보</h4>
       <div class="fs-grid">
-        <div class="fs-card">
-          <span>거래량</span>
-          <strong id="fsQty">0 주</strong>
-        </div>
-        <div class="fs-card">
-          <span>거래대금</span>
-          <strong id="fsVol">0 억</strong>
-        </div>
-        <div class="fs-card">
-          <span>시가총액</span>
-          <strong id="fsCap">0 억</strong>
-        </div>
-        <div class="fs-card">
-          <span>52주 최고/최저</span>
-          <strong>추후 제공</strong>
-        </div>
-        <div class="fs-card">
-          <span>외국인 소진율</span>
-          <strong>-- %</strong>
-        </div>
-        <div class="fs-card">
-          <span>PER / PBR</span>
-          <strong>-- / --</strong>
-        </div>
+        <div class="fs-card"><span>거래량</span><strong id="fsQty">0 주</strong></div>
+        <div class="fs-card"><span>거래대금</span><strong id="fsVol">0 억</strong></div>
+        <div class="fs-card"><span>시가총액</span><strong id="fsCap">0 억</strong></div>
+        <div class="fs-card"><span>52주 최고 / 최저</span><strong id="fs52Week">-- / --</strong></div>
+        <div class="fs-card"><span>외국인 소진율</span><strong id="fsForeign">-- %</strong></div>
+        <div class="fs-card"><span>PER / PBR</span><strong id="fsPerPbr">-- / --</strong></div>
       </div>
     </div>
   </div>
@@ -799,42 +786,66 @@
       applyTheme(currentTheme);
     });
 
-    // --- 2. 샘플 데이터 (평탄화 구조 및 시총, 마켓 추가) ---
-    // 실제 이미지의 데이터를 모방하여 확장
+    // 지원하는 카테고리 컬러명 (CSS 매핑용)
+    const SUPPORTED_COLORS = [
+      'MLCC', '2차전지', '우주태양광', '양자암호', '반도체기판', 
+      '고체산화물연료전지', '광통신', 'LED장비', 'AI', '반도체'
+    ];
+    function getColorKey(sectorName) {
+      return SUPPORTED_COLORS.includes(sectorName) ? sectorName : 'default';
+    }
+
+    // --- 2. 샘플 데이터 (인기테마 분류 추가 반영) ---
     const SAMPLE_DATA = [
-      { code:'247540', name:'에코프로비엠', market:'KOSDAQ', sector:'2차전지', price:217000, change:11.28, volume:4003, qty:1844000, marketCap: 212000, limitUp:false },
-      { code:'086520', name:'에코프로', market:'KOSDAQ', sector:'2차전지', price:146100, change:12.56, volume:8771, qty:6003000, marketCap: 389000, limitUp:false },
-      { code:'006400', name:'삼성SDI', market:'KOSPI', sector:'2차전지', price:647000, change:5.03, volume:6431, qty:993000, marketCap: 445000, limitUp:false },
-      { code:'009150', name:'삼성전기', market:'KOSPI', sector:'MLCC', price:132100, change:9.72, volume:2390, qty:1809000, marketCap: 98000, limitUp:false },
-      { code:'001820', name:'삼화콘덴서', market:'KOSPI', sector:'MLCC', price:102000, change:29.94, volume:5362, qty:5250000, marketCap: 11000, limitUp:true },
-      { code:'005930', name:'삼성전자', market:'KOSPI', sector:'반도체', price:83200, change:1.5, volume:15000, qty:20000000, marketCap: 4950000, limitUp:false },
-      { code:'000660', name:'SK하이닉스', market:'KOSPI', sector:'반도체', price:165000, change:3.2, volume:9800, qty:5500000, marketCap: 1200000, limitUp:false },
-      { code:'036930', name:'주성엔지니어링', market:'KOSDAQ', sector:'반도체', price:22100, change:19.33, volume:977, qty:4420000, marketCap: 10500, limitUp:false },
-      { code:'196170', name:'알테오젠', market:'KOSDAQ', sector:'바이오', price:367500, change:4.55, volume:4145, qty:1120000, marketCap: 195000, limitUp:false },
-      { code:'207940', name:'삼성바이오로직스', market:'KOSPI', sector:'바이오', price:850000, change:2.1, volume:1200, qty:150000, marketCap: 600000, limitUp:false },
-      { code:'064400', name:'LG씨엔에스', market:'KOSPI', sector:'로봇', price:84200, change:4.99, volume:5196, qty:6170000, marketCap: 75000, limitUp:false },
-      { code:'356680', name:'엑스게이트', market:'KOSDAQ', sector:'인기테마', price:20800, change:21.85, volume:4434, qty:21300000, marketCap: 6500, limitUp:false },
-      { code:'336260', name:'두산퓨얼셀', market:'KOSPI', sector:'신재생', price:101100, change:21.08, volume:3857, qty:3810000, marketCap: 15000, limitUp:false }
+      // 기존 종목 및 일부 수정
+      { code:'247540', name:'에코프로비엠', market:'KOSDAQ', sector:'2차전지', price:217000, change:11.28, volume:4003, qty:1844000, marketCap: 212000, limitUp:false, high52:315000, low52:188000, foreign:8.5, per:72.4, pbr:11.2 },
+      { code:'086520', name:'에코프로', market:'KOSDAQ', sector:'2차전지', price:146100, change:12.56, volume:8771, qty:6003000, marketCap: 389000, limitUp:false, high52:1530000, low52:95000, foreign:5.2, per:45.1, pbr:8.5 },
+      { code:'006400', name:'삼성SDI', market:'KOSPI', sector:'2차전지', price:647000, change:5.03, volume:6431, qty:993000, marketCap: 445000, limitUp:false, high52:750000, low52:480000, foreign:45.3, per:18.2, pbr:2.1 },
+      
+      { code:'009150', name:'삼성전기', market:'KOSPI', sector:'MLCC', price:132100, change:9.72, volume:2390, qty:1809000, marketCap: 98000, limitUp:false, high52:160000, low52:125000, foreign:30.1, per:12.5, pbr:1.3 },
+      { code:'001820', name:'삼화콘덴서', market:'KOSPI', sector:'MLCC', price:102000, change:29.94, volume:5362, qty:5250000, marketCap: 11000, limitUp:true, high52:102000, low52:35000, foreign:4.5, per:22.1, pbr:3.4 },
+      
+      { code:'272210', name:'한화시스템', market:'KOSPI', sector:'우주태양광', price:18400, change:8.5, volume:1250, qty:3500000, marketCap: 34000, limitUp:false, high52:21000, low52:12000, foreign:14.2, per:20.5, pbr:1.8 },
+      { code:'189300', name:'인텔리안테크', market:'KOSDAQ', sector:'우주태양광', price:67500, change:15.2, volume:890, qty:1200000, marketCap: 6500, limitUp:false, high52:85000, low52:45000, foreign:8.1, per:35.4, pbr:3.5 },
+      
+      { code:'356680', name:'엑스게이트', market:'KOSDAQ', sector:'양자암호', price:20800, change:21.85, volume:4434, qty:21300000, marketCap: 6500, limitUp:false, high52:25000, low52:4000, foreign:2.1, per:0, pbr:12.1 },
+      { code:'115440', name:'우리넷', market:'KOSDAQ', sector:'양자암호', price:11500, change:12.3, volume:520, qty:2400000, marketCap: 1500, limitUp:false, high52:14000, low52:7500, foreign:1.5, per:18.2, pbr:1.9 },
+      
+      { code:'353200', name:'대덕전자', market:'KOSPI', sector:'반도체기판', price:25100, change:7.2, volume:1800, qty:6400000, marketCap: 12500, limitUp:false, high52:32000, low52:19000, foreign:11.2, per:16.8, pbr:1.7 },
+      { code:'222800', name:'심텍', market:'KOSDAQ', sector:'반도체기판', price:31000, change:9.1, volume:1450, qty:4100000, marketCap: 9800, limitUp:false, high52:42000, low52:22000, foreign:9.4, per:14.1, pbr:1.5 },
+      
+      { code:'336260', name:'두산퓨얼셀', market:'KOSPI', sector:'고체산화물연료전지', price:101100, change:21.08, volume:3857, qty:3810000, marketCap: 15000, limitUp:false, high52:115000, low52:28000, foreign:8.5, per:50.2, pbr:4.8 },
+      
+      { code:'138080', name:'오이솔루션', market:'KOSDAQ', sector:'광통신', price:18200, change:6.5, volume:350, qty:1800000, marketCap: 2100, limitUp:false, high52:24000, low52:12000, foreign:3.4, per:22.5, pbr:2.1 },
+      
+      { code:'053610', name:'프로텍', market:'KOSDAQ', sector:'LED장비', price:45000, change:14.8, volume:1120, qty:2100000, marketCap: 4800, limitUp:false, high52:58000, low52:25000, foreign:5.5, per:15.2, pbr:1.9 },
+      
+      { code:'035420', name:'NAVER', market:'KOSPI', sector:'AI', price:195000, change:4.2, volume:18500, qty:9500000, marketCap: 320000, limitUp:false, high52:235000, low52:170000, foreign:48.5, per:38.2, pbr:1.4 },
+      
+      { code:'005930', name:'삼성전자', market:'KOSPI', sector:'반도체', price:83200, change:1.5, volume:15000, qty:20000000, marketCap: 4950000, limitUp:false, high52:86000, low52:68000, foreign:54.2, per:15.8, pbr:1.5 }
     ];
 
-    // --- 3. 기본 설정 및 상태 ---
+    // --- 3. 기본 설정 및 상태 (인기테마 기본 적용) ---
     let settings = {
-      categories: ['전체', '인기테마', '코스피', '코스닥', '반도체', '2차전지', '바이오', '로봇'],
+      categories: {
+        sector: ['전체', 'MLCC', '2차전지', '우주태양광', '양자암호', '반도체기판', '고체산화물연료전지', '광통신', 'LED장비', 'AI'],
+        volume: ['전체', '코스피', '코스닥'],
+        qty: ['전체', '코스피', '코스닥']
+      },
       accountNo: '44614025-01',
       appKey: 'PS4Wd3zl5anUOvHvu1GxST2Ll9Vs9VX2GvR7',
       appSecret: '10usi/N28hKXVcZ9hIA9eQfU95qQf2T+woAa0MykUVYmmX49P0xY4+sgwwzkBCQfjj032tH+xbCRmS+ehtXWJuiJXO5Ou8H8Hl5myjZPaFOBTrUsa979IkqIlHoOB06eRlTDuu46cAy2TcG12e3qivppEG1i5nSyRkTt2MkQept/g5zaGzk=',
-      mockMode: true,
       autoRefresh: true,
-      refreshInterval: 30,
       minChange: 4,
       maxItems: 20
     };
 
     let state = {
       currentTab: 'sector',
-      currentCategory: '전체',
-      expandedCode: null, // 현재 열려있는 슬라이드 미리보기
-      timer: null
+      currentCat: { sector: '전체', volume: '전체', qty: '전체' },
+      expandedCode: null, 
+      timer: null,
+      countdown: 30
     };
 
     function $(id){ return document.getElementById(id); }
@@ -848,59 +859,70 @@
     // --- 4. 카테고리 렌더링 및 편집 ---
     function renderCategoryChips() {
       const container = $('categoryMenu');
-      container.innerHTML = settings.categories.map(cat => 
-        `<button class="chip ${state.currentCategory === cat ? 'active' : ''}" 
-                 onclick="selectCategory('${cat}')">${cat}</button>`
-      ).join('');
+      const cats = settings.categories[state.currentTab];
+      const activeCat = state.currentCat[state.currentTab];
+      
+      container.innerHTML = cats.map(cat => {
+        const colorKey = getColorKey(cat);
+        const isActive = activeCat === cat ? 'active' : '';
+        return `<button class="chip ${isActive}" data-color="${colorKey}" onclick="selectCategory('${cat}')">${cat}</button>`;
+      }).join('');
     }
 
     function renderCategoryEditor() {
+      const targetTab = $('targetTabSelect').value;
+      const cats = settings.categories[targetTab];
       const list = $('catEditorList');
-      list.innerHTML = settings.categories.map((cat, i) => `
+      
+      list.innerHTML = cats.map((cat, i) => `
         <div class="cat-edit-item">
           <span>${cat}</span>
           ${cat !== '전체' ? `
             <button class="cat-btn" onclick="moveCat(${i}, -1)">▲</button>
             <button class="cat-btn" onclick="moveCat(${i}, 1)">▼</button>
             <button class="cat-btn" onclick="removeCat(${i})" style="color:var(--red);">✕</button>
-          ` : '<span style="font-size:11px;color:var(--sub);">기본</span>'}
+          ` : '<span style="font-size:12px;color:var(--sub);">기본</span>'}
         </div>
       `).join('');
     }
+    $('targetTabSelect').addEventListener('change', renderCategoryEditor);
 
     function moveCat(index, dir) {
-      if(dir === -1 && index > 1) { // 0번 '전체'는 고정
-        [settings.categories[index-1], settings.categories[index]] = [settings.categories[index], settings.categories[index-1]];
-      } else if(dir === 1 && index < settings.categories.length - 1) {
-        [settings.categories[index], settings.categories[index+1]] = [settings.categories[index+1], settings.categories[index]];
+      const targetTab = $('targetTabSelect').value;
+      let cats = settings.categories[targetTab];
+      if(dir === -1 && index > 1) { 
+        [cats[index-1], cats[index]] = [cats[index], cats[index-1]];
+      } else if(dir === 1 && index < cats.length - 1) {
+        [cats[index], cats[index+1]] = [cats[index+1], cats[index]];
       }
       renderCategoryEditor();
     }
-    
     function removeCat(index) {
-      settings.categories.splice(index, 1);
+      const targetTab = $('targetTabSelect').value;
+      settings.categories[targetTab].splice(index, 1);
       renderCategoryEditor();
     }
-
-    function addCategory() {
+    function addCategory(val = null) {
       const input = $('newCatInput');
-      const val = input.value.trim();
-      if(val && !settings.categories.includes(val)) {
-        settings.categories.push(val);
+      const targetTab = $('targetTabSelect').value;
+      const catVal = val || input.value.trim();
+      if(catVal && !settings.categories[targetTab].includes(catVal)) {
+        settings.categories[targetTab].push(catVal);
         input.value = '';
         renderCategoryEditor();
       }
     }
+    window.addPresetCat = function(name) { addCategory(name); }
 
     function selectCategory(cat) {
-      state.currentCategory = cat;
+      state.currentCat[state.currentTab] = cat;
       renderCategoryChips();
       renderAll();
     }
 
     // --- 5. 데이터 필터링 및 렌더링 ---
     function getFilteredStocks() {
-      const cat = state.currentCategory;
+      const cat = state.currentCat[state.currentTab];
       let rows = SAMPLE_DATA.filter(s => {
         if(cat === '전체') return true;
         if(cat === '코스피') return s.market === 'KOSPI';
@@ -910,39 +932,50 @@
       return rows;
     }
 
-    // 아코디언 미리보기 토글 로직
-    window.togglePreview = function(code) {
-      // 기존에 열린 것 닫기
-      if(state.expandedCode && state.expandedCode !== code) {
-        const oldEl = $(`item-container-${state.expandedCode}`);
+    // 탭별 고유 ID를 부여하여 이벤트 충돌 방지
+    window.togglePreview = function(tabName, code) {
+      const containerId = `item-container-${tabName}-${code}`;
+      const el = $(containerId);
+      
+      // 현재 열려있는 게 있고, 그게 클릭한 게 아니라면 닫기
+      if(state.expandedCode && state.expandedCode !== containerId) {
+        const oldEl = $(state.expandedCode);
         if(oldEl) oldEl.classList.remove('expanded');
       }
       
-      const el = $(`item-container-${code}`);
       if(el) {
         el.classList.toggle('expanded');
-        state.expandedCode = el.classList.contains('expanded') ? code : null;
+        state.expandedCode = el.classList.contains('expanded') ? containerId : null;
       }
     };
 
-    // 아이템 렌더링 (리스트 공통 템플릿 - 미리보기 포함)
-    function renderListHtml(rows, isQty = false) {
-      if(!rows.length) return '<div class="empty">선택한 카테고리에 해당하는 종목이 없습니다.</div>';
+    function renderListHtml(rows, isQty = false, applyColors = false) {
+      if(!rows.length) return '<div class="empty">조건에 해당하는 종목이 없습니다.</div>';
       
+      const tabName = state.currentTab;
+
       return rows.map((row, i) => {
-        const cls = row.limitUp ? 'item-container limit' : 'item-container';
+        const limitCls = row.limitUp ? 'limit' : '';
+        const colorKey = getColorKey(row.sector);
+        // 주도섹터 탭이면 카테고리 컬러 클래스를 입힌다. 아니면 default.
+        const catCls = applyColors ? `cat-${colorKey}` : 'cat-default';
+        const metaCatCls = applyColors ? `meta-cat-${colorKey}` : '';
         const valText = isQty ? formatQty(row.qty) + '주' : formatVolume(row.volume);
         
+        const containerId = `item-container-${tabName}-${row.code}`;
+        
         return `
-          <div class="${cls}" id="item-container-${row.code}">
-            <div class="item" onclick="togglePreview('${row.code}')">
+          <div class="item-container ${limitCls} ${catCls}" id="${containerId}">
+            <div class="item" onclick="togglePreview('${tabName}', '${row.code}')">
               <div class="name-wrap">
                 <div class="line1">
                   <span class="rank">${i + 1}</span>
                   <span class="name">${row.name}</span>
                   ${row.limitUp ? '<span class="badge">상한가</span>' : ''}
                 </div>
-                <div class="meta">${row.market} · ${row.code}</div>
+                <div class="meta">
+                  ${row.market} · <span class="${metaCatCls}">${row.sector}</span>
+                </div>
               </div>
               <div class="price">${formatPrice(row.price)}</div>
               <div class="change ${row.change < 0 ? 'down' : ''}">
@@ -951,14 +984,13 @@
               <div class="vol">${valText}</div>
             </div>
             
-            <!-- 슬라이드 미리보기 패널 -->
             <div class="preview-wrap">
               <div class="preview-content" onclick="openFullDetail('${row.code}')">
                 <div class="p-col"><span>업종(테마)</span><strong>${row.sector}</strong></div>
                 <div class="p-col"><span>거래량</span><strong>${formatQty(row.qty)}주</strong></div>
-                <div class="p-col highlight"><span>거래대금</span><strong>${formatVolume(row.volume)}</strong></div>
+                <div class="p-col"><span>거래대금</span><strong style="color:var(--accent)">${formatVolume(row.volume)}</strong></div>
                 <div class="p-col"><span>시가총액</span><strong>${formatVolume(row.marketCap)}</strong></div>
-                <div class="p-guide">터치하여 상세보기 ➔</div>
+                <div class="p-guide">터치하여 전체 상세 정보 보기 ➔</div>
               </div>
             </div>
           </div>
@@ -974,34 +1006,88 @@
         if(sortKey === 'price') return b.price - a.price;
         return b.volume - a.volume;
       });
-      
-      $('sectorList').innerHTML = renderListHtml(rows.slice(0, settings.maxItems));
+      // 주도섹터는 컬러 스타일 적용 (true)
+      $('sectorList').innerHTML = renderListHtml(rows.slice(0, settings.maxItems), false, true);
       $('updateTime1').textContent = '업데이트: ' + new Date().toLocaleTimeString('ko-KR');
     }
 
     function renderVolumeList(){
-      let rows = getFilteredStocks();
+      let rows = getFilteredStocks().filter(x => x.change >= 4); // 대금상위 4% 이상 조건
       rows.sort((a,b) => b.volume - a.volume);
-      $('volumeList').innerHTML = renderListHtml(rows.slice(0, settings.maxItems), false);
+      $('volumeList').innerHTML = renderListHtml(rows.slice(0, settings.maxItems), false, false);
       $('updateTime2').textContent = '업데이트: ' + new Date().toLocaleTimeString('ko-KR');
     }
     
     function renderQtyList(){
       let rows = getFilteredStocks();
       rows.sort((a,b) => b.qty - a.qty);
-      $('qtyList').innerHTML = renderListHtml(rows.slice(0, settings.maxItems), true);
+      $('qtyList').innerHTML = renderListHtml(rows.slice(0, settings.maxItems), true, false);
       $('updateTime3').textContent = '업데이트: ' + new Date().toLocaleTimeString('ko-KR');
     }
 
     function renderAll(){
       $('currentFilterText').textContent = settings.minChange + '%';
-      
       if(state.currentTab === 'sector') renderSectorList();
       if(state.currentTab === 'volume') renderVolumeList();
       if(state.currentTab === 'qty') renderQtyList();
     }
 
-    // --- 6. 전체화면 상세보기 ---
+    // --- 6. 전체화면 상세보기 및 차트(Canvas) ---
+    function drawMockChart() {
+      const canvas = $('fsChartCanvas');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      // 캔버스 사이즈 매칭
+      const width = canvas.width = canvas.parentElement.offsetWidth;
+      const height = canvas.height = canvas.parentElement.offsetHeight;
+      
+      ctx.clearRect(0, 0, width, height);
+      
+      // 모의 데이터(랜덤 주가 흐름)
+      const points = [];
+      const numPoints = 40;
+      let curY = height * 0.7; // 시작 위치
+      
+      for(let i=0; i<=numPoints; i++) {
+        points.push({
+          x: (width / numPoints) * i,
+          y: curY
+        });
+        curY += (Math.random() - 0.45) * 20; // 위아래 변동
+        curY = Math.max(20, Math.min(height - 20, curY));
+      }
+      
+      // 선 그리기
+      ctx.beginPath();
+      ctx.moveTo(points[0].x, points[0].y);
+      for(let i=1; i<points.length; i++) {
+        // 부드러운 곡선(베지어)을 쓰면 좋지만 단순함을 위해 lineTo
+        ctx.lineTo(points[i].x, points[i].y);
+      }
+      
+      const themeColor = currentTheme === 'dark' ? '#ff7a2f' : '#ea580c';
+      ctx.strokeStyle = themeColor;
+      ctx.lineWidth = 3;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+
+      // 그라데이션 영역 채우기 (아래로 퍼지는 효과)
+      ctx.lineTo(width, height);
+      ctx.lineTo(0, height);
+      ctx.closePath();
+      
+      const gradient = ctx.createLinearGradient(0, 0, 0, height);
+      if(currentTheme === 'dark') {
+        gradient.addColorStop(0, 'rgba(255,122,47,0.3)');
+        gradient.addColorStop(1, 'rgba(255,122,47,0.0)');
+      } else {
+        gradient.addColorStop(0, 'rgba(234,88,12,0.3)');
+        gradient.addColorStop(1, 'rgba(234,88,12,0.0)');
+      }
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    }
+
     window.openFullDetail = function(code) {
       const stock = SAMPLE_DATA.find(s => s.code === code);
       if(!stock) return;
@@ -1020,14 +1106,28 @@
       $('fsVol').textContent = formatVolume(stock.volume);
       $('fsCap').textContent = formatVolume(stock.marketCap);
       
+      $('fs52Week').textContent = `${formatPrice(stock.high52)} / ${formatPrice(stock.low52)}`;
+      $('fsForeign').textContent = stock.foreign.toFixed(2) + ' %';
+      $('fsPerPbr').textContent = `${stock.per > 0 ? stock.per : 'N/A'} 배 / ${stock.pbr} 배`;
+      
       $('fullscreenDetail').classList.add('open');
-      document.body.style.overflow = 'hidden'; // 뒤쪽 배경 스크롤 방지
+      document.body.style.overflow = 'hidden'; 
+      
+      // 차트 렌더링 (모달 오픈 애니메이션 이후 크기를 잡기 위해 약간 지연)
+      setTimeout(drawMockChart, 100);
     };
     
     window.closeFullDetail = function() {
       $('fullscreenDetail').classList.remove('open');
       document.body.style.overflow = '';
     };
+    
+    // 화면 리사이즈 시 차트 다시 그리기
+    window.addEventListener('resize', () => {
+      if($('fullscreenDetail').classList.contains('open')) {
+        drawMockChart();
+      }
+    });
 
     // --- 7. 유틸리티 및 탭 전환 ---
     function switchTab(tab){
@@ -1039,6 +1139,9 @@
         const el = $('tab-' + name);
         if(el) el.classList.toggle('hidden', name !== tab);
       });
+      
+      state.expandedCode = null; // 탭 변경 시 열려있는 미리보기 초기화
+      renderCategoryChips();
       renderAll();
     }
 
@@ -1051,14 +1154,14 @@
     }
 
     function loadSettings(){
-      const saved = localStorage.getItem('stock_monitor_settings_v3');
+      const saved = localStorage.getItem('stock_monitor_settings_v5');
       if(saved){
-        settings = { ...settings, ...JSON.parse(saved) };
+        const parsed = JSON.parse(saved);
+        settings = { ...settings, ...parsed };
       }
       $('appKey').value = settings.appKey;
       $('appSecret').value = settings.appSecret;
       $('accountNo').value = settings.accountNo;
-      $('mockMode').checked = settings.mockMode;
       $('autoRefresh').checked = settings.autoRefresh;
       $('maxItems').value = settings.maxItems;
       renderCategoryEditor();
@@ -1068,24 +1171,29 @@
       settings.appKey = $('appKey').value.trim();
       settings.appSecret = $('appSecret').value.trim();
       settings.accountNo = $('accountNo').value.trim();
-      settings.mockMode = $('mockMode').checked;
       settings.autoRefresh = $('autoRefresh').checked;
       settings.maxItems = Number($('maxItems').value || 20);
 
-      localStorage.setItem('stock_monitor_settings_v3', JSON.stringify(settings));
+      localStorage.setItem('stock_monitor_settings_v5', JSON.stringify(settings));
       renderCategoryChips();
       renderAll();
       closeSettings();
       showToast('설정이 저장되었습니다.');
+      startTimer();
     }
 
     function resetSettings(){
-      localStorage.removeItem('stock_monitor_settings_v3');
+      localStorage.removeItem('stock_monitor_settings_v5');
       location.reload();
     }
 
-    function openSettings(){ $('settingsModal').classList.add('open'); }
+    function openSettings(){ 
+      $('targetTabSelect').value = state.currentTab;
+      renderCategoryEditor();
+      $('settingsModal').classList.add('open'); 
+    }
     function closeSettings(){ $('settingsModal').classList.remove('open'); }
+    
     function showToast(msg){
       const el = document.createElement('div');
       el.className = 'toast'; el.textContent = msg;
@@ -1103,8 +1211,35 @@
       });
       renderAll();
     }
+    
+    function startTimer() {
+      clearInterval(state.timer);
+      if(!settings.autoRefresh) {
+        $('refreshBtn').innerHTML = '새로고침 중지';
+        return;
+      }
+      state.countdown = 30;
+      $('refreshBtn').innerHTML = `새로고침 ${state.countdown}s`;
+      
+      state.timer = setInterval(() => {
+        state.countdown -= 1;
+        if(state.countdown <= 0) {
+          mutateSampleData();
+          state.countdown = 30;
+        }
+        $('refreshBtn').innerHTML = `새로고침 ${state.countdown}s`;
+      }, 1000);
+    }
 
-    // --- 8. 이벤트 리스너 바인딩 ---
+    function forceRefresh() {
+      mutateSampleData();
+      if(settings.autoRefresh) {
+        state.countdown = 30; 
+        $('refreshBtn').innerHTML = `새로고침 ${state.countdown}s`;
+      }
+    }
+
+    // --- 8. 이벤트 바인딩 ---
     document.querySelectorAll('.tab').forEach(btn => {
       btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
@@ -1112,13 +1247,12 @@
       btn.addEventListener('click', () => setChangeFilter(btn.dataset.change));
     });
     $('sectorSort').addEventListener('change', renderAll);
-    $('refreshBtn').addEventListener('click', mutateSampleData);
+    $('refreshBtn').addEventListener('click', forceRefresh);
     $('openSettingsBtn').addEventListener('click', openSettings);
     $('closeSettingsBtn').addEventListener('click', closeSettings);
     $('saveBtn').addEventListener('click', saveSettings);
     $('resetBtn').addEventListener('click', resetSettings);
     
-    // 모달 배경 클릭 시 닫기
     $('settingsModal').addEventListener('click', e => {
       if(e.target === $('settingsModal')) closeSettings();
     });
@@ -1127,11 +1261,7 @@
     loadSettings();
     renderCategoryChips();
     renderAll();
-    
-    // 자동 갱신 타이머
-    setInterval(() => {
-      if(settings.autoRefresh) mutateSampleData();
-    }, 30000);
+    startTimer();
 
   </script>
 </body>
