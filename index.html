@@ -72,25 +72,86 @@
       border-radius:6px;padding:3px 7px;min-width:34px;text-align:center;
     }
 
-    /* ── 섹터 필터 ── */
-    .chip-row{display:flex;gap:6px;overflow-x:auto;padding:10px 14px;scrollbar-width:none}
-    .chip-row::-webkit-scrollbar{display:none}
-    .chip{
-      border:1px solid var(--line);background:var(--panel-2);
-      color:var(--sub);padding:5px 12px;border-radius:20px;
-      font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;
+    /* ── 섹터 분류 컬러 박스 그리드 ── */
+    .sector-type-bar{
+      display:flex;gap:8px;padding:10px 14px 0;
     }
-    .chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
-    .chip:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+    .sector-type-btn{
+      flex:1;padding:7px 10px;border-radius:10px;border:1.5px solid var(--line);
+      background:var(--panel-2);color:var(--sub);font-size:12px;font-weight:700;
+      cursor:pointer;transition:all .15s;text-align:center;
+    }
+    .sector-type-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(234,88,12,.07)}
 
-    /* ── 섹터 배지 색상 ── */
-    .sb-battery{background:var(--bg-cat-battery);color:var(--tx-cat-battery)}
-    .sb-mlcc{background:var(--bg-cat-mlcc);color:var(--tx-cat-mlcc)}
-    .sb-semi{background:var(--bg-cat-semi);color:var(--tx-cat-semi)}
-    .sb-bio{background:var(--bg-cat-bio);color:var(--tx-cat-bio)}
-    .sb-robot{background:var(--bg-cat-robot);color:var(--tx-cat-robot)}
-    .sb-energy{background:var(--bg-cat-energy);color:var(--tx-cat-energy)}
-    .sb-quantum{background:var(--bg-cat-quantum);color:var(--tx-cat-quantum)}
+    .sector-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+      padding:10px 14px;
+    }
+    .sector-card{
+      border-radius:12px;padding:10px 8px;cursor:pointer;
+      display:flex;flex-direction:column;align-items:center;gap:4px;
+      border:2px solid transparent;transition:all .18s;
+      position:relative;
+    }
+    .sector-card.active{border-color:currentColor;transform:scale(1.04);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+    .sector-card .sc-icon{font-size:20px}
+    .sector-card .sc-name{font-size:11px;font-weight:700;text-align:center}
+    .sector-card .sc-chg{font-size:10px;font-weight:800;opacity:.85}
+
+    /* 아코디언 미리보기 */
+    .accordion-preview{
+      overflow:hidden;max-height:0;transition:max-height .32s cubic-bezier(.4,0,.2,1);
+      background:var(--panel-2);border-bottom:1px solid var(--line);
+    }
+    .accordion-preview.open{max-height:500px}
+    .preview-inner{padding:10px 14px 14px}
+    .preview-title{
+      font-size:12px;font-weight:800;margin-bottom:8px;
+      display:flex;align-items:center;gap:6px;
+    }
+    .preview-item{
+      display:flex;align-items:center;gap:8px;
+      padding:7px 0;border-bottom:1px solid var(--line);
+      cursor:pointer;
+    }
+    .preview-item:last-child{border-bottom:none}
+    .preview-rank{font-size:11px;font-weight:800;color:var(--sub);min-width:18px}
+    .preview-name{flex:1;font-size:13px;font-weight:700;color:var(--text)}
+    .preview-chg{font-size:13px;font-weight:800}
+    .preview-more{
+      text-align:center;margin-top:10px;font-size:12px;
+      font-weight:700;color:var(--accent);cursor:pointer;
+    }
+
+    /* 분류 아코디언 (대금상위/거래량상위용) */
+    .classify-list{
+      display:flex;flex-direction:column;gap:0;
+    }
+    .classify-item{
+      border-bottom:1px solid var(--line);
+    }
+    .classify-header{
+      display:flex;align-items:center;gap:10px;
+      padding:12px 14px;cursor:pointer;transition:background .12s;
+      user-select:none;
+    }
+    .classify-header:hover{background:var(--hover)}
+    .classify-header.active-header{background:rgba(234,88,12,.05)}
+    .classify-icon{font-size:18px}
+    .classify-name{flex:1;font-size:14px;font-weight:700;color:var(--text)}
+    .classify-badge{
+      font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;
+      background:var(--panel-2);color:var(--sub);border:1px solid var(--line);
+    }
+    .classify-arrow{
+      font-size:12px;color:var(--sub);transition:transform .2s;
+    }
+    .classify-arrow.open{transform:rotate(180deg)}
+    .classify-body{
+      overflow:hidden;max-height:0;
+      transition:max-height .32s cubic-bezier(.4,0,.2,1);
+    }
+    .classify-body.open{max-height:600px}
 
     /* ── 필터박스 ── */
     .filter-box{
@@ -112,6 +173,15 @@
       margin-left:auto;border:1px solid var(--line);background:var(--panel-2);
       color:var(--text);padding:5px 8px;border-radius:8px;font-size:12px;cursor:pointer;
     }
+
+    /* ── 섹터 배지 색상 ── */
+    .sb-battery{background:var(--bg-cat-battery);color:var(--tx-cat-battery)}
+    .sb-mlcc{background:var(--bg-cat-mlcc);color:var(--tx-cat-mlcc)}
+    .sb-semi{background:var(--bg-cat-semi);color:var(--tx-cat-semi)}
+    .sb-bio{background:var(--bg-cat-bio);color:var(--tx-cat-bio)}
+    .sb-robot{background:var(--bg-cat-robot);color:var(--tx-cat-robot)}
+    .sb-energy{background:var(--bg-cat-energy);color:var(--tx-cat-energy)}
+    .sb-quantum{background:var(--bg-cat-quantum);color:var(--tx-cat-quantum)}
 
     /* ── 뉴스바 ── */
     .news{overflow:hidden;background:rgba(234,88,12,.06);border-bottom:1px solid rgba(234,88,12,.15);padding:8px 14px}
@@ -250,6 +320,7 @@
     @media(max-width:480px){
       .tabs .tab{padding:6px 8px;font-size:12px}
       .detail-price{font-size:22px}
+      .sector-grid{grid-template-columns:repeat(4,1fr)}
     }
   </style>
 </head>
@@ -264,13 +335,10 @@
     </div>
     <div class="top-actions">
       <span class="countdown-badge" id="countdownText">30s</span>
-      <!-- 새로고침 -->
       <button class="icon-btn" id="refreshBtn" title="새로고침">
         <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
       </button>
-      <!-- 테마 전환 -->
       <button class="icon-btn" id="themeBtn" title="테마 변경"></button>
-      <!-- 설정 -->
       <button class="icon-btn orange" id="openSettingsBtn" title="환경설정">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
@@ -279,16 +347,20 @@
 
   <!-- ── 주도섹터 ── -->
   <div class="section" id="tab-sector">
-    <div class="chip-row" id="sectorMenu">
-      <button class="chip active" data-sector="all">전체</button>
-      <button class="chip" data-sector="battery">2차전지</button>
-      <button class="chip" data-sector="mlcc">MLCC</button>
-      <button class="chip" data-sector="semi">반도체</button>
-      <button class="chip" data-sector="bio">바이오</button>
-      <button class="chip" data-sector="robot">로봇</button>
-      <button class="chip" data-sector="energy">신재생</button>
-      <button class="chip" data-sector="quantum">양자</button>
+    <!-- 테마/업종 전환 탭 -->
+    <div class="sector-type-bar">
+      <button class="sector-type-btn active" data-stype="theme">📊 테마별</button>
+      <button class="sector-type-btn" data-stype="industry">🏭 업종별</button>
     </div>
+
+    <!-- 테마 섹터 그리드 -->
+    <div class="sector-grid" id="sectorGrid"></div>
+
+    <!-- 아코디언 미리보기 -->
+    <div class="accordion-preview" id="sectorPreview">
+      <div class="preview-inner" id="sectorPreviewInner"></div>
+    </div>
+
     <div class="filter-box">
       <span class="filter-label">등락률</span>
       <button class="mini-chip active" data-chg="4">4%↑</button>
@@ -313,18 +385,8 @@
 
   <!-- ── 대금상위 ── -->
   <div class="section hidden" id="tab-volume">
-    <div class="filter-box">
-      <span class="filter-label">시장</span>
-      <button class="mkt-chip active" data-mkt="all">전체</button>
-      <button class="mkt-chip" data-mkt="kospi">KOSPI</button>
-      <button class="mkt-chip" data-mkt="kosdaq">KOSDAQ</button>
-      <select class="select" id="volumeSort" onchange="renderVolume()">
-        <option value="volume">거래대금순</option>
-        <option value="change">등락률순</option>
-        <option value="price">현재가순</option>
-      </select>
-    </div>
-    <div class="head-row">
+    <div class="classify-list" id="volumeClassifyList"></div>
+    <div class="head-row" style="margin-top:8px">
       <span class="title">거래대금 TOP 종목</span>
       <span id="updateTime2">업데이트: --:--:--</span>
     </div>
@@ -333,18 +395,8 @@
 
   <!-- ── 거래량상위 ── -->
   <div class="section hidden" id="tab-turnover">
-    <div class="filter-box">
-      <span class="filter-label">시장</span>
-      <button class="mkt-chip active" data-tmkt="all">전체</button>
-      <button class="mkt-chip" data-tmkt="kospi">KOSPI</button>
-      <button class="mkt-chip" data-tmkt="kosdaq">KOSDAQ</button>
-      <select class="select" id="turnoverSort" onchange="renderTurnover()">
-        <option value="turnover">거래량순</option>
-        <option value="change">등락률순</option>
-        <option value="price">현재가순</option>
-      </select>
-    </div>
-    <div class="head-row">
+    <div class="classify-list" id="turnoverClassifyList"></div>
+    <div class="head-row" style="margin-top:8px">
       <span class="title">거래량 TOP 종목</span>
       <span id="updateTime3">업데이트: --:--:--</span>
     </div>
@@ -430,6 +482,16 @@
         </div>
       </div>
       <div class="group">
+        <h4>📈 주도섹터 표시 개수</h4>
+        <div class="row">
+          <div class="label"><div class="t">섹터별 기본 표시</div><div class="s">기본 5위까지 표시</div></div>
+          <input type="number" class="input" id="cfgSectorTop" value="5" min="5" max="10"/>
+        </div>
+        <div style="font-size:12px;color:var(--sub);background:var(--panel-2);border-radius:8px;padding:8px 10px;line-height:1.6">
+          💡 5~10 사이로 설정. 10위까지 확장 가능합니다.
+        </div>
+      </div>
+      <div class="group">
         <h4>🔔 알림</h4>
         <div class="row">
           <div class="label"><div class="t">급등 알림 기준(%)</div></div>
@@ -451,7 +513,7 @@
 <script>
 const $ = id => document.getElementById(id);
 
-// ── 테마 관리 (기본: light, localStorage 저장) ──
+// ── 테마 관리 ──
 const moonIcon = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
 const sunIcon  = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
 
@@ -477,12 +539,15 @@ function toast(msg) {
 
 // ── 전역 상태 ──
 let G = {
-  sector:'all', tab:'sector', mkt:'all', tmkt:'all',
-  minChg:4, minVol:0, maxItems:30,
+  sector:'all', sectorType:'theme', tab:'sector', mkt:'all', tmkt:'all',
+  minChg:4, minVol:0, maxItems:30, sectorTop:5,
   limitTop:true, autoRefresh:true, interval:30,
   showNews:true, alertChg:15, alertLimit:true,
   appKey:'', appSecret:'', accountNo:'', mock:true, useProxy:true,
-  kisToken:null, tokenExp:0, countdown:30, timer:null
+  kisToken:null, tokenExp:0, countdown:30, timer:null,
+  openSector: null,
+  openVolumeCat: null,
+  openTurnoverCat: null
 };
 function loadG() {
   const s = localStorage.getItem('stocky4');
@@ -518,43 +583,340 @@ async function testApi() {
   else    { st.className='api-status api-err'; st.textContent='● 연결 실패 — 프록시 ON 확인'; toast('연결 실패. CORS 안내 확인 필요'); }
 }
 
-// ── 샘플 데이터 ──
-const SECTOR_COLORS = {battery:'#ff5b5b',mlcc:'#b07cff',semi:'#56a8ff',bio:'#3bc26b',robot:'#ffb347',energy:'#00d4f0',quantum:'#e040fb',default:'#97a3b6'};
+// ── 섹터/테마 데이터 ──
+const SECTOR_COLORS = {
+  battery:'#16a34a', mlcc:'#2563eb', semi:'#7c3aed',
+  bio:'#db2777', robot:'#ea580c', energy:'#0891b2',
+  quantum:'#dc2626', default:'#475569'
+};
+
+// 테마별 정의
+const THEME_SECTORS = [
+  {key:'battery', name:'2차전지', icon:'🔋', bgVar:'--bg-cat-battery', txVar:'--tx-cat-battery'},
+  {key:'mlcc',    name:'MLCC',   icon:'⚡', bgVar:'--bg-cat-mlcc',    txVar:'--tx-cat-mlcc'},
+  {key:'semi',    name:'반도체', icon:'💾', bgVar:'--bg-cat-semi',    txVar:'--tx-cat-semi'},
+  {key:'bio',     name:'바이오', icon:'🧬', bgVar:'--bg-cat-bio',     txVar:'--tx-cat-bio'},
+  {key:'robot',   name:'로봇',   icon:'🤖', bgVar:'--bg-cat-robot',   txVar:'--tx-cat-robot'},
+  {key:'energy',  name:'신재생', icon:'☀️', bgVar:'--bg-cat-energy',  txVar:'--tx-cat-energy'},
+  {key:'quantum', name:'양자',   icon:'⚛️', bgVar:'--bg-cat-quantum', txVar:'--tx-cat-quantum'},
+];
+
+// 업종별 정의
+const INDUSTRY_SECTORS = [
+  {key:'it',       name:'IT·전자', icon:'💻', bgVar:'--bg-cat-semi',    txVar:'--tx-cat-semi'},
+  {key:'finance',  name:'금융',    icon:'🏦', bgVar:'--bg-cat-mlcc',    txVar:'--tx-cat-mlcc'},
+  {key:'chemical', name:'화학',    icon:'🧪', bgVar:'--bg-cat-battery', txVar:'--tx-cat-battery'},
+  {key:'health',   name:'의료',    icon:'🏥', bgVar:'--bg-cat-bio',     txVar:'--tx-cat-bio'},
+  {key:'energy2',  name:'에너지',  icon:'⚡', bgVar:'--bg-cat-energy',  txVar:'--tx-cat-energy'},
+  {key:'consumer', name:'소비재',  icon:'🛒', bgVar:'--bg-cat-robot',   txVar:'--tx-cat-robot'},
+  {key:'auto',     name:'자동차',  icon:'🚗', bgVar:'--bg-cat-quantum', txVar:'--tx-cat-quantum'},
+];
+
 const STOCKS = {
   battery:[
     {code:'247540',name:'에코프로비엠',s:'battery',sl:'2차전지',mkt:'kosdaq',price:217000,change:11.28,volume:9840000,turnover:4003,limitUp:false,high:228000,low:195000,open:196000,prev:195000,pbr:11.2,per:72.4,mcap:'21조'},
     {code:'086520',name:'에코프로',s:'battery',sl:'2차전지',mkt:'kosdaq',price:98500,change:8.52,volume:7230000,turnover:5214,limitUp:false,high:101000,low:90500,open:91000,prev:90800,pbr:9.1,per:0,mcap:'14조'},
     {code:'373220',name:'LG에너지솔루션',s:'battery',sl:'2차전지',mkt:'kospi',price:412000,change:5.11,volume:18900000,turnover:2871,limitUp:false,high:420000,low:390000,open:391000,prev:391900,pbr:4.8,per:78.2,mcap:'96조'},
+    {code:'051910',name:'LG화학',s:'battery',sl:'2차전지',mkt:'kospi',price:320000,change:3.55,volume:5100000,turnover:1632,limitUp:false,high:327000,low:308000,open:309000,prev:309000,pbr:1.2,per:0,mcap:'22조'},
+    {code:'006400',name:'삼성SDI',s:'battery',sl:'2차전지',mkt:'kospi',price:285000,change:2.87,volume:4300000,turnover:1226,limitUp:false,high:291000,low:275000,open:277000,prev:277000,pbr:1.1,per:0,mcap:'19조'},
+    {code:'096770',name:'SK이노베이션',s:'battery',sl:'2차전지',mkt:'kospi',price:98200,change:2.10,volume:3800000,turnover:373,limitUp:false,high:100000,low:95000,open:96000,prev:96200,pbr:0.7,per:0,mcap:'9조'},
+    {code:'011790',name:'SKC',s:'battery',sl:'2차전지',mkt:'kospi',price:47500,change:1.82,volume:2900000,turnover:137,limitUp:false,high:48200,low:46100,open:46600,prev:46300,pbr:1.4,per:0,mcap:'2.4조'},
+    {code:'259960',name:'크래프톤',s:'battery',sl:'2차전지',mkt:'kospi',price:312000,change:1.50,volume:1200000,turnover:374,limitUp:false,high:315000,low:305000,open:306000,prev:307300,pbr:3.2,per:18.1,mcap:'14조'},
+    {code:'272210',name:'한화시스템',s:'battery',sl:'2차전지',mkt:'kospi',price:28500,change:1.25,volume:2100000,turnover:59,limitUp:false,high:29000,low:27700,open:28100,prev:28000,pbr:1.8,per:22.4,mcap:'2.9조'},
+    {code:'298040',name:'효성첨단소재',s:'battery',sl:'2차전지',mkt:'kospi',price:172000,change:1.00,volume:800000,turnover:137,limitUp:false,high:174000,low:169000,open:170000,prev:170300,pbr:1.6,per:15.2,mcap:'1.8조'},
   ],
   mlcc:[
     {code:'009150',name:'삼성전기',s:'mlcc',sl:'MLCC',mkt:'kospi',price:187500,change:6.25,volume:12400000,turnover:3126,limitUp:false,high:192000,low:175000,open:176000,prev:176400,pbr:2.9,per:22.3,mcap:'14조'},
     {code:'030210',name:'BYC',s:'mlcc',sl:'MLCC',mkt:'kospi',price:54200,change:4.83,volume:3200000,turnover:412,limitUp:false,high:55500,low:51300,open:51700,prev:51700,pbr:3.6,per:41.2,mcap:'3,900억'},
+    {code:'052690',name:'한전기술',s:'mlcc',sl:'MLCC',mkt:'kospi',price:92000,change:3.71,volume:2100000,turnover:193,limitUp:false,high:93500,low:88500,open:89000,prev:88700,pbr:7.2,per:28.4,mcap:'4.4조'},
+    {code:'009830',name:'한화솔루션',s:'mlcc',sl:'MLCC',mkt:'kospi',price:23000,change:2.45,volume:5400000,turnover:124,limitUp:false,high:23400,low:22400,open:22500,prev:22400,pbr:0.6,per:0,mcap:'4.2조'},
+    {code:'036460',name:'한국가스공사',s:'mlcc',sl:'MLCC',mkt:'kospi',price:41500,change:1.96,volume:1800000,turnover:74,limitUp:false,high:42000,low:40600,open:40700,prev:40700,pbr:0.4,per:5.2,mcap:'4.7조'},
+    {code:'047040',name:'대우건설',s:'mlcc',sl:'MLCC',mkt:'kospi',price:4880,change:1.66,volume:9200000,turnover:44,limitUp:false,high:4940,low:4780,open:4800,prev:4800,pbr:0.5,per:6.8,mcap:'1.9조'},
   ],
   semi:[
     {code:'036930',name:'주성엔지니어링',s:'semi',sl:'반도체',mkt:'kosdaq',price:221000,change:19.33,volume:21600000,turnover:9773,limitUp:false,high:225000,low:182000,open:185000,prev:185200,pbr:5.2,per:62.4,mcap:'3.5조'},
     {code:'036540',name:'SFA반도체',s:'semi',sl:'반도체',mkt:'kospi',price:10530,change:17.65,volume:6809000,turnover:6466,limitUp:false,high:10720,low:8870,open:8950,prev:8950,pbr:1.9,per:24.1,mcap:'7,000억'},
     {code:'080220',name:'제주반도체',s:'semi',sl:'반도체',mkt:'kosdaq',price:127800,change:8.49,volume:7001000,turnover:5478,limitUp:false,high:130000,low:116000,open:117800,prev:117800,pbr:4.1,per:52.3,mcap:'8,100억'},
+    {code:'000660',name:'SK하이닉스',s:'semi',sl:'반도체',mkt:'kospi',price:218000,change:5.31,volume:14200000,turnover:30960,limitUp:false,high:222000,low:207000,open:208000,prev:207000,pbr:2.3,per:14.2,mcap:'158조'},
+    {code:'005930',name:'삼성전자',s:'semi',sl:'반도체',mkt:'kospi',price:79000,change:3.28,volume:23000000,turnover:181700,limitUp:false,high:80200,low:76500,open:76800,prev:76500,pbr:1.4,per:18.2,mcap:'472조'},
+    {code:'042700',name:'한미반도체',s:'semi',sl:'반도체',mkt:'kospi',price:89500,change:2.75,volume:3900000,turnover:3490,limitUp:false,high:91000,low:86800,open:87200,prev:87100,pbr:8.4,per:35.2,mcap:'6.1조'},
   ],
   bio:[
     {code:'196170',name:'알테오젠',s:'bio',sl:'바이오',mkt:'kosdaq',price:367500,change:4.55,volume:15230000,turnover:4145,limitUp:false,high:374000,low:348000,open:351000,prev:351600,pbr:12.3,per:0,mcap:'12조'},
     {code:'068270',name:'셀트리온',s:'bio',sl:'바이오',mkt:'kospi',price:198500,change:3.12,volume:17510000,turnover:8820,limitUp:false,high:202000,low:191000,open:192000,prev:192500,pbr:3.8,per:44.1,mcap:'26조'},
+    {code:'207940',name:'삼성바이오로직스',s:'bio',sl:'바이오',mkt:'kospi',price:895000,change:2.57,volume:1420000,turnover:12708,limitUp:false,high:907000,low:870000,open:872000,prev:872000,pbr:6.1,per:78.4,mcap:'63조'},
+    {code:'326030',name:'SK바이오팜',s:'bio',sl:'바이오',mkt:'kospi',price:98500,change:2.28,volume:2100000,turnover:2068,limitUp:false,high:100000,low:96000,open:96500,prev:96400,pbr:4.2,per:0,mcap:'7.2조'},
+    {code:'145720',name:'덴티움',s:'bio',sl:'바이오',mkt:'kosdaq',price:67200,change:1.97,volume:1800000,turnover:1209,limitUp:false,high:68000,low:65500,open:66000,prev:65900,pbr:3.1,per:18.2,mcap:'1.4조'},
   ],
   robot:[
     {code:'066570',name:'LG씨엔에스',s:'robot',sl:'로봇',mkt:'kospi',price:84200,change:4.99,volume:4375000,turnover:5196,limitUp:false,high:85900,low:79700,open:80200,prev:80200,pbr:3.1,per:35.2,mcap:'6.8조'},
+    {code:'215600',name:'신라젠',s:'robot',sl:'로봇',mkt:'kosdaq',price:4850,change:3.83,volume:8200000,turnover:397,limitUp:false,high:4930,low:4660,open:4680,prev:4680,pbr:0,per:0,mcap:'5,200억'},
+    {code:'377300',name:'카카오페이',s:'robot',sl:'로봇',mkt:'kospi',price:23500,change:3.08,volume:6300000,turnover:1480,limitUp:false,high:24000,low:22800,open:22900,prev:22800,pbr:2.8,per:0,mcap:'3조'},
+    {code:'348210',name:'넥스틴',s:'robot',sl:'로봇',mkt:'kosdaq',price:178500,change:2.59,volume:850000,turnover:151,limitUp:false,high:181000,low:173000,open:174000,prev:174000,pbr:4.7,per:32.1,mcap:'1조'},
+    {code:'214450',name:'파마리서치',s:'robot',sl:'로봇',mkt:'kosdaq',price:171000,change:2.09,volume:720000,turnover:123,limitUp:false,high:173000,low:167000,open:168000,prev:167400,pbr:9.2,per:25.4,mcap:'1.3조'},
   ],
   energy:[
     {code:'336260',name:'두산퓨얼셀',s:'energy',sl:'신재생',mkt:'kospi',price:101100,change:21.08,volume:3900000,turnover:3857,limitUp:false,high:103000,low:82500,open:83500,prev:83500,pbr:6.4,per:0,mcap:'1.9조'},
+    {code:'009830',name:'한화솔루션',s:'energy',sl:'신재생',mkt:'kospi',price:23000,change:5.25,volume:5400000,turnover:124,limitUp:false,high:23800,low:21800,open:22000,prev:21900,pbr:0.6,per:0,mcap:'4.2조'},
+    {code:'950130',name:'엑스페릭스',s:'energy',sl:'신재생',mkt:'kosdaq',price:5420,change:4.42,volume:4200000,turnover:22,limitUp:false,high:5510,low:5190,open:5200,prev:5190,pbr:2.1,per:0,mcap:'2,300억'},
+    {code:'016450',name:'한세예스24',s:'energy',sl:'신재생',mkt:'kospi',price:13100,change:3.15,volume:2100000,turnover:27,limitUp:false,high:13300,low:12700,open:12800,prev:12700,pbr:1.3,per:12.4,mcap:'2,700억'},
+    {code:'005440',name:'현대그린푸드',s:'energy',sl:'신재생',mkt:'kospi',price:12000,change:2.56,volume:1800000,turnover:21,limitUp:false,high:12200,low:11700,open:11800,prev:11700,pbr:0.7,per:8.2,mcap:'6,300억'},
   ],
   quantum:[
     {code:'356680',name:'엑스게이트',s:'quantum',sl:'양자',mkt:'kosdaq',price:20800,change:21.85,volume:923000,turnover:4434,limitUp:false,high:21200,low:16900,open:17050,prev:17070,pbr:8.2,per:0,mcap:'9,000억'},
-  ]
+    {code:'900290',name:'GRT',s:'quantum',sl:'양자',mkt:'kosdaq',price:1820,change:15.18,volume:12400000,turnover:225,limitUp:false,high:1850,low:1570,open:1580,prev:1580,pbr:3.1,per:0,mcap:'2,100억'},
+    {code:'950140',name:'잉글우드랩',s:'quantum',sl:'양자',mkt:'kosdaq',price:8450,change:11.24,volume:5600000,turnover:47,limitUp:false,high:8600,low:7590,open:7620,prev:7600,pbr:2.4,per:0,mcap:'4,800억'},
+    {code:'208140',name:'정다운',s:'quantum',sl:'양자',mkt:'kosdaq',price:3120,change:8.72,volume:7300000,turnover:22,limitUp:false,high:3170,low:2860,open:2870,prev:2870,pbr:1.2,per:14.2,mcap:'1,700억'},
+    {code:'950110',name:'SV인베스트먼트',s:'quantum',sl:'양자',mkt:'kosdaq',price:2450,change:6.52,volume:4800000,turnover:11,limitUp:false,high:2490,low:2290,open:2300,prev:2300,pbr:1.8,per:0,mcap:'1,400억'},
+  ],
+  // 업종별 (샘플 - 일부 기존 종목 재사용)
+  it:[
+    {code:'005930',name:'삼성전자',s:'it',sl:'IT·전자',mkt:'kospi',price:79000,change:3.28,volume:23000000,turnover:181700,limitUp:false,high:80200,low:76500,open:76800,prev:76500,pbr:1.4,per:18.2,mcap:'472조'},
+    {code:'000660',name:'SK하이닉스',s:'it',sl:'IT·전자',mkt:'kospi',price:218000,change:5.31,volume:14200000,turnover:30960,limitUp:false,high:222000,low:207000,open:208000,prev:207000,pbr:2.3,per:14.2,mcap:'158조'},
+    {code:'009150',name:'삼성전기',s:'it',sl:'IT·전자',mkt:'kospi',price:187500,change:6.25,volume:12400000,turnover:3126,limitUp:false,high:192000,low:175000,open:176000,prev:176400,pbr:2.9,per:22.3,mcap:'14조'},
+    {code:'036930',name:'주성엔지니어링',s:'it',sl:'IT·전자',mkt:'kosdaq',price:221000,change:19.33,volume:21600000,turnover:9773,limitUp:false,high:225000,low:182000,open:185000,prev:185200,pbr:5.2,per:62.4,mcap:'3.5조'},
+    {code:'042700',name:'한미반도체',s:'it',sl:'IT·전자',mkt:'kospi',price:89500,change:2.75,volume:3900000,turnover:3490,limitUp:false,high:91000,low:86800,open:87200,prev:87100,pbr:8.4,per:35.2,mcap:'6.1조'},
+  ],
+  finance:[
+    {code:'105560',name:'KB금융',s:'finance',sl:'금융',mkt:'kospi',price:89000,change:2.18,volume:4200000,turnover:37380,limitUp:false,high:90500,low:87100,open:87500,prev:87100,pbr:0.8,per:7.2,mcap:'36조'},
+    {code:'055550',name:'신한지주',s:'finance',sl:'금융',mkt:'kospi',price:58200,change:1.92,volume:5100000,turnover:29682,limitUp:false,high:59000,low:57100,open:57300,prev:57100,pbr:0.7,per:6.8,mcap:'29조'},
+    {code:'086790',name:'하나금융지주',s:'finance',sl:'금융',mkt:'kospi',price:72000,change:1.75,volume:3800000,turnover:27360,limitUp:false,high:72800,low:70700,open:71000,prev:70800,pbr:0.7,per:6.1,mcap:'20조'},
+    {code:'316140',name:'우리금융지주',s:'finance',sl:'금융',mkt:'kospi',price:18200,change:1.50,volume:9200000,turnover:16744,limitUp:false,high:18400,low:17900,open:18000,prev:17900,pbr:0.5,per:5.4,mcap:'13조'},
+    {code:'032830',name:'삼성생명',s:'finance',sl:'금융',mkt:'kospi',price:102000,change:1.29,volume:1800000,turnover:18360,limitUp:false,high:103000,low:100500,open:101000,prev:100700,pbr:0.8,per:9.2,mcap:'20조'},
+  ],
+  chemical:[
+    {code:'051910',name:'LG화학',s:'chemical',sl:'화학',mkt:'kospi',price:320000,change:3.55,volume:5100000,turnover:16320,limitUp:false,high:327000,low:308000,open:309000,prev:309000,pbr:1.2,per:0,mcap:'22조'},
+    {code:'010950',name:'S-Oil',s:'chemical',sl:'화학',mkt:'kospi',price:72800,change:2.83,volume:2900000,turnover:21112,limitUp:false,high:74000,low:70800,open:71200,prev:70800,pbr:1.1,per:12.4,mcap:'8.5조'},
+    {code:'011170',name:'롯데케미칼',s:'chemical',sl:'화학',mkt:'kospi',price:72500,change:2.26,volume:2600000,turnover:18850,limitUp:false,high:73500,low:70800,open:71000,prev:70900,pbr:0.5,per:0,mcap:'2.5조'},
+    {code:'006820',name:'코오롱인더',s:'chemical',sl:'화학',mkt:'kospi',price:23000,change:2.00,volume:3200000,turnover:7360,limitUp:false,high:23300,low:22500,open:22600,prev:22500,pbr:0.8,per:0,mcap:'1.7조'},
+    {code:'004000',name:'롯데정밀화학',s:'chemical',sl:'화학',mkt:'kospi',price:42500,change:1.79,volume:1800000,turnover:7650,limitUp:false,high:43000,low:41700,open:41900,prev:41800,pbr:1.3,per:15.2,mcap:'1.4조'},
+  ],
+  health:[
+    {code:'207940',name:'삼성바이오로직스',s:'health',sl:'의료',mkt:'kospi',price:895000,change:2.57,volume:1420000,turnover:12708,limitUp:false,high:907000,low:870000,open:872000,prev:872000,pbr:6.1,per:78.4,mcap:'63조'},
+    {code:'068270',name:'셀트리온',s:'health',sl:'의료',mkt:'kospi',price:198500,change:3.12,volume:17510000,turnover:8820,limitUp:false,high:202000,low:191000,open:192000,prev:192500,pbr:3.8,per:44.1,mcap:'26조'},
+    {code:'196170',name:'알테오젠',s:'health',sl:'의료',mkt:'kosdaq',price:367500,change:4.55,volume:15230000,turnover:4145,limitUp:false,high:374000,low:348000,open:351000,prev:351600,pbr:12.3,per:0,mcap:'12조'},
+    {code:'326030',name:'SK바이오팜',s:'health',sl:'의료',mkt:'kospi',price:98500,change:2.28,volume:2100000,turnover:2068,limitUp:false,high:100000,low:96000,open:96500,prev:96400,pbr:4.2,per:0,mcap:'7.2조'},
+    {code:'145720',name:'덴티움',s:'health',sl:'의료',mkt:'kosdaq',price:67200,change:1.97,volume:1800000,turnover:1209,limitUp:false,high:68000,low:65500,open:66000,prev:65900,pbr:3.1,per:18.2,mcap:'1.4조'},
+  ],
+  energy2:[
+    {code:'336260',name:'두산퓨얼셀',s:'energy2',sl:'에너지',mkt:'kospi',price:101100,change:21.08,volume:3900000,turnover:3857,limitUp:false,high:103000,low:82500,open:83500,prev:83500,pbr:6.4,per:0,mcap:'1.9조'},
+    {code:'009830',name:'한화솔루션',s:'energy2',sl:'에너지',mkt:'kospi',price:23000,change:5.25,volume:5400000,turnover:124,limitUp:false,high:23800,low:21800,open:22000,prev:21900,pbr:0.6,per:0,mcap:'4.2조'},
+    {code:'036460',name:'한국가스공사',s:'energy2',sl:'에너지',mkt:'kospi',price:41500,change:1.96,volume:1800000,turnover:74,limitUp:false,high:42000,low:40600,open:40700,prev:40700,pbr:0.4,per:5.2,mcap:'4.7조'},
+    {code:'267260',name:'HD현대일렉트릭',s:'energy2',sl:'에너지',mkt:'kospi',price:380000,change:4.11,volume:1200000,turnover:4560,limitUp:false,high:385000,low:365000,open:366000,prev:365000,pbr:9.2,per:32.4,mcap:'8조'},
+    {code:'010120',name:'LS ELECTRIC',s:'energy2',sl:'에너지',mkt:'kospi',price:196000,change:3.42,volume:890000,turnover:1744,limitUp:false,high:198000,low:189000,open:190000,prev:189700,pbr:2.4,per:15.2,mcap:'3.1조'},
+  ],
+  consumer:[
+    {code:'005380',name:'현대차',s:'consumer',sl:'소비재',mkt:'kospi',price:235000,change:2.18,volume:4800000,turnover:112800,limitUp:false,high:238000,low:229000,open:230000,prev:229800,pbr:0.7,per:8.2,mcap:'50조'},
+    {code:'000270',name:'기아',s:'consumer',sl:'소비재',mkt:'kospi',price:112500,change:2.09,volume:7200000,turnover:81000,limitUp:false,high:114000,low:110000,open:110500,prev:110200,pbr:1.2,per:7.4,mcap:'45조'},
+    {code:'004370',name:'농심',s:'consumer',sl:'소비재',mkt:'kospi',price:428000,change:1.90,volume:280000,turnover:11984,limitUp:false,high:432000,low:419000,open:420000,prev:420000,pbr:2.1,per:18.4,mcap:'2.7조'},
+    {code:'097950',name:'CJ제일제당',s:'consumer',sl:'소비재',mkt:'kospi',price:265000,change:1.72,volume:380000,turnover:10070,limitUp:false,high:268000,low:260000,open:261000,prev:260500,pbr:0.9,per:12.1,mcap:'3.7조'},
+    {code:'271560',name:'오리온',s:'consumer',sl:'소비재',mkt:'kospi',price:84000,change:1.57,volume:620000,turnover:5208,limitUp:false,high:85000,low:82500,open:83000,prev:82700,pbr:2.8,per:14.2,mcap:'3.2조'},
+  ],
+  auto:[
+    {code:'005380',name:'현대차',s:'auto',sl:'자동차',mkt:'kospi',price:235000,change:2.18,volume:4800000,turnover:112800,limitUp:false,high:238000,low:229000,open:230000,prev:229800,pbr:0.7,per:8.2,mcap:'50조'},
+    {code:'000270',name:'기아',s:'auto',sl:'자동차',mkt:'kospi',price:112500,change:2.09,volume:7200000,turnover:81000,limitUp:false,high:114000,low:110000,open:110500,prev:110200,pbr:1.2,per:7.4,mcap:'45조'},
+    {code:'012330',name:'현대모비스',s:'auto',sl:'자동차',mkt:'kospi',price:248000,change:1.84,volume:1900000,turnover:47120,limitUp:false,high:250000,low:243000,open:244000,prev:243600,pbr:0.9,per:10.2,mcap:'23조'},
+    {code:'010140',name:'삼성중공업',s:'auto',sl:'자동차',mkt:'kospi',price:15700,change:3.29,volume:11200000,turnover:17584,limitUp:false,high:15900,low:15200,open:15300,prev:15200,pbr:1.6,per:0,mcap:'8.9조'},
+    {code:'009540',name:'HD한국조선해양',s:'auto',sl:'자동차',mkt:'kospi',price:295000,change:4.06,volume:2100000,turnover:61950,limitUp:false,high:298000,low:283000,open:284000,prev:283500,pbr:2.1,per:18.4,mcap:'14조'},
+  ],
 };
+
+function currentSectors() {
+  return G.sectorType === 'theme' ? THEME_SECTORS : INDUSTRY_SECTORS;
+}
 function allS() { return Object.values(STOCKS).flat(); }
-function gc(s) { return SECTOR_COLORS[s]||SECTOR_COLORS.default; }
+function sectorStocks(key) { return STOCKS[key] || []; }
+function gc(s) {
+  const map = {
+    battery:'#16a34a',mlcc:'#2563eb',semi:'#7c3aed',bio:'#db2777',
+    robot:'#ea580c',energy:'#0891b2',quantum:'#dc2626',
+    it:'#7c3aed',finance:'#2563eb',chemical:'#16a34a',health:'#db2777',
+    energy2:'#0891b2',consumer:'#ea580c',auto:'#dc2626'
+  };
+  return map[s] || '#475569';
+}
 function fp(v) { return Number(v).toLocaleString('ko-KR'); }
 function fv(v) { return v>=10000?(v/10000).toFixed(2)+'조':Number(v).toLocaleString('ko-KR')+'억'; }
 function ft(v) { return v>=100000000?(v/100000000).toFixed(2)+'억주':v>=10000?(v/10000).toFixed(1)+'만주':(v/1000).toFixed(0)+'천주'; }
 function findSt(code) { return allS().find(x=>x.code===code)||{}; }
+function avgChg(key) {
+  const arr = sectorStocks(key);
+  if(!arr.length) return 0;
+  return arr.reduce((a,b)=>a+b.change,0)/arr.length;
+}
+
+// ── 섹터 카드 렌더 (주도섹터 그리드) ──
+function renderSectorGrid() {
+  const sectors = currentSectors();
+  const grid = $('sectorGrid');
+  // 정렬: openSector가 있으면 최상단
+  let ordered = [...sectors];
+  if(G.openSector && G.openSector !== 'all') {
+    const idx = ordered.findIndex(s=>s.key===G.openSector);
+    if(idx>0) { const [item] = ordered.splice(idx,1); ordered.unshift(item); }
+  }
+  grid.innerHTML = ordered.map(s => {
+    const avg = avgChg(s.key);
+    const color = gc(s.key);
+    const isActive = G.openSector === s.key;
+    return `<div class="sector-card${isActive?' active':''}" data-skey="${s.key}"
+      style="background:var(${s.bgVar});color:var(${s.txVar})"
+      onclick="toggleSectorCard('${s.key}')">
+      <span class="sc-icon">${s.icon}</span>
+      <span class="sc-name">${s.name}</span>
+      <span class="sc-chg" style="color:${color}">▲${avg.toFixed(1)}%</span>
+    </div>`;
+  }).join('');
+}
+
+// ── 섹터 카드 아코디언 ──
+function toggleSectorCard(key) {
+  if(G.openSector === key) {
+    G.openSector = null;
+    closeSectorPreview();
+  } else {
+    G.openSector = key;
+    openSectorPreview(key);
+    renderSectorGrid(); // 최상단 재정렬
+    renderSector();
+  }
+  if(G.openSector !== key) renderSectorGrid();
+}
+
+function openSectorPreview(key) {
+  const sectors = currentSectors();
+  const sec = sectors.find(s=>s.key===key);
+  if(!sec) return;
+  const stocks = sectorStocks(key);
+  const top = stocks.slice(0, G.sectorTop);
+  const color = gc(key);
+  $('sectorPreviewInner').innerHTML = `
+    <div class="preview-title">
+      <span style="color:${color}">${sec.icon} ${sec.name}</span>
+      <span style="font-size:11px;color:var(--sub);font-weight:400">평균 ▲${avgChg(key).toFixed(2)}%</span>
+    </div>
+    ${top.map((r,i)=>`
+      <div class="preview-item" onclick="openDetail('${r.code}')">
+        <span class="preview-rank">${i+1}</span>
+        <span class="preview-name">${r.name}</span>
+        <span class="preview-chg" style="color:${gc(r.s)}">▲${r.change.toFixed(2)}%</span>
+        <span style="font-size:11px;color:var(--sub)">${fv(r.volume)}</span>
+      </div>`).join('')}
+    ${stocks.length > G.sectorTop ? `<div class="preview-more" onclick="scrollToSectorList()">▼ ${stocks.length - G.sectorTop}개 더보기</div>` : ''}
+  `;
+  $('sectorPreview').classList.add('open');
+  renderSectorGrid();
+}
+
+function closeSectorPreview() {
+  $('sectorPreview').classList.remove('open');
+  setTimeout(()=>{ $('sectorPreviewInner').innerHTML=''; },350);
+  renderSectorGrid();
+}
+
+function scrollToSectorList() {
+  $('sectorList').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ── 대금/거래량 분류 아코디언 ──
+const VOLUME_CATS = [
+  {key:'all', name:'전체', icon:'📊'},
+  {key:'kospi', name:'KOSPI', icon:'🏢'},
+  {key:'kosdaq', name:'KOSDAQ', icon:'💹'},
+];
+const TURNOVER_CATS = [
+  {key:'all', name:'전체', icon:'📊'},
+  {key:'kospi', name:'KOSPI', icon:'🏢'},
+  {key:'kosdaq', name:'KOSDAQ', icon:'💹'},
+];
+
+function renderVolumeClassify() {
+  const list = $('volumeClassifyList');
+  // 정렬: active를 첫 번째로
+  let cats = [...VOLUME_CATS];
+  if(G.openVolumeCat) {
+    const idx = cats.findIndex(c=>c.key===G.openVolumeCat);
+    if(idx>0) { const [item] = cats.splice(idx,1); cats.unshift(item); }
+  }
+  list.innerHTML = cats.map(c => {
+    const isOpen = G.openVolumeCat === c.key;
+    let filtered = [...allS()];
+    if(c.key!=='all') filtered = filtered.filter(x=>x.mkt===c.key);
+    const sk = ($('volumeSort')||{}).value||'volume';
+    filtered.sort((a,b)=>sk==='change'?b.change-a.change:sk==='price'?b.price-a.price:b.volume-a.volume);
+    const top3 = filtered.slice(0,3);
+    return `
+    <div class="classify-item">
+      <div class="classify-header${isOpen?' active-header':''}" onclick="toggleVolumeCat('${c.key}')">
+        <span class="classify-icon">${c.icon}</span>
+        <span class="classify-name">${c.name}</span>
+        <span class="classify-badge">${filtered.length}종목</span>
+        <span class="classify-arrow${isOpen?' open':''}">▼</span>
+      </div>
+      <div class="classify-body${isOpen?' open':''}">
+        <div style="padding:6px 14px 10px">
+          ${top3.map((r,i)=>`
+            <div class="preview-item" onclick="openDetail('${r.code}')">
+              <span class="preview-rank">${i+1}</span>
+              <span class="preview-name">${r.name}</span>
+              <span class="sector-badge sb-${r.s}" style="font-size:10px">${r.sl}</span>
+              <span class="preview-chg" style="color:${gc(r.s)}">▲${r.change.toFixed(2)}%</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderTurnoverClassify() {
+  const list = $('turnoverClassifyList');
+  let cats = [...TURNOVER_CATS];
+  if(G.openTurnoverCat) {
+    const idx = cats.findIndex(c=>c.key===G.openTurnoverCat);
+    if(idx>0) { const [item] = cats.splice(idx,1); cats.unshift(item); }
+  }
+  list.innerHTML = cats.map(c => {
+    const isOpen = G.openTurnoverCat === c.key;
+    let filtered = [...allS()];
+    if(c.key!=='all') filtered = filtered.filter(x=>x.mkt===c.key);
+    const sk = ($('turnoverSort')||{}).value||'turnover';
+    filtered.sort((a,b)=>sk==='change'?b.change-a.change:sk==='price'?b.price-a.price:b.turnover-a.turnover);
+    const top3 = filtered.slice(0,3);
+    return `
+    <div class="classify-item">
+      <div class="classify-header${isOpen?' active-header':''}" onclick="toggleTurnoverCat('${c.key}')">
+        <span class="classify-icon">${c.icon}</span>
+        <span class="classify-name">${c.name}</span>
+        <span class="classify-badge">${filtered.length}종목</span>
+        <span class="classify-arrow${isOpen?' open':''}">▼</span>
+      </div>
+      <div class="classify-body${isOpen?' open':''}">
+        <div style="padding:6px 14px 10px">
+          ${top3.map((r,i)=>`
+            <div class="preview-item" onclick="openDetail('${r.code}')">
+              <span class="preview-rank">${i+1}</span>
+              <span class="preview-name">${r.name}</span>
+              <span class="sector-badge sb-${r.s}" style="font-size:10px">${r.sl}</span>
+              <span class="preview-chg" style="color:${gc(r.s)}">▲${r.change.toFixed(2)}%</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleVolumeCat(key) {
+  G.openVolumeCat = (G.openVolumeCat===key) ? null : key;
+  G.mkt = key;
+  renderVolumeClassify();
+  renderVolume();
+}
+function toggleTurnoverCat(key) {
+  G.openTurnoverCat = (G.openTurnoverCat===key) ? null : key;
+  G.tmkt = key;
+  renderTurnoverClassify();
+  renderTurnover();
+}
 
 // ── 종목 카드 렌더 ──
 function makeItem(row, rank, valKey) {
@@ -578,7 +940,7 @@ function makeItem(row, rank, valKey) {
 
 // ── 필터/렌더 ──
 function filterSector() {
-  let d = G.sector==='all' ? allS() : (STOCKS[G.sector]||[]);
+  let d = G.openSector && G.openSector!=='all' ? (STOCKS[G.openSector]||[]) : Object.values(STOCKS).flat();
   d = d.filter(x=>x.change>=G.minChg && x.volume>=G.minVol);
   const sk = ($('sectorSort')||{}).value||'volume';
   d.sort((a,b)=>{ if(G.limitTop&&a.limitUp!==b.limitUp)return b.limitUp-a.limitUp; return sk==='change'?b.change-a.change:sk==='price'?b.price-a.price:b.volume-a.volume; });
@@ -613,7 +975,12 @@ function renderTurnover() {
   $('updateTime3').textContent = '업데이트: '+new Date().toLocaleTimeString('ko-KR');
 }
 function renderAll() {
-  renderSector(); renderVolume(); renderTurnover();
+  renderSectorGrid();
+  renderSector();
+  renderVolume();
+  renderTurnover();
+  renderVolumeClassify();
+  renderTurnoverClassify();
   $('newsBar').style.display = G.showNews ? '' : 'none';
 }
 
@@ -661,102 +1028,4 @@ function closeDetail() { $('detailOverlay').classList.remove('open'); }
 // ── 설정 모달 ──
 function openSettings() {
   $('cfgKey').value = G.appKey; $('cfgSecret').value = G.appSecret; $('cfgAcct').value = G.accountNo;
-  $('cfgMock').checked = G.mock; $('cfgProxy').checked = G.useProxy;
-  $('cfgAuto').checked = G.autoRefresh; $('cfgInterval').value = G.interval;
-  $('cfgMinChg').value = G.minChg; $('cfgMaxItems').value = G.maxItems;
-  $('cfgLimitTop').checked = G.limitTop; $('cfgNews').checked = G.showNews;
-  $('cfgAlertChg').value = G.alertChg; $('cfgAlertLimit').checked = G.alertLimit;
-  $('settingsModal').classList.add('open');
-}
-function closeSettings() { $('settingsModal').classList.remove('open'); }
-function saveCfg() {
-  G.appKey=$('cfgKey').value.trim(); G.appSecret=$('cfgSecret').value.trim(); G.accountNo=$('cfgAcct').value.trim();
-  G.mock=$('cfgMock').checked; G.useProxy=$('cfgProxy').checked;
-  G.autoRefresh=$('cfgAuto').checked; G.interval=Math.max(5,parseInt($('cfgInterval').value)||30);
-  G.minChg=parseFloat($('cfgMinChg').value)||0; G.maxItems=parseInt($('cfgMaxItems').value)||20;
-  G.limitTop=$('cfgLimitTop').checked; G.showNews=$('cfgNews').checked;
-  G.alertChg=parseFloat($('cfgAlertChg').value)||15; G.alertLimit=$('cfgAlertLimit').checked;
-  saveG(); closeSettings(); renderAll(); startTimer(); toast('설정 저장 완료 ✓');
-}
-function resetCfg() { if(confirm('설정을 초기화할까요?')) { localStorage.removeItem('stocky4'); location.reload(); } }
-
-// ── 데이터 갱신 ──
-async function refreshData() {
-  if(G.appKey) { const tok = await getToken(); if(tok) toast('KIS API 시세 조회 중...'); }
-  allS().forEach(r => {
-    const d = (Math.random()-.48)*.005;
-    r.price = Math.max(100, Math.round(r.price*(1+d)));
-    r.change = parseFloat((r.change+(Math.random()-.5)*.3).toFixed(2));
-    r.high = Math.max(r.high,r.price); r.low = Math.min(r.low,r.price);
-  });
-  renderAll();
-  if(G.alertLimit) {
-    allS().forEach(r => {
-      if(r.limitUp) toast('🚨 '+r.name+' 상한가!');
-      else if(r.change>=G.alertChg) toast('⚡ '+r.name+' +'+r.change.toFixed(2)+'%');
-    });
-  }
-}
-
-// ── 타이머 ──
-function startTimer() {
-  clearInterval(G.timer);
-  if(!G.autoRefresh) { $('countdownText').textContent=''; return; }
-  G.countdown = G.interval;
-  $('countdownText').textContent = G.countdown+'s';
-  G.timer = setInterval(() => {
-    G.countdown -= 1;
-    if(G.countdown <= 0) { refreshData(); G.countdown = G.interval; }
-    $('countdownText').textContent = G.countdown+'s';
-  }, 1000);
-}
-
-// ── 이벤트 바인딩 ──
-document.querySelectorAll('.tab').forEach(b => {
-  b.addEventListener('click', () => {
-    G.tab = b.dataset.tab;
-    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));
-    ['sector','volume','turnover'].forEach(t=>$('tab-'+t).classList.toggle('hidden',t!==b.dataset.tab));
-  });
-});
-document.querySelectorAll('#sectorMenu .chip').forEach(b => {
-  b.addEventListener('click', () => {
-    G.sector = b.dataset.sector;
-    document.querySelectorAll('#sectorMenu .chip').forEach(x=>x.classList.toggle('active',x===b));
-    renderSector();
-  });
-});
-document.querySelectorAll('.mini-chip[data-chg]').forEach(b => {
-  b.addEventListener('click', () => {
-    G.minChg = parseFloat(b.dataset.chg)||0;
-    document.querySelectorAll('.mini-chip[data-chg]').forEach(x=>x.classList.toggle('active',x===b));
-    renderSector();
-  });
-});
-document.querySelectorAll('.mkt-chip[data-mkt]').forEach(b => {
-  b.addEventListener('click', () => {
-    G.mkt = b.dataset.mkt;
-    document.querySelectorAll('.mkt-chip[data-mkt]').forEach(x=>x.classList.toggle('active',x===b));
-    renderVolume();
-  });
-});
-document.querySelectorAll('.mkt-chip[data-tmkt]').forEach(b => {
-  b.addEventListener('click', () => {
-    G.tmkt = b.dataset.tmkt;
-    document.querySelectorAll('.mkt-chip[data-tmkt]').forEach(x=>x.classList.toggle('active',x===b));
-    renderTurnover();
-  });
-});
-$('refreshBtn').addEventListener('click', refreshData);
-$('openSettingsBtn').addEventListener('click', openSettings);
-$('closeSettingsBtn') && $('closeSettingsBtn').addEventListener('click', closeSettings);
-$('saveBtn').addEventListener('click', saveCfg);
-$('resetBtn').addEventListener('click', resetCfg);
-
-// ── 초기화 ──
-loadG();
-renderAll();
-startTimer();
-</script>
-</body>
-</html>
+  $('cfgMock').checked = G.mock; $('cf
