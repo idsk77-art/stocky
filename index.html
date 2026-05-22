@@ -1,88 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>주도섹터 / 대금상위 모니터</title>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Stocky [주도섹터 / 대금상위 / 거래량상위]</title>
   <style>
-    :root {
-      /* 라이트 테마 (기본) */
-      --bg: #f1f5f9;
-      --panel: #ffffff;
-      --panel-2: #f8fafc;
-      --line: #cbd5e1;
-      --text: #0f172a;
-      --sub: #64748b;
-      --accent: #ea580c;
-      --red: #ef4444;
-      --blue: #3b82f6;
-      --green: #22c55e;
-      --yellow: #eab308;
-      --hover: rgba(0,0,0,0.02);
-      /* 라이트모드용 은은한 파스텔 배경 */
-      --bg-cat-mlcc: rgba(37, 99, 235, 0.08);
-      --tx-cat-mlcc: #2563eb;
-      --bg-cat-battery: rgba(22, 163, 74, 0.08);
-      --tx-cat-battery: #16a34a;
-      --bg-cat-space: rgba(147, 51, 234, 0.08);
-      --tx-cat-space: #9333ea;
-      --bg-cat-quantum: rgba(220, 38, 38, 0.08);
-      --tx-cat-quantum: #dc2626;
-      --bg-cat-pcb: rgba(13, 148, 136, 0.08);
-      --tx-cat-pcb: #0d9488;
-      --bg-cat-fuel: rgba(202, 138, 4, 0.08);
-      --tx-cat-fuel: #ca8a04;
-      --bg-cat-optic: rgba(79, 70, 229, 0.08);
-      --tx-cat-optic: #4f46e5;
-      --bg-cat-led: rgba(8, 145, 178, 0.08);
-      --tx-cat-led: #0891b2;
-      --bg-cat-ai: rgba(219, 39, 119, 0.08);
-      --tx-cat-ai: #db2777;
-      --bg-cat-semi: rgba(124, 58, 237, 0.08);
-      --tx-cat-semi: #7c3aed;
-      --bg-cat-default: rgba(71, 85, 105, 0.08);
-      --tx-cat-default: #475569;
-    }
-    [data-theme="dark"] {
-      /* 다크 테마 */
-      --bg: #0f1115;
-      --panel: #171b22;
-      --panel-2: #1d2330;
-      --line: #2b3442;
-      --text: #edf2f7;
-      --sub: #97a3b6;
-      --accent: #ff7a2f;
-      --red: #ff5b5b;
-      --blue: #56a8ff;
-      --green: #3bc26b;
-      --yellow: #f5b700;
-      --hover: rgba(255,255,255,0.03);
-      /* 다크모드용 연한 배경 */
-      --bg-cat-mlcc: rgba(59, 130, 246, 0.12);
-      --tx-cat-mlcc: #60a5fa;
-      --bg-cat-battery: rgba(34, 197, 94, 0.12);
-      --tx-cat-battery: #4ade80;
-      --bg-cat-space: rgba(168, 85, 247, 0.12);
-      --tx-cat-space: #c084fc;
-      --bg-cat-quantum: rgba(239, 68, 68, 0.12);
-      --tx-cat-quantum: #f87171;
-      --bg-cat-pcb: rgba(20, 184, 166, 0.12);
-      --tx-cat-pcb: #2dd4bf;
-      --bg-cat-fuel: rgba(234, 179, 8, 0.12);
-      --tx-cat-fuel: #facc15;
-      --bg-cat-optic: rgba(99, 102, 241, 0.12);
-      --tx-cat-optic: #818cf8;
-      --bg-cat-led: rgba(6, 182, 212, 0.12);
-      --tx-cat-led: #22d3ee;
-      --bg-cat-ai: rgba(236, 72, 153, 0.12);
-      --tx-cat-ai: #f472b6;
-      --bg-cat-semi: rgba(139, 92, 246, 0.12);
-      --tx-cat-semi: #a78bfa;
-      --bg-cat-default: rgba(100, 116, 139, 0.12);
-      --tx-cat-default: #94a3b8;
     :root{
       --bg:#0f1115; --panel:#171b22; --panel-2:#1d2330; --line:#2b3442;
       --text:#edf2f7; --sub:#97a3b6; --accent:#ff7a2f;
@@ -92,87 +14,17 @@
       --c-bio:#3bc26b;     --c-robot:#ffb347; --c-energy:#00d4f0; --c-quantum:#e040fb;
     }
     *{box-sizing:border-box}
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family:Apple SD Gothic Neo, Malgun Gothic, sans-serif;
-      transition: background 0.3s, color 0.3s;
-      font-size: 16px; 
-    }
-    button,input,select{font:inherit; outline:none;}
-    
-    .app{
-      max-width:860px;
-      margin:0 auto;
-      min-height:100vh;
-      background:var(--bg);
-      position: relative;
-    }
     body{margin:0;background:var(--bg);color:var(--text);font-family:Apple SD Gothic Neo,Malgun Gothic,sans-serif}
     button,input,select{font:inherit;cursor:pointer}
     .app{max-width:860px;margin:0 auto;min-height:100vh;background:var(--bg)}
 
     .topbar{
-      position:sticky;
-      top:0;
-      z-index:20;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:12px 16px;
-      background:var(--panel);
       position:sticky;top:0;z-index:40;
       display:flex;justify-content:space-between;align-items:center;gap:12px;
       padding:14px 16px;
       background:rgba(15,17,21,.94);backdrop-filter:blur(8px);
       border-bottom:1px solid var(--line);
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
-    
-    .tabs{
-      display:flex;
-      gap:16px;
-    }
-    .tab{
-      border:none;
-      background:none;
-      color:var(--sub);
-      padding:10px 4px;
-      cursor:pointer;
-      font-size: 17px;
-      border-bottom:3px solid transparent;
-      transition: all 0.2s;
-    }
-    .tab:hover { color: var(--text); }
-    .tab.active{
-      color:var(--text);
-      border-bottom-color:var(--accent);
-      font-weight:800;
-    }
-    .top-actions{
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-    .icon-btn{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border:1px solid var(--line);
-      background:var(--panel-2);
-      color:var(--text);
-      padding:8px;
-      height: 40px;
-      border-radius:10px;
-      cursor:pointer;
-      transition: all 0.2s;
-    }
-    .icon-btn:hover { filter: brightness(0.95); background: var(--line); }
-    .icon-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .icon-btn.orange { border-color: rgba(234,88,12,0.45); color: var(--accent); }
-    .icon-btn.refresh { padding: 8px 12px; }
-    #countdownText { font-size: 14px; font-weight: 700; margin-left: 6px; width: 24px; text-align: left; }
     .brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700}
     .status{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid #244a31;color:#79e29f;background:#13241a}
     .top-actions{display:flex;align-items:center;gap:8px}
@@ -180,53 +32,12 @@
     .btn{border:1px solid var(--line);background:var(--panel-2);color:var(--text);padding:8px 12px;border-radius:10px}
     .btn.orange{border-color:rgba(255,122,47,.45);color:#ffb087}
 
-    /* 통합 카테고리 바 */
-    .shared-header {
-      background: var(--bg);
-      position: sticky;
-      top: 61px; 
-      z-index: 15;
-    }
-    .chip-row{
-      display:flex;
-      gap:10px;
-      overflow-x:auto;
-      padding:14px 16px;
-      scrollbar-width: none;
-      border-bottom: 1px solid var(--line);
-    }
-    .chip-row::-webkit-scrollbar { display: none; }
-    
-    .chip{
-      white-space:nowrap;
-      border-radius:999px;
-      padding:10px 18px;
-      cursor:pointer;
-      font-size: 15px;
-      transition: all 0.2s;
-      opacity: 0.65;
-    }
-    
-    /* 컬러 칩 스타일 매핑 */
-    .chip[data-color="MLCC"] { background: var(--bg-cat-mlcc); color: var(--tx-cat-mlcc); border: 1px solid transparent; }
-    .chip[data-color="2차전지"] { background: var(--bg-cat-battery); color: var(--tx-cat-battery); border: 1px solid transparent; }
-    .chip[data-color="우주태양광"] { background: var(--bg-cat-space); color: var(--tx-cat-space); border: 1px solid transparent; }
-    .chip[data-color="양자암호"] { background: var(--bg-cat-quantum); color: var(--tx-cat-quantum); border: 1px solid transparent; }
-    .chip[data-color="반도체기판"] { background: var(--bg-cat-pcb); color: var(--tx-cat-pcb); border: 1px solid transparent; }
-    .chip[data-color="고체산화물연료전지"] { background: var(--bg-cat-fuel); color: var(--tx-cat-fuel); border: 1px solid transparent; }
-    .chip[data-color="광통신"] { background: var(--bg-cat-optic); color: var(--tx-cat-optic); border: 1px solid transparent; }
-    .chip[data-color="LED장비"] { background: var(--bg-cat-led); color: var(--tx-cat-led); border: 1px solid transparent; }
-    .chip[data-color="AI"] { background: var(--bg-cat-ai); color: var(--tx-cat-ai); border: 1px solid transparent; }
-    .chip[data-color="반도체"] { background: var(--bg-cat-semi); color: var(--tx-cat-semi); border: 1px solid transparent; }
-    .chip[data-color="default"] { background: var(--panel-2); color: var(--text); border: 1px solid var(--line); }
     .tabs{display:flex;gap:4px;padding:0 14px;border-bottom:1px solid var(--line);background:var(--panel)}
     .tab{border:none;background:none;color:var(--sub);padding:14px 10px;border-bottom:2px solid transparent;font-size:14px;font-weight:500}
     .tab.active{color:var(--text);border-bottom-color:var(--accent);font-weight:700}
 
-    .chip.active { font-weight:800; border-color:currentColor; opacity: 1; }
     .section{padding:14px}
 
-    .section{ padding:16px; }
     .chip-row{display:flex;gap:8px;overflow:auto;padding-bottom:2px;scrollbar-width:none}
     .chip-row::-webkit-scrollbar{display:none}
     .chip{
@@ -254,51 +65,6 @@
     .chip[data-sector=quantum]:hover{border-color:var(--c-quantum);color:var(--c-quantum)}
 
     .filter-box{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      background:var(--panel-2);
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:14px;
-    }
-    .mini-chip{
-      border:1px solid var(--line);
-      background:var(--panel);
-      color:var(--sub);
-      border-radius:999px;
-      padding:8px 14px;
-      cursor:pointer;
-      font-size:14px;
-      font-weight: 600;
-    }
-    .mini-chip.active{
-      border-color:var(--accent);
-      background:rgba(234,88,12,0.1);
-      color:var(--accent);
-    }
-    .right{ margin-left:auto; }
-    .select{
-      background:var(--panel);
-      border:1px solid var(--line);
-      color:var(--text);
-      border-radius:10px;
-      padding:10px 12px;
-      font-size: 15px;
-    }
-    .head-row{
-      margin-top:20px;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-end;
-      color:var(--sub);
-      font-size:14px;
-    }
-    .head-row .title{
-      color:var(--text);
-      font-weight:800;
-      font-size: 18px;
       margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;
       background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:12px;
     }
@@ -307,72 +73,15 @@
     .right{margin-left:auto}
     .select{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:8px 10px}
 
-    .list{
-      margin-top:12px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    
-    /* 리스트 아이템 박스 */
-    .item-container {
-      background:var(--panel-2);
-      border:1px solid transparent; 
-      border-radius:16px;
-      overflow: hidden;
-      transition: all 0.2s;
-    }
-    
-    /* 아이템 배경 컬러 맵핑 */
-    .item-container.cat-MLCC { background: var(--bg-cat-mlcc); }
-    .item-container.cat-2차전지 { background: var(--bg-cat-battery); }
-    .item-container.cat-우주태양광 { background: var(--bg-cat-space); }
-    .item-container.cat-양자암호 { background: var(--bg-cat-quantum); }
-    .item-container.cat-반도체기판 { background: var(--bg-cat-pcb); }
-    .item-container.cat-고체산화물연료전지 { background: var(--bg-cat-fuel); }
-    .item-container.cat-광통신 { background: var(--bg-cat-optic); }
-    .item-container.cat-LED장비 { background: var(--bg-cat-led); }
-    .item-container.cat-AI { background: var(--bg-cat-ai); }
-    .item-container.cat-반도체 { background: var(--bg-cat-semi); }
-    .item-container.cat-default { background: var(--panel-2); border:1px solid var(--line); }
     .news{margin-top:12px;background:rgba(86,168,255,.08);border:1px solid rgba(86,168,255,.25);color:#9dc8ff;border-radius:12px;padding:10px 12px;font-size:13px;overflow:hidden}
     .news-inner{white-space:nowrap;animation:nticker 28s linear infinite}
     @keyframes nticker{0%{transform:translateX(30%)}100%{transform:translateX(-100%)}}
 
-    .item-container.limit { border-color:var(--yellow); }
-    .item-container.expanded { border-color:var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     .head-row{margin-top:14px;display:flex;justify-content:space-between;align-items:center;color:var(--sub);font-size:13px}
     .head-row .title{color:var(--text);font-weight:700}
 
     .list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
     .item{
-      display:grid;
-      grid-template-columns:1fr auto auto auto;
-      gap:16px;
-      align-items:center;
-      padding:18px 16px;
-      cursor:pointer;
-    }
-    .item:hover { background: var(--hover); }
-    
-    .name-wrap{ min-width:0; }
-    .line1{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      min-width:0;
-    }
-    .rank{
-      width:24px;
-      color:var(--sub);
-      font-size:15px;
-      font-weight:800;
-      flex:0 0 auto;
-    }
-    .name{
-      font-weight:800;
-      font-size: 18px;
-      white-space:nowrap;
       display:grid;grid-template-columns:1fr auto auto auto;
       gap:12px;align-items:center;
       background:var(--panel-2);border:1px solid var(--line);
@@ -389,6 +98,7 @@
     .item[data-s=robot]  {border-left:3px solid var(--c-robot)}
     .item[data-s=energy] {border-left:3px solid var(--c-energy)}
     .item[data-s=quantum]{border-left:3px solid var(--c-quantum)}
+
     .name-wrap{min-width:0}
     .line1{display:flex;gap:6px;align-items:center;min-width:0}
     .rank{width:22px;color:var(--sub);font-size:13px;font-weight:700;flex:0 0 auto}
@@ -406,10 +116,13 @@
     .price{color:var(--red);font-weight:800;font-size:18px;text-align:right}
     .change{min-width:72px;text-align:right;font-weight:700;color:var(--red)}
     .vol{min-width:76px;text-align:right;color:var(--sub);font-size:14px}
+
     .hidden{display:none}
     .empty{margin-top:12px;text-align:center;color:var(--sub);padding:50px 20px;background:var(--panel-2);border:1px solid var(--line);border-radius:14px}
+
     .mkt-chip{border:1px solid var(--line);background:var(--panel);color:var(--sub);border-radius:999px;padding:7px 14px;font-size:13px}
     .mkt-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+
     .detail-overlay{
       position:fixed;inset:0;
       background:rgba(0,0,0,.65);
@@ -423,130 +136,6 @@
       display:flex;flex-direction:column;
       background:#fff;border-radius:22px 22px 0 0;
       overflow:hidden;
-      text-overflow:ellipsis;
-      color: var(--text);
-    }
-    .badge{
-      flex:0 0 auto;
-      font-size:12px;
-      font-weight:800;
-      padding:4px 8px;
-      border-radius:6px;
-      background:var(--yellow);
-      color:#181818;
-    }
-    .meta{
-      margin-top:6px;
-      font-size:14px;
-      color:var(--sub);
-      display:flex;
-      align-items:center;
-      gap:8px;
-    }
-    .meta-cat-MLCC { color: var(--tx-cat-mlcc); font-weight: 700; }
-    .meta-cat-2차전지 { color: var(--tx-cat-battery); font-weight: 700; }
-    .meta-cat-우주태양광 { color: var(--tx-cat-space); font-weight: 700; }
-    .meta-cat-양자암호 { color: var(--tx-cat-quantum); font-weight: 700; }
-    .meta-cat-반도체기판 { color: var(--tx-cat-pcb); font-weight: 700; }
-    .meta-cat-고체산화물연료전지 { color: var(--tx-cat-fuel); font-weight: 700; }
-    .meta-cat-광통신 { color: var(--tx-cat-optic); font-weight: 700; }
-    .meta-cat-LED장비 { color: var(--tx-cat-led); font-weight: 700; }
-    .meta-cat-AI { color: var(--tx-cat-ai); font-weight: 700; }
-    .meta-cat-반도체 { color: var(--tx-cat-semi); font-weight: 700; }
-    
-    .price{
-      color:var(--text);
-      font-weight:800;
-      font-size:22px;
-      text-align:right;
-    }
-    .change{
-      min-width:85px;
-      text-align:right;
-      font-weight:800;
-      font-size: 17px;
-      color:var(--red);
-    }
-    .change.down{ color:var(--blue); }
-    .vol{
-      min-width:85px;
-      text-align:right;
-      color:var(--sub);
-      font-size:16px;
-      font-weight: 600;
-    }
-    /* 슬라이드 미리보기 - 테마 기본 배경색 강제 적용 */
-    .preview-wrap {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.35s ease;
-      background: var(--panel) !important;
-      border-radius: 0 0 16px 16px;
-      border-top: 1px solid transparent;
-    }
-    .item-container.expanded .preview-wrap {
-      max-height: 250px; 
-      border-top-color: var(--line);
-    }
-    .preview-content {
-      padding: 20px 16px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      cursor: pointer;
-      color: var(--text);
-    }
-    .preview-content:hover { background: var(--hover); }
-    .preview-content .p-col {
-      flex: 1;
-      min-width: 110px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .p-col span { font-size: 14px; color: var(--sub); }
-    .p-col strong { font-size: 16px; color: var(--text); font-weight: 700; }
-    
-    .p-guide {
-      width: 100%;
-      text-align: right;
-      font-size: 13px;
-      color: var(--sub);
-      margin-top: 10px;
-    }
-    .hidden{display:none !important;}
-    /* 설정 모달 */
-    .modal-wrap{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.7);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-      z-index:50;
-    }
-    .modal-wrap.open{display:flex}
-    .modal{
-      width:min(100%,600px);
-      max-height:90vh;
-      display:flex;
-      flex-direction:column;
-      border-radius:20px;
-      border:1px solid var(--line);
-      background:var(--panel);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .modal-head{
-      flex:0 0 auto;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:20px;
-      border-bottom:1px solid var(--line);
-    }
-    .modal-title{ font-weight:800; font-size:20px; }
-    .modal-body{
       animation:slideUp .25s ease;
     }
     @keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -568,40 +157,6 @@
       -webkit-overflow-scrolling:touch;
       padding:20px;
     }
-    
-    .group{
-      margin-bottom:24px;
-      border:1px solid var(--line);
-      background:var(--panel-2);
-      border-radius:16px;
-      padding:18px;
-    }
-    .group h4{
-      margin:0 0 16px;
-      color:var(--accent);
-      font-size:16px;
-      font-weight: 800;
-    }
-    
-    .cat-selector-wrap { margin-bottom: 16px; }
-    .cat-editor-list { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
-    .cat-edit-item {
-      display:flex; align-items:center; gap:10px; background:var(--panel); padding:10px 14px;
-      border-radius:10px; border:1px solid var(--line);
-    }
-    .cat-edit-item span { flex:1; font-size:15px; font-weight:600; }
-    .cat-btn {
-      background:none; border:none; color:var(--sub); cursor:pointer; padding:6px; border-radius:6px;
-    }
-    .cat-btn:hover { background:var(--line); color:var(--text); }
-    .cat-add-row { display:flex; gap:10px; margin-bottom: 12px; }
-    .preset-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .preset-chip {
-      background: var(--panel); border: 1px solid var(--line); padding: 6px 12px;
-      border-radius: 20px; font-size: 13px; color: var(--text); cursor: pointer;
-    }
-    .preset-chip:hover { border-color: var(--accent); color: var(--accent); }
-    .row{ display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:16px; }
     .detail-price-row{display:flex;align-items:flex-end;gap:12px;margin-bottom:20px}
     .detail-price{font-size:32px;font-weight:900;color:#1a1a2e}
     .detail-chg{font-size:16px;font-weight:700;color:#e83040}
@@ -625,6 +180,7 @@
     .d-info-grid{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:14px;margin-bottom:20px}
     .d-info-grid .dk{color:#999}
     .d-info-grid .dval{font-weight:600;color:#1a1a2e}
+
     .modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
     .modal-wrap.open{display:flex}
     .modal{width:min(100%,560px);max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border-radius:18px;border:1px solid var(--line);background:var(--panel)}
@@ -635,17 +191,6 @@
     .group h4{margin:0 0 12px;color:#ffb087;font-size:14px}
     .row{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:12px}
     .row:last-child{margin-bottom:0}
-    .label{ flex:1; min-width:0; }
-    .label .t{ font-size:16px; font-weight:700; }
-    .label .s{ margin-top:4px; color:var(--sub); font-size:13px; }
-    .input, .input-full{
-      background:var(--panel); border:1px solid var(--line); color:var(--text);
-      border-radius:10px; padding:12px 14px;
-    }
-    .input{width:150px;text-align:right}
-    .input-full{width:100%;margin-bottom:10px}
-    
-    .toggle{ position:relative; width:52px; height:28px; flex:0 0 auto; }
     .label{flex:1;min-width:0}
     .label .t{font-size:14px;font-weight:600}
     .label .s{margin-top:2px;color:var(--sub);font-size:12px}
@@ -654,83 +199,6 @@
     .input-full{width:100%;margin-bottom:8px}
     .toggle{position:relative;width:46px;height:26px;flex:0 0 auto}
     .toggle input{display:none}
-    .slider{
-      position:absolute; inset:0; border-radius:999px; background:#cbd5e1;
-      cursor:pointer; transition:.2s;
-    }
-    [data-theme="dark"] .slider { background: #4a5568; }
-    .slider:before{
-      content:""; position:absolute; width:22px; height:22px; border-radius:50%;
-      background:#fff; left:3px; top:3px; transition:.2s;
-    }
-    .toggle input:checked + .slider{ background:var(--accent); }
-    .toggle input:checked + .slider:before{ transform:translateX(24px); }
-    
-    .modal-foot{
-      flex:0 0 auto; display:flex; gap:12px; padding:20px; border-top:1px solid var(--line);
-    }
-    .btn-block{
-      flex:1; border:none; border-radius:12px; padding:14px; cursor:pointer;
-      font-weight:800; font-size: 16px;
-    }
-    .btn-save{ background:var(--accent); color:#fff; }
-    .btn-reset{ background:var(--panel-2); color:var(--sub); border:1px solid var(--line); }
-    /* 전체화면 상세 보기 */
-    .fullscreen-view {
-      position: fixed; inset: 0; background: var(--bg); z-index: 100;
-      display: none; flex-direction: column; overflow-y: auto;
-    }
-    .fullscreen-view.open { display: flex; }
-    .fs-header {
-      position: sticky; top: 0; background: var(--panel); padding: 16px;
-      display: flex; align-items: center; gap: 16px; border-bottom: 1px solid var(--line); z-index: 10;
-    }
-    .fs-back {
-      background: none; border: none; color: var(--text); cursor: pointer; padding: 4px; display:flex; align-items:center;
-    }
-    .fs-title { font-size: 22px; font-weight: 800; flex: 1; }
-    .fs-body {
-      padding: 24px; max-width: 860px; margin: 0 auto; width: 100%;
-    }
-    .fs-top-info {
-      display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;
-    }
-    .fs-price { font-size: 40px; font-weight: 800; color: var(--text); }
-    .fs-change { font-size: 22px; font-weight: 800; color: var(--red); margin-top: 6px;}
-    .fs-change.down { color: var(--blue); }
-    
-    /* 캔버스 차트 영역 */
-    .fs-chart-container {
-      width: 100%; height: 320px; background: var(--panel-2);
-      border: 1px solid var(--line); border-radius: 16px; margin-bottom: 30px;
-      position: relative; overflow: hidden;
-    }
-    .fs-chart-canvas { width: 100%; height: 100%; display: block; }
-    .fs-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 30px;
-    }
-    .fs-card {
-      background: var(--panel-2); border: 1px solid var(--line); border-radius: 16px; padding: 20px;
-    }
-    .fs-card span { display: block; font-size: 14px; color: var(--sub); margin-bottom: 8px; }
-    .fs-card strong { display: block; font-size: 18px; color: var(--text); font-weight: 700; }
-    .toast{
-      position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:#1c2230;
-      color:#fff; border:1px solid #3b4556; padding:12px 18px; border-radius:12px;
-      z-index:200; font-size:15px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-    .empty{
-      margin-top:16px; text-align:center; color:var(--sub); padding:60px 20px;
-      background:var(--panel-2); border:1px solid var(--line); border-radius:16px; font-size: 16px;
-    }
-    @media (max-width:640px){
-      .item{ grid-template-columns:1fr auto auto; padding:16px 12px; }
-      .vol{ display:none; }
-      .fs-grid { grid-template-columns: 1fr; }
-      .topbar { padding: 12px; }
-      .tabs { gap: 10px; }
-      .icon-btn.refresh { padding: 8px; }
-      #countdownText { display: none; } /* 모바일에서는 텍스트 숨김 */
     .slider{position:absolute;inset:0;border-radius:999px;background:#4a5568;cursor:pointer;transition:.2s}
     .slider:before{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;left:3px;top:3px;transition:.2s}
     .toggle input:checked+.slider{background:var(--accent)}
@@ -743,7 +211,9 @@
     .api-ok{color:#3bc26b!important;font-weight:600}
     .api-err{color:#ff5b5b!important;font-weight:600}
     .cors-notice{background:#1a1500;border:1px solid #4a3800;border-radius:10px;padding:10px 12px;font-size:12px;color:#f5c842;margin:8px 0;line-height:1.7}
+
     .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#1c2230;color:#fff;border:1px solid #3b4556;padding:10px 14px;border-radius:10px;z-index:100;font-size:13px}
+
     @media(max-width:640px){
       .item{grid-template-columns:1fr auto auto}
       .vol{display:none}
@@ -753,39 +223,8 @@
   </style>
 </head>
 <body>
-  <div class="app">
-    <!-- 상단 탭 및 설정 -->
-    <div class="topbar">
-      <div class="tabs">
-        <button class="tab active" data-tab="sector">주도섹터</button>
-        <button class="tab" data-tab="volume">대금상위</button>
-        <button class="tab" data-tab="qty">거래량상위</button>
-      </div>
-      <div class="top-actions">
-        <!-- 테마변경 (달/해 아이콘) -->
-        <button class="icon-btn" id="themeBtn" title="테마 변경"></button>
-        <!-- 새로고침 (모래시계 아이콘) -->
-        <button class="icon-btn refresh" id="refreshBtn" title="새로고침">
-          <svg viewBox="0 0 24 24">
-            <path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
-          </svg>
-          <span id="countdownText">30s</span>
-        </button>
-        <!-- 설정 (톱니바퀴 아이콘) -->
-        <button class="icon-btn orange" id="openSettingsBtn" title="설정">
-          <svg viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-        </button>
-      </div>
-    </div>
 <div class="app">
 
-    <!-- 통합 카테고리 바 -->
-    <div class="shared-header">
-      <div class="chip-row" id="categoryMenu">
-        <!-- JS 렌더링 -->
-      </div>
   <div class="topbar">
     <div class="brand">
       <span>📊 섹터모니터</span>
@@ -798,32 +237,12 @@
     </div>
   </div>
 
-    <!-- 주도섹터 탭 -->
-    <div class="section" id="tab-sector">
-      <div class="filter-box">
-        <span style="font-size:14px;color:var(--sub); font-weight:700;">등락률 필터</span>
-        <button class="mini-chip active" data-change="4">4%↑</button>
-        <button class="mini-chip" data-change="3">3%↑</button>
-        <button class="mini-chip" data-change="2">2%↑</button>
-        <button class="mini-chip" data-change="0">전체</button>
-        <div class="right">
-          <select class="select" id="sectorSort">
-            <option value="volume">거래대금순</option>
-            <option value="change">등락률순</option>
-            <option value="price">현재가순</option>
-          </select>
-        </div>
-      </div>
-      <div class="head-row">
-        <div class="title"><span id="currentFilterText">4%</span> 이상 상승 종목</div>
-        <div id="updateTime1">업데이트: --:--:--</div>
-      </div>
-      <div class="list" id="sectorList"></div>
   <div class="tabs">
     <button class="tab active" data-tab="sector">주도섹터</button>
     <button class="tab" data-tab="volume">대금상위</button>
     <button class="tab" data-tab="turnover">거래량상위</button>
   </div>
+
   <!-- 주도섹터 -->
   <div class="section" id="tab-sector">
     <div class="chip-row" id="sectorMenu">
@@ -858,13 +277,6 @@
     <div class="list" id="sectorList"></div>
   </div>
 
-    <!-- 대금상위 탭 -->
-    <div class="section hidden" id="tab-volume">
-      <div class="head-row">
-        <div class="title">거래대금 상위 (4% 이상 상승)</div>
-        <div id="updateTime2">업데이트: --:--:--</div>
-      </div>
-      <div class="list" id="volumeList"></div>
   <!-- 대금상위 -->
   <div class="section hidden" id="tab-volume">
     <div class="filter-box">
@@ -885,13 +297,6 @@
     <div class="list" id="volumeList"></div>
   </div>
 
-    <!-- 거래량상위 탭 -->
-    <div class="section hidden" id="tab-qty">
-      <div class="head-row">
-        <div class="title">거래량 상위 TOP</div>
-        <div id="updateTime3">업데이트: --:--:--</div>
-      </div>
-      <div class="list" id="qtyList"></div>
   <!-- 거래량상위 -->
   <div class="section hidden" id="tab-turnover">
     <div class="filter-box">
@@ -912,15 +317,8 @@
     <div class="list" id="turnoverList"></div>
   </div>
 
-  <!-- 환경설정 모달 -->
-  <div class="modal-wrap" id="settingsModal">
-    <div class="modal">
-      <div class="modal-head">
-        <div class="modal-title">환경설정</div>
-        <button class="icon-btn" id="closeSettingsBtn" title="닫기" style="border:none;">
-          <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
 </div>
+
 <!-- 상세보기 -->
 <div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
   <div class="detail-sheet">
@@ -930,40 +328,12 @@
         <div class="detail-title" id="dName"></div>
         <div class="detail-sub" id="dSub"></div>
       </div>
-      <div class="modal-body">
-        <div class="group">
-          <h4>카테고리(테마) 관리</h4>
-          <div class="cat-selector-wrap">
-            <select class="select" id="targetTabSelect" style="width:100%;">
-              <option value="sector">주도섹터 탭 카테고리 편집</option>
-              <option value="volume">대금상위 탭 카테고리 편집</option>
-              <option value="qty">거래량상위 탭 카테고리 편집</option>
-            </select>
-          </div>
-          <div class="cat-editor-list" id="catEditorList"></div>
-          <div class="cat-add-row">
-            <input type="text" class="input-full" id="newCatInput" placeholder="직접 테마명 입력" style="margin:0;">
-            <button class="icon-btn" onclick="addCategory()" style="padding:0 16px;">추가</button>
-          </div>
-          <div style="font-size:13px; color:var(--text); margin-bottom:6px; font-weight:700;">인기 분류 추가하기</div>
-          <div class="preset-chips">
-            <button class="preset-chip" onclick="addPresetCat('코스피')">+ 코스피</button>
-            <button class="preset-chip" onclick="addPresetCat('코스닥')">+ 코스닥</button>
-            <button class="preset-chip" onclick="addPresetCat('MLCC')">+ MLCC</button>
-            <button class="preset-chip" onclick="addPresetCat('2차전지')">+ 2차전지</button>
-            <button class="preset-chip" onclick="addPresetCat('우주태양광')">+ 우주태양광</button>
-            <button class="preset-chip" onclick="addPresetCat('양자암호')">+ 양자암호</button>
-            <button class="preset-chip" onclick="addPresetCat('반도체기판')">+ 반도체기판</button>
-            <button class="preset-chip" onclick="addPresetCat('고체산화물연료전지')">+ 고체산화물연료전지</button>
-            <button class="preset-chip" onclick="addPresetCat('광통신')">+ 광통신</button>
-            <button class="preset-chip" onclick="addPresetCat('LED장비')">+ LED장비</button>
-            <button class="preset-chip" onclick="addPresetCat('AI')">+ AI</button>
-          </div>
       <button class="detail-close" onclick="closeDetail()">✕</button>
     </div>
     <div class="detail-body" id="detailBody"></div>
   </div>
 </div>
+
 <!-- 환경설정 -->
 <div class="modal-wrap" id="settingsModal" onclick="if(event.target===this)closeSettings()">
   <div class="modal">
@@ -981,11 +351,6 @@
           <div class="label"><div class="t">모의투자 모드</div></div>
           <label class="toggle"><input type="checkbox" id="cfgMock" checked/><span class="slider"></span></label>
         </div>
-        <div class="group">
-          <h4>KIS OpenAPI</h4>
-          <input class="input-full" id="accountNo" type="text" placeholder="계좌번호 예: 44614025-01" />
-          <input class="input-full" id="appKey" type="text" placeholder="App Key" />
-          <input class="input-full" id="appSecret" type="password" placeholder="App Secret" />
         <div class="cors-notice">
           ⚠️ <strong>CORS 안내</strong> — 브라우저에서 KIS API를 직접 호출하면 CORS 차단됩니다.<br>
           아래 방법 중 하나를 선택하세요:<br>
@@ -993,16 +358,6 @@
           ② <b>Chrome 확장</b> "Allow CORS: Access-Control-Allow-Origin" 설치<br>
           ③ <b>Node.js 로컬 프록시</b> 서버 구축 후 localhost 호출
         </div>
-        <div class="group">
-          <h4>데이터 갱신 및 표시</h4>
-          <div class="row">
-            <div class="label"><div class="t">자동 갱신 (30초)</div></div>
-            <label class="toggle"><input type="checkbox" id="autoRefresh" checked /><span class="slider"></span></label>
-          </div>
-          <div class="row">
-            <div class="label"><div class="t">최대 표시 종목 수</div></div>
-            <input class="input" id="maxItems" type="number" min="5" max="50" value="20" />
-          </div>
         <div class="row">
           <div class="label"><div class="t">공개 CORS 프록시 사용</div><div class="s">corsproxy.io 경유</div></div>
           <label class="toggle"><input type="checkbox" id="cfgProxy" checked/><span class="slider"></span></label>
@@ -1010,9 +365,6 @@
         <button onclick="testApi()" style="width:100%;background:#1d3557;color:#56a8ff;border:1px solid #2a4a7f;border-radius:10px;padding:10px;font-weight:700;margin-top:4px">🔗 연결 테스트</button>
         <div class="api-status" id="apiStatus">● API 미연결</div>
       </div>
-      <div class="modal-foot">
-        <button class="btn-block btn-reset" id="resetBtn">초기화</button>
-        <button class="btn-block btn-save" id="saveBtn">저장 적용</button>
       <div class="group">
         <h4>🔄 데이터 갱신</h4>
         <div class="row">
@@ -1024,22 +376,6 @@
           <input type="number" class="input" id="cfgInterval" value="30"/>
         </div>
       </div>
-    </div>
-  </div>
-  <!-- 전체화면 상세 보기 -->
-  <div class="fullscreen-view" id="fullscreenDetail">
-    <div class="fs-header">
-      <button class="fs-back" onclick="closeFullDetail()">
-        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-      </button>
-      <div class="fs-title" id="fsTitle">종목명</div>
-      <div class="badge" id="fsMarket" style="margin:0;">KOSPI</div>
-    </div>
-    <div class="fs-body">
-      <div class="fs-top-info">
-        <div>
-          <div class="fs-price" id="fsPrice">0 원</div>
-          <div class="fs-change" id="fsChange">0.00%</div>
       <div class="group">
         <h4>📊 필터 기본값</h4>
         <div class="row">
@@ -1050,17 +386,11 @@
           <div class="label"><div class="t">최소 거래대금(억)</div><div class="s">이 값 이상만 노출</div></div>
           <input type="number" class="input" id="cfgMinVol" value="0"/>
         </div>
-        <div style="text-align:right;">
-          <span class="badge" id="fsSector" style="background:var(--accent);color:#fff; font-size:14px; padding:6px 10px;">섹터</span>
         <div class="row">
           <div class="label"><div class="t">최대 표시 종목 수</div></div>
           <input type="number" class="input" id="cfgMaxItems" value="30"/>
         </div>
       </div>
-      
-      <!-- 사실적 캔들스틱 차트 영역 -->
-      <div class="fs-chart-container">
-        <canvas id="fsChartCanvas" class="fs-chart-canvas"></canvas>
       <div class="group">
         <h4>🖥️ 화면 표시</h4>
         <div class="row">
@@ -1072,16 +402,6 @@
           <label class="toggle"><input type="checkbox" id="cfgNews" checked/><span class="slider"></span></label>
         </div>
       </div>
-      <h4 style="margin-bottom:16px; font-size:18px; font-weight:800;">상세 투자 정보</h4>
-      <div class="fs-grid">
-        <div class="fs-card"><span>시가총액</span><strong id="fsCap">0 억</strong></div>
-        <div class="fs-card"><span>거래대금 / 거래량</span><strong id="fsVolQty">0 억 / 0주</strong></div>
-        <div class="fs-card"><span>52주 최고 / 최저</span><strong id="fs52Week">-- / --</strong></div>
-        <div class="fs-card"><span>외국인 소진율</span><strong id="fsForeign">-- %</strong></div>
-        <div class="fs-card"><span>PER / PBR</span><strong id="fsPerPbr">-- / --</strong></div>
-        <div class="fs-card"><span>EPS / BPS</span><strong id="fsEpsBps">-- / --</strong></div>
-        <div class="fs-card"><span>ROE (자기자본이익률)</span><strong id="fsRoe">-- %</strong></div>
-        <div class="fs-card"><span>배당수익률</span><strong id="fsDiv">-- %</strong></div>
       <div class="group">
         <h4>🔔 알림 설정</h4>
         <div class="row">
@@ -1099,391 +419,8 @@
       <button class="btn-block btn-save" onclick="saveCfg()">저장 적용</button>
     </div>
   </div>
-  <script>
-    // --- 1. 테마(Dark/Light) 관리 (SVG 아이콘 적용) ---
-    const themeBtn = $('themeBtn');
-    const moonIcon = `<svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-    const sunIcon = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-    
-    // 기본 라이트 테마 유지
-    let currentTheme = localStorage.getItem('stock_theme') || 'light';
-    function applyTheme(theme) {
-      if(theme === 'dark') {
-        document.body.setAttribute('data-theme', 'dark');
-        themeBtn.innerHTML = sunIcon;
-      } else {
-        document.body.removeAttribute('data-theme');
-        themeBtn.innerHTML = moonIcon;
-      }
-    }
-    applyTheme(currentTheme);
-    themeBtn.addEventListener('click', () => {
-      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-      localStorage.setItem('stock_theme', currentTheme);
-      applyTheme(currentTheme);
-    });
-    // 지원 카테고리 컬러명 (CSS 매핑)
-    const SUPPORTED_COLORS = [
-      'MLCC', '2차전지', '우주태양광', '양자암호', '반도체기판', 
-      '고체산화물연료전지', '광통신', 'LED장비', 'AI', '반도체'
-    ];
-    function getColorKey(sectorName) {
-      return SUPPORTED_COLORS.includes(sectorName) ? sectorName : 'default';
-    }
-    // --- 2. 샘플 데이터 (재무 지표 확장) ---
-    const SAMPLE_DATA = [
-      { code:'247540', name:'에코프로비엠', market:'KOSDAQ', sector:'2차전지', price:217000, change:11.28, volume:4003, qty:1844000, marketCap: 212000, limitUp:false, high52:315000, low52:188000, foreign:8.5, per:72.4, pbr:11.2, eps:2997, bps:19375, roe:15.8, divYield: 0.2 },
-      { code:'086520', name:'에코프로', market:'KOSDAQ', sector:'2차전지', price:146100, change:12.56, volume:8771, qty:6003000, marketCap: 389000, limitUp:false, high52:1530000, low52:95000, foreign:5.2, per:45.1, pbr:8.5, eps:3239, bps:17188, roe:21.4, divYield: 0.1 },
-      { code:'006400', name:'삼성SDI', market:'KOSPI', sector:'2차전지', price:647000, change:5.03, volume:6431, qty:993000, marketCap: 445000, limitUp:false, high52:750000, low52:480000, foreign:45.3, per:18.2, pbr:2.1, eps:35549, bps:308095, roe:12.6, divYield: 0.5 },
-      { code:'009150', name:'삼성전기', market:'KOSPI', sector:'MLCC', price:132100, change:9.72, volume:2390, qty:1809000, marketCap: 98000, limitUp:false, high52:160000, low52:125000, foreign:30.1, per:12.5, pbr:1.3, eps:10568, bps:101615, roe:11.1, divYield: 1.6 },
-      { code:'001820', name:'삼화콘덴서', market:'KOSPI', sector:'MLCC', price:102000, change:29.94, volume:5362, qty:5250000, marketCap: 11000, limitUp:true, high52:102000, low52:35000, foreign:4.5, per:22.1, pbr:3.4, eps:4615, bps:30000, roe:16.8, divYield: 1.1 },
-      { code:'272210', name:'한화시스템', market:'KOSPI', sector:'우주태양광', price:18400, change:8.5, volume:1250, qty:3500000, marketCap: 34000, limitUp:false, high52:21000, low52:12000, foreign:14.2, per:20.5, pbr:1.8, eps:897, bps:10222, roe:9.2, divYield: 1.5 },
-      { code:'189300', name:'인텔리안테크', market:'KOSDAQ', sector:'우주태양광', price:67500, change:15.2, volume:890, qty:1200000, marketCap: 6500, limitUp:false, high52:85000, low52:45000, foreign:8.1, per:35.4, pbr:3.5, eps:1906, bps:19285, roe:10.5, divYield: 0 },
-      { code:'356680', name:'엑스게이트', market:'KOSDAQ', sector:'양자암호', price:20800, change:21.85, volume:4434, qty:21300000, marketCap: 6500, limitUp:false, high52:25000, low52:4000, foreign:2.1, per:0, pbr:12.1, eps:-120, bps:1719, roe:-6.5, divYield: 0 },
-      { code:'115440', name:'우리넷', market:'KOSDAQ', sector:'양자암호', price:11500, change:12.3, volume:520, qty:2400000, marketCap: 1500, limitUp:false, high52:14000, low52:7500, foreign:1.5, per:18.2, pbr:1.9, eps:631, bps:6052, roe:11.2, divYield: 0 },
-      { code:'353200', name:'대덕전자', market:'KOSPI', sector:'반도체기판', price:25100, change:7.2, volume:1800, qty:6400000, marketCap: 12500, limitUp:false, high52:32000, low52:19000, foreign:11.2, per:16.8, pbr:1.7, eps:1494, bps:14764, roe:10.8, divYield: 1.2 },
-      { code:'222800', name:'심텍', market:'KOSDAQ', sector:'반도체기판', price:31000, change:9.1, volume:1450, qty:4100000, marketCap: 9800, limitUp:false, high52:42000, low52:22000, foreign:9.4, per:14.1, pbr:1.5, eps:2198, bps:20666, roe:11.5, divYield: 1.5 },
-      { code:'336260', name:'두산퓨얼셀', market:'KOSPI', sector:'고체산화물연료전지', price:101100, change:21.08, volume:3857, qty:3810000, marketCap: 15000, limitUp:false, high52:115000, low52:28000, foreign:8.5, per:50.2, pbr:4.8, eps:2013, bps:21062, roe:10.0, divYield: 0 },
-      { code:'138080', name:'오이솔루션', market:'KOSDAQ', sector:'광통신', price:18200, change:6.5, volume:350, qty:1800000, marketCap: 2100, limitUp:false, high52:24000, low52:12000, foreign:3.4, per:22.5, pbr:2.1, eps:808, bps:8666, roe:9.5, divYield: 0.5 },
-      { code:'053610', name:'프로텍', market:'KOSDAQ', sector:'LED장비', price:45000, change:14.8, volume:1120, qty:2100000, marketCap: 4800, limitUp:false, high52:58000, low52:25000, foreign:5.5, per:15.2, pbr:1.9, eps:2960, bps:23684, roe:13.4, divYield: 1.8 },
-      { code:'035420', name:'NAVER', market:'KOSPI', sector:'AI', price:195000, change:4.2, volume:18500, qty:9500000, marketCap: 320000, limitUp:false, high52:235000, low52:170000, foreign:48.5, per:38.2, pbr:1.4, eps:5104, bps:139285, roe:3.8, divYield: 0.5 },
-      { code:'005930', name:'삼성전자', market:'KOSPI', sector:'반도체', price:83200, change:1.5, volume:15000, qty:20000000, marketCap: 4950000, limitUp:false, high52:86000, low52:68000, foreign:54.2, per:15.8, pbr:1.5, eps:5265, bps:55466, roe:9.8, divYield: 1.7 }
-    ];
-    // --- 3. 기본 설정 (초기 분류 5개 제한) ---
-    let settings = {
-      categories: {
-        sector: ['전체', 'MLCC', '2차전지', '우주태양광', '양자암호'],
-        volume: ['전체', '코스피', '코스닥'],
-        qty: ['전체', '코스피', '코스닥']
-      },
-      accountNo: '44614025-01',
-      appKey: 'PS4Wd3zl5anUOvHvu1GxST2Ll9Vs9VX2GvR7',
-      appSecret: '10usi/N28hKXVcZ9hIA9eQfU95qQf2T+woAa0MykUVYmmX49P0xY4+sgwwzkBCQfjj032tH+xbCRmS+ehtXWJuiJXO5Ou8H8Hl5myjZPaFOBTrUsa979IkqIlHoOB06eRlTDuu46cAy2TcG12e3qivppEG1i5nSyRkTt2MkQept/g5zaGzk=',
-      autoRefresh: true,
-      minChange: 4,
-      maxItems: 20
-    };
-    let state = {
-      currentTab: 'sector',
-      currentCat: { sector: '전체', volume: '전체', qty: '전체' },
-      expandedCode: null, 
-      timer: null,
-      countdown: 30
-    };
-    function $(id){ return document.getElementById(id); }
-    function formatPrice(v){ return Number(v).toLocaleString('ko-KR'); }
-    function formatVolume(v){ 
-      if(v >= 10000) return (v / 10000).toFixed(2) + '조';
-      return Number(v).toLocaleString('ko-KR') + '억'; 
-    }
-    function formatQty(v){ return Number(v).toLocaleString('ko-KR'); }
-    // --- 4. 카테고리 렌더링 ---
-    function renderCategoryChips() {
-      const container = $('categoryMenu');
-      const cats = settings.categories[state.currentTab];
-      const activeCat = state.currentCat[state.currentTab];
-      
-      container.innerHTML = cats.map(cat => {
-        const colorKey = getColorKey(cat);
-        const isActive = activeCat === cat ? 'active' : '';
-        return `<button class="chip ${isActive}" data-color="${colorKey}" onclick="selectCategory('${cat}')">${cat}</button>`;
-      }).join('');
-    }
-    function renderCategoryEditor() {
-      const targetTab = $('targetTabSelect').value;
-      const cats = settings.categories[targetTab];
-      const list = $('catEditorList');
-      
-      list.innerHTML = cats.map((cat, i) => `
-        <div class="cat-edit-item">
-          <span>${cat}</span>
-          ${cat !== '전체' ? `
-            <button class="cat-btn" onclick="moveCat(${i}, -1)">▲</button>
-            <button class="cat-btn" onclick="moveCat(${i}, 1)">▼</button>
-            <button class="cat-btn" onclick="removeCat(${i})" style="color:var(--red);">✕</button>
-          ` : '<span style="font-size:12px;color:var(--sub);">기본</span>'}
-        </div>
-      `).join('');
-    }
-    $('targetTabSelect').addEventListener('change', renderCategoryEditor);
-    function moveCat(index, dir) {
-      const targetTab = $('targetTabSelect').value;
-      let cats = settings.categories[targetTab];
-      if(dir === -1 && index > 1) { 
-        [cats[index-1], cats[index]] = [cats[index], cats[index-1]];
-      } else if(dir === 1 && index < cats.length - 1) {
-        [cats[index], cats[index+1]] = [cats[index+1], cats[index]];
-      }
-      renderCategoryEditor();
-    }
-    function removeCat(index) {
-      const targetTab = $('targetTabSelect').value;
-      settings.categories[targetTab].splice(index, 1);
-      renderCategoryEditor();
-    }
-    function addCategory(val = null) {
-      const input = $('newCatInput');
-      const targetTab = $('targetTabSelect').value;
-      const catVal = val || input.value.trim();
-      if(catVal && !settings.categories[targetTab].includes(catVal)) {
-        settings.categories[targetTab].push(catVal);
-        input.value = '';
-        renderCategoryEditor();
-      }
-    }
-    window.addPresetCat = function(name) { addCategory(name); }
-    function selectCategory(cat) {
-      state.currentCat[state.currentTab] = cat;
-      renderCategoryChips();
-      renderAll();
-    }
-    // --- 5. 정렬 및 렌더링 로직 (선택 분류 상단 배치) ---
-    function sortAndPrioritize(rows, sortKey, targetCat, applyMinChangeFilter) {
-      let filtered = rows;
-      // 기본 등락률 필터만 적용 (선택한 분류에 상관없이 리스트엔 포함시킴)
-      if(applyMinChangeFilter) {
-          filtered = rows.filter(x => x.change >= settings.minChange);
-      }
-      
-      return filtered.sort((a, b) => {
-        // 1순위 정렬: 선택된 카테고리에 속하는 종목 우선 노출
-        if (targetCat !== '전체') {
-            const aMatch = (a.sector === targetCat || a.market === targetCat);
-            const bMatch = (b.sector === targetCat || b.market === targetCat);
-            if (aMatch && !bMatch) return -1;
-            if (!aMatch && bMatch) return 1;
-        }
-        
-        // 2순위 정렬: 상한가 여부
-        if(a.limitUp !== b.limitUp) return b.limitUp - a.limitUp;
-        // 3순위 정렬: 선택 정렬값
-        if(sortKey === 'change') return b.change - a.change;
-        if(sortKey === 'price') return b.price - a.price;
-        if(sortKey === 'qty') return b.qty - a.qty;
-        return b.volume - a.volume;
-      });
-    }
-    // 미리보기 토글 충돌 방지
-    window.togglePreview = function(tabName, code) {
-      const containerId = `item-container-${tabName}-${code}`;
-      const el = $(containerId);
-      
-      if(state.expandedCode && state.expandedCode !== containerId) {
-        const oldEl = $(state.expandedCode);
-        if(oldEl) oldEl.classList.remove('expanded');
-      }
-      
-      if(el) {
-        el.classList.toggle('expanded');
-        state.expandedCode = el.classList.contains('expanded') ? containerId : null;
-      }
-    };
-    function renderListHtml(rows, isQty = false, applyColors = false) {
-      if(!rows.length) return '<div class="empty">조건에 해당하는 종목이 없습니다.</div>';
-      
-      const tabName = state.currentTab;
-      return rows.map((row, i) => {
-        const limitCls = row.limitUp ? 'limit' : '';
-        const colorKey = getColorKey(row.sector);
-        const catCls = applyColors ? `cat-${colorKey}` : 'cat-default';
-        const metaCatCls = applyColors ? `meta-cat-${colorKey}` : '';
-        const valText = isQty ? formatQty(row.qty) + '주' : formatVolume(row.volume);
-        
-        const containerId = `item-container-${tabName}-${row.code}`;
-        
-        return `
-          <div class="item-container ${limitCls} ${catCls}" id="${containerId}">
-            <div class="item" onclick="togglePreview('${tabName}', '${row.code}')">
-              <div class="name-wrap">
-                <div class="line1">
-                  <span class="rank">${i + 1}</span>
-                  <span class="name">${row.name}</span>
-                  ${row.limitUp ? '<span class="badge">상한가</span>' : ''}
-                </div>
-                <div class="meta">
-                  ${row.market} · <span class="${metaCatCls}">${row.sector}</span>
-                </div>
-              </div>
-              <div class="price">${formatPrice(row.price)}</div>
-              <div class="change ${row.change < 0 ? 'down' : ''}">
-                ${row.change > 0 ? '▲ ' : (row.change < 0 ? '▼ ' : '')}${Math.abs(row.change).toFixed(2)}%
-              </div>
-              <div class="vol">${valText}</div>
-            </div>
-            
-            <div class="preview-wrap">
-              <div class="preview-content" onclick="openFullDetail('${row.code}')">
-                <div class="p-col"><span>업종(테마)</span><strong>${row.sector}</strong></div>
-                <div class="p-col"><span>거래량</span><strong>${formatQty(row.qty)}주</strong></div>
-                <div class="p-col"><span>거래대금</span><strong style="color:var(--accent)">${formatVolume(row.volume)}</strong></div>
-                <div class="p-col"><span>시가총액</span><strong>${formatVolume(row.marketCap)}</strong></div>
-                <div class="p-guide">터치하여 전체 상세 투자 정보 보기 ➔</div>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-    function renderSectorList(){
-      const targetCat = state.currentCat['sector'];
-      const sortKey = $('sectorSort').value;
-      const sortedRows = sortAndPrioritize(SAMPLE_DATA, sortKey, targetCat, true);
-      $('sectorList').innerHTML = renderListHtml(sortedRows.slice(0, settings.maxItems), false, true);
-      $('updateTime1').textContent = '업데이트: ' + new Date().toLocaleTimeString('ko-KR');
-    }
-    function renderVolumeList(){
-      const targetCat = state.currentCat['volume'];
-      const filtered = SAMPLE_DATA.filter(x => x.change >= 4); // 대금상위 4% 이상 조건
-      const sortedRows = sortAndPrioritize(filtered, 'volume', targetCat, false);
-      $('volumeList').innerHTML = renderListHtml(sortedRows.slice(0, settings.maxItems), false, false);
-      $('updateTime2').textContent = '업데이트: ' + new Date().toLocaleTimeString('ko-KR');
-    }
-    
-    function renderQtyList(){
-      const targetCat = state.currentCat['qty'];
-      const sortedRows = sortAndPrioritize(SAMPLE_DATA, 'qty', targetCat, false);
-      $('qtyList').innerHTML = renderListHtml(sortedRows.slice(0, settings.maxItems), true, false);
-      $('updateTime3').textContent = '업데이트: ' + new Date().toLocaleTimeString('ko-KR');
-    }
-    function renderAll(){
-      $('currentFilterText').textContent = settings.minChange + '%';
-      if(state.currentTab === 'sector') renderSectorList();
-      if(state.currentTab === 'volume') renderVolumeList();
-      if(state.currentTab === 'qty') renderQtyList();
-    }
-    // --- 6. 캔들스틱 차트 (Canvas) ---
-    function drawDetailedCandleChart() {
-      const canvas = $('fsChartCanvas');
-      if(!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const width = canvas.width = canvas.parentElement.offsetWidth;
-      const height = canvas.height = canvas.parentElement.offsetHeight;
-      
-      ctx.clearRect(0, 0, width, height);
-      
-      // 여백 및 거래량 바 영역 설정
-      const pad = 24;
-      const chartW = width - pad * 2;
-      const volH = 50;
-      const chartH = height - pad * 2 - volH - 10;
-      
-      // 모의 캔들스틱 데이터 생성 (40개 봉)
-      const numCandles = 40;
-      const candleW = (chartW / numCandles) * 0.6;
-      const gap = (chartW / numCandles) * 0.4;
-      const candles = [];
-      let curPrice = 50000;
-      let minP = curPrice, maxP = curPrice, maxV = 0;
-      
-      for(let i=0; i<numCandles; i++) {
-        const open = curPrice + (Math.random()-0.5)*1500;
-        const close = open + (Math.random()-0.5)*2500;
-        const high = Math.max(open, close) + Math.random()*1000;
-        const low = Math.min(open, close) - Math.random()*1000;
-        const vol = Math.random() * 50000;
-        
-        candles.push({open, close, high, low, vol});
-        curPrice = close;
-        
-        if(high > maxP) maxP = high;
-        if(low < minP) minP = low;
-        if(vol > maxV) maxV = vol;
-      }
-      
-      // 배경 그리드 라인 (수평 4개)
-      ctx.strokeStyle = currentTheme === 'dark' ? '#2b3442' : '#e2e8f0';
-      ctx.lineWidth = 1;
-      for(let i=0; i<=4; i++) {
-          const y = pad + (chartH/4)*i;
-          ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(width-pad, y); ctx.stroke();
-      }
-      
-      // 캔들 및 거래량 렌더링
-      candles.forEach((c, i) => {
-        const x = pad + i * (candleW + gap);
-        const isUp = c.close >= c.open;
-        const color = isUp ? '#ff5b5b' : '#3b82f6'; // 韓 주식 (상승 붉은색, 하락 푸른색)
-        
-        const yOpen = pad + chartH - ((c.open - minP) / (maxP - minP) * chartH);
-        const yClose = pad + chartH - ((c.close - minP) / (maxP - minP) * chartH);
-        const yHigh = pad + chartH - ((c.high - minP) / (maxP - minP) * chartH);
-        const yLow = pad + chartH - ((c.low - minP) / (maxP - minP) * chartH);
-        
-        // 꼬리선 (위/아래)
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(x + candleW/2, yHigh);
-        ctx.lineTo(x + candleW/2, yLow);
-        ctx.stroke();
-        
-        // 몸통
-        ctx.fillStyle = color;
-        const bodyY = Math.min(yOpen, yClose);
-        const bodyH = Math.max(Math.abs(yOpen - yClose), 1);
-        ctx.fillRect(x, bodyY, candleW, bodyH);
-        
-        // 거래량 바
-        const vH = (c.vol / maxV) * volH;
-        ctx.fillStyle = isUp ? 'rgba(255,91,91,0.4)' : 'rgba(59,130,246,0.4)';
-        ctx.fillRect(x, height - pad - vH, candleW, vH);
-      });
-      
-      // 20일 이동평균선 (가상)
-      ctx.strokeStyle = '#f5b700'; // 노란색
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      candles.forEach((c, i) => {
-          if (i < 9) return; // 10개 봉부터 계산 (간이용)
-          let sum = 0;
-          for(let j=0; j<10; j++) sum += candles[i-j].close;
-          const avg = sum / 10;
-          const x = pad + i * (candleW + gap) + candleW/2;
-          const y = pad + chartH - ((avg - minP) / (maxP - minP) * chartH);
-          if (i === 9) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-    }
-    // --- 7. 전체화면 상세보기 ---
-    window.openFullDetail = function(code) {
-      const stock = SAMPLE_DATA.find(s => s.code === code);
-      if(!stock) return;
-      
-      $('fsTitle').textContent = stock.name + ' (' + stock.code + ')';
-      $('fsMarket').textContent = stock.market;
-      $('fsSector').textContent = stock.sector;
-      
-      $('fsPrice').textContent = formatPrice(stock.price) + ' 원';
-      const changeEl = $('fsChange');
-      changeEl.textContent = `${stock.change > 0 ? '▲ ' : (stock.change < 0 ? '▼ ' : '')}${Math.abs(stock.change).toFixed(2)}%`;
-      changeEl.className = 'fs-change ' + (stock.change < 0 ? 'down' : '');
-      
-      $('fsCap').textContent = formatVolume(stock.marketCap);
-      $('fsVolQty').textContent = `${formatVolume(stock.volume)} / ${formatQty(stock.qty)}주`;
-      $('fs52Week').textContent = `${formatPrice(stock.high52)} / ${formatPrice(stock.low52)}`;
-      $('fsForeign').textContent = stock.foreign.toFixed(2) + ' %';
-      $('fsPerPbr').textContent = `${stock.per > 0 ? stock.per : 'N/A'} 배 / ${stock.pbr} 배`;
-      $('fsEpsBps').textContent = `${formatPrice(stock.eps)} 원 / ${formatPrice(stock.bps)} 원`;
-      $('fsRoe').textContent = `${stock.roe} %`;
-      $('fsDiv').textContent = stock.divYield > 0 ? `${stock.divYield.toFixed(2)} %` : '배당 없음';
-      
-      $('fullscreenDetail').classList.add('open');
-      document.body.style.overflow = 'hidden'; 
-      
-      setTimeout(drawDetailedCandleChart, 150);
-    };
-    
-    window.closeFullDetail = function() {
-      $('fullscreenDetail').classList.remove('open');
-      document.body.style.overflow = '';
-    };
-    
-    window.addEventListener('resize', () => {
-      if($('fullscreenDetail').classList.contains('open')) {
-        drawDetailedCandleChart();
-      }
 </div>
+
 <script>
 const STOCKS = {
   battery:[
@@ -1516,6 +453,7 @@ const STOCKS = {
     {code:'356680',name:'엑스게이트',s:'quantum',sl:'양자',mkt:'kosdaq',price:20800,change:21.85,volume:4434,turnover:923000,limitUp:false,high:21200,low:16900,open:17050,prev:17070,pbr:8.2,per:0,mcap:'9,000억'},
   ]
 };
+
 const SECTOR_COLORS={battery:'#ff5b5b',mlcc:'#b07cff',semi:'#56a8ff',bio:'#3bc26b',robot:'#ffb347',energy:'#00d4f0',quantum:'#e040fb',default:'#97a3b6'};
 function allS(){return Object.values(STOCKS).flat()}
 function gc(s){return SECTOR_COLORS[s]||SECTOR_COLORS.default}
@@ -1523,6 +461,7 @@ function fp(v){return Number(v).toLocaleString('ko-KR')}
 function fv(v){return v>=10000?(v/10000).toFixed(2)+'조':Number(v).toLocaleString('ko-KR')+'억'}
 function ft(v){return v>=100000000?(v/100000000).toFixed(2)+'억주':v>=10000?(v/10000).toFixed(1)+'만주':(v/1000).toFixed(0)+'천주'}
 function findSt(code){return allS().find(x=>x.code===code)||{}}
+
 let G={
   sector:'all',tab:'sector',mkt:'all',tmkt:'all',
   minChg:4,minVol:0,maxItems:30,
@@ -1531,14 +470,17 @@ let G={
   appKey:'',appSecret:'',accountNo:'',mock:true,useProxy:true,
   kisToken:null,tokenExp:0,countdown:30,timer:null
 };
+
 function loadG(){
   const s=localStorage.getItem('stocky4');
   if(s){const p=JSON.parse(s);Object.assign(G,p);G.kisToken=null}
   G.countdown=G.interval;
 }
 function saveG(){localStorage.setItem('stocky4',JSON.stringify(G))}
+
 function kisDomain(){return G.mock?'https://openapivts.koreainvestment.com:29443':'https://openapi.koreainvestment.com:9443'}
 function proxyWrap(url){return G.useProxy?'https://corsproxy.io/?'+encodeURIComponent(url):url}
+
 async function getToken(){
   if(G.kisToken&&Date.now()<G.tokenExp)return G.kisToken;
   if(!G.appKey||!G.appSecret)return null;
@@ -1549,123 +491,6 @@ async function getToken(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({grant_type:'client_credentials',appkey:G.appKey,appsecret:G.appSecret})
     });
-    // --- 8. 유틸리티 및 탭 전환 ---
-    function switchTab(tab){
-      state.currentTab = tab;
-      document.querySelectorAll('.tab').forEach(el => {
-        el.classList.toggle('active', el.dataset.tab === tab);
-      });
-      ['sector', 'volume', 'qty'].forEach(name => {
-        const el = $('tab-' + name);
-        if(el) el.classList.toggle('hidden', name !== tab);
-      });
-      
-      state.expandedCode = null; 
-      renderCategoryChips();
-      renderAll();
-    }
-    function setChangeFilter(value){
-      settings.minChange = Number(value);
-      document.querySelectorAll('.mini-chip[data-change]').forEach(el => {
-        el.classList.toggle('active', Number(el.dataset.change) === Number(value));
-      });
-      renderAll();
-    }
-    function loadSettings(){
-      const saved = localStorage.getItem('stock_monitor_settings_v6');
-      if(saved){
-        const parsed = JSON.parse(saved);
-        settings = { ...settings, ...parsed };
-      }
-      $('appKey').value = settings.appKey;
-      $('appSecret').value = settings.appSecret;
-      $('accountNo').value = settings.accountNo;
-      $('autoRefresh').checked = settings.autoRefresh;
-      $('maxItems').value = settings.maxItems;
-      renderCategoryEditor();
-    }
-    function saveSettings(){
-      settings.appKey = $('appKey').value.trim();
-      settings.appSecret = $('appSecret').value.trim();
-      settings.accountNo = $('accountNo').value.trim();
-      settings.autoRefresh = $('autoRefresh').checked;
-      settings.maxItems = Number($('maxItems').value || 20);
-      localStorage.setItem('stock_monitor_settings_v6', JSON.stringify(settings));
-      renderCategoryChips();
-      renderAll();
-      closeSettings();
-      showToast('설정이 저장되었습니다.');
-      startTimer();
-    }
-    function resetSettings(){
-      localStorage.removeItem('stock_monitor_settings_v6');
-      location.reload();
-    }
-    function openSettings(){ 
-      $('targetTabSelect').value = state.currentTab;
-      renderCategoryEditor();
-      $('settingsModal').classList.add('open'); 
-    }
-    function closeSettings(){ $('settingsModal').classList.remove('open'); }
-    
-    function showToast(msg){
-      const el = document.createElement('div');
-      el.className = 'toast'; el.textContent = msg;
-      document.body.appendChild(el);
-      setTimeout(() => el.remove(), 2200);
-    }
-    function mutateSampleData(){
-      SAMPLE_DATA.forEach(row => {
-        const drift = (Math.random() - 0.48) * 0.004;
-        row.price = Math.max(100, Math.round(row.price * (1 + drift)));
-        row.change = Number((row.change + (Math.random() - 0.5) * 0.25).toFixed(2));
-        row.volume = Math.max(100, Math.round(row.volume + (Math.random() - 0.3) * 50));
-        row.qty = Math.max(10000, Math.round(row.qty + (Math.random() - 0.3) * 15000));
-      });
-      renderAll();
-    }
-    
-    function startTimer() {
-      clearInterval(state.timer);
-      if(!settings.autoRefresh) {
-        $('countdownText').innerHTML = '';
-        return;
-      }
-      state.countdown = 30;
-      $('countdownText').innerHTML = `${state.countdown}s`;
-      
-      state.timer = setInterval(() => {
-        state.countdown -= 1;
-        if(state.countdown <= 0) {
-          mutateSampleData();
-          state.countdown = 30;
-        }
-        $('countdownText').innerHTML = `${state.countdown}s`;
-      }, 1000);
-    }
-    function forceRefresh() {
-      mutateSampleData();
-      if(settings.autoRefresh) {
-        state.countdown = 30; 
-        $('countdownText').innerHTML = `${state.countdown}s`;
-      }
-    }
-    // --- 9. 이벤트 바인딩 및 초기화 ---
-    document.querySelectorAll('.tab').forEach(btn => {
-      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-    });
-    document.querySelectorAll('.mini-chip[data-change]').forEach(btn => {
-      btn.addEventListener('click', () => setChangeFilter(btn.dataset.change));
-    });
-    $('sectorSort').addEventListener('change', renderAll);
-    $('refreshBtn').addEventListener('click', forceRefresh);
-    $('openSettingsBtn').addEventListener('click', openSettings);
-    $('closeSettingsBtn').addEventListener('click', closeSettings);
-    $('saveBtn').addEventListener('click', saveSettings);
-    $('resetBtn').addEventListener('click', resetSettings);
-    
-    $('settingsModal').addEventListener('click', e => {
-      if(e.target === $('settingsModal')) closeSettings();
     if(!r.ok)throw new Error('HTTP '+r.status);
     const d=await r.json();
     if(d.access_token){
@@ -1676,6 +501,7 @@ async function getToken(){
     throw new Error(d.msg1||JSON.stringify(d));
   }catch(e){console.error('[KIS] 토큰 오류:',e);return null}
 }
+
 async function testApi(){
   const st=document.getElementById('apiStatus');
   G.appKey=document.getElementById('cfgKey').value.trim();
@@ -1692,6 +518,7 @@ async function testApi(){
     st.className='api-status api-err';st.textContent='● 연결 실패 — 프록시 ON 확인 또는 키 재확인';toast('연결 실패. CORS 안내 확인 필요');
   }
 }
+
 function makeItem(row,rank,valKey){
   const color=gc(row.s);
   const valText=valKey==='turnover'?ft(row.turnover):fv(row.volume);
@@ -1711,6 +538,7 @@ function makeItem(row,rank,valKey){
   <div class="vol">${valText}</div>
 </div>`;
 }
+
 function filterSector(){
   let d=G.sector==='all'?allS():(STOCKS[G.sector]||[]);
   d=d.filter(x=>x.change>=G.minChg&&x.volume>=G.minVol);
@@ -1728,6 +556,7 @@ function renderSector(){
   document.getElementById('updateTime1').textContent='업데이트: '+new Date().toLocaleTimeString('ko-KR');
   document.getElementById('filterLabel').textContent=G.minChg;
 }
+
 function filterVolume(){
   let d=[...allS()];
   if(G.mkt!=='all')d=d.filter(x=>x.mkt===G.mkt);
@@ -1739,6 +568,7 @@ function renderVolume(){
   document.getElementById('volumeList').innerHTML=filterVolume().map((r,i)=>makeItem(r,i+1,'volume')).join('');
   document.getElementById('updateTime2').textContent='업데이트: '+new Date().toLocaleTimeString('ko-KR');
 }
+
 function filterTurnover(){
   let d=[...allS()];
   if(G.tmkt!=='all')d=d.filter(x=>x.mkt===G.tmkt);
@@ -1750,10 +580,12 @@ function renderTurnover(){
   document.getElementById('turnoverList').innerHTML=filterTurnover().map((r,i)=>makeItem(r,i+1,'turnover')).join('');
   document.getElementById('updateTime3').textContent='업데이트: '+new Date().toLocaleTimeString('ko-KR');
 }
+
 function renderAll(){
   renderSector();renderVolume();renderTurnover();
   document.getElementById('newsBar').style.display=G.showNews?'':'none';
 }
+
 function openDetail(code){
   const row=findSt(code);if(!row.code)return;
   document.getElementById('dName').textContent=row.name;
@@ -1802,6 +634,7 @@ function openDetail(code){
   document.getElementById('detailOverlay').classList.add('open');
 }
 function closeDetail(){document.getElementById('detailOverlay').classList.remove('open')}
+
 document.querySelectorAll('.tab').forEach(b=>{
   b.addEventListener('click',()=>{
     G.tab=b.dataset.tab;
@@ -1837,6 +670,7 @@ document.querySelectorAll('.mkt-chip[data-tmkt]').forEach(b=>{
     renderTurnover();
   });
 });
+
 function openSettings(){
   document.getElementById('cfgKey').value=G.appKey;
   document.getElementById('cfgSecret').value=G.appSecret;
@@ -1873,6 +707,7 @@ function saveCfg(){
   saveG();closeSettings();renderAll();startTimer();toast('설정 저장 완료 ✓');
 }
 function resetCfg(){if(confirm('설정을 초기화할까요?')){localStorage.removeItem('stocky4');location.reload()}}
+
 async function refreshData(){
   if(G.appKey){
     const tok=await getToken();
@@ -1890,13 +725,9 @@ async function refreshData(){
       if(r.limitUp)toast('🚨 '+r.name+' 상한가!');
       else if(r.change>=G.alertChg)toast('⚡ '+r.name+' +'+r.change.toFixed(2)+'%');
     });
-    loadSettings();
-    renderCategoryChips();
-    renderAll();
-    startTimer();
-  </script>
   }
 }
+
 function startTimer(){
   clearInterval(G.timer);G.countdown=G.interval;
   const el=document.getElementById('countdown');
@@ -1906,6 +737,7 @@ function startTimer(){
     if(G.countdown<=0){refreshData();G.countdown=G.interval}
   },1000);
 }
+
 function updateMarket(){
   const m=new Date().getHours()*60+new Date().getMinutes();
   const el=document.getElementById('marketStatus');
@@ -1913,12 +745,15 @@ function updateMarket(){
   else if(m>=510&&m<540){el.textContent='● 장전';el.style.cssText='font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid #4a3800;color:#f5c842;background:#1a1500'}
   else{el.textContent='● 장마감';el.style.cssText='font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid #2b3442;color:#97a3b6;background:#171b22'}
 }
+
 function toast(msg){
   const el=document.createElement('div');el.className='toast';el.textContent=msg;
   document.body.appendChild(el);setTimeout(()=>el.remove(),2500);
 }
+
 document.getElementById('refreshBtn').addEventListener('click',refreshData);
 document.getElementById('openSettingsBtn').addEventListener('click',openSettings);
+
 loadG();updateMarket();renderAll();startTimer();
 setInterval(updateMarket,60000);
 </script>
