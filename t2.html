@@ -139,8 +139,8 @@ button.primary{
 }
 .status{
   display:flex;
-  justify-content:flex-end; /* 오른쪽 정렬로 변경 */
-  gap:12px; /* 항목 간 간격 */
+  justify-content:flex-end;
+  gap:12px;
   font-size:11px;
   color:var(--muted);
   padding:0 2px;
@@ -175,7 +175,7 @@ button.primary{
 .tabs {
   display: flex;
   gap: 8px;
-  padding: 14px 14px 0; /* 상단 여백 추가 */
+  padding: 14px 14px 0;
 }
 .tab {
   flex: 1;
@@ -418,6 +418,31 @@ html[data-theme="dark"] .item {
   color: #fff;
   border-color: var(--accent2);
 }
+.api-saved-card {
+  display: none;
+  padding: 16px;
+  background: var(--chip);
+  border-radius: 14px;
+  margin-bottom: 12px;
+  border: 1px solid var(--line);
+}
+.api-table {
+  width: 100%;
+  font-size: 12px;
+  border-collapse: collapse;
+}
+.api-table td {
+  padding: 6px 0;
+  color: var(--text);
+}
+.api-table td:first-child {
+  color: var(--muted);
+  width: 80px;
+}
+.api-table td:last-child {
+  font-weight: 700;
+  text-align: right;
+}
 .warn{
   border-left:4px solid #f59e0b;
   background:rgba(245,158,11,.1);
@@ -495,18 +520,38 @@ html[data-theme="dark"] .item {
       <input type="number" id="filterCount" min="1" max="10" placeholder="기본 5개" />
     </div>
 
-    <div class="field"><label>계좌번호</label><input type="text" id="cano" placeholder="예: 44614025" /></div>
-    <div class="field"><label>상품코드</label><input type="text" id="prdt" placeholder="예: 01" /></div>
-    <div class="field"><label>App Key</label><input type="password" id="appKey" placeholder="API Key 입력" /></div>
-    <div class="field"><label>App Secret</label><input type="password" id="appSecret" placeholder="API Secret 입력" /></div>
-    <div class="field"><label>환경</label><select id="envType"><option value="live">실계좌</option><option value="paper">모의투자</option></select></div>
-    <div class="btnrow">
-      <button id="saveSettingBtn" class="primary">저장</button>
-      <button id="loadSettingBtn">불러오기</button>
-      <button id="clearSettingBtn">초기화</button>
-      <button id="testSettingBtn">연결 테스트</button>
+    <hr style="border:0; border-top:1px solid var(--line); margin:16px 0;">
+
+    <!-- 저장 완료 & 연결 상태일 때 보여주는 표 영역 -->
+    <div id="apiSavedGroup" class="api-saved-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+        <span style="font-size:14px; font-weight:800; color:var(--text);">✅ API 연동 완료</span>
+        <button id="editApiBtn" style="padding:6px 12px; font-size:12px;">수정하기</button>
+      </div>
+      <table class="api-table">
+        <tr><td>계좌번호</td><td id="dispCano"></td></tr>
+        <tr><td>App Key</td><td id="dispAppKey"></td></tr>
+        <tr><td>환경</td><td id="dispEnv"></td></tr>
+      </table>
     </div>
-    <div class="warn">민감정보는 브라우저 저장보다 서버 토큰 구조가 안전하다.</div>
+
+    <!-- API 입력 폼 (수정중일때만 보임) -->
+    <div id="apiFormGroup">
+      <div class="field"><label>계좌번호</label><input type="text" id="cano" placeholder="예: 44614025" /></div>
+      <div class="field"><label>상품코드</label><input type="text" id="prdt" placeholder="예: 01" /></div>
+      <div class="field"><label>App Key</label><input type="password" id="appKey" placeholder="API Key 입력" /></div>
+      <div class="field"><label>App Secret</label><input type="password" id="appSecret" placeholder="API Secret 입력" /></div>
+      <div class="field"><label>환경</label><select id="envType"><option value="live">실계좌</option><option value="paper">모의투자</option></select></div>
+      <div class="btnrow">
+        <button id="testSettingBtn" class="primary" style="flex:1;">저장 및 연결 테스트</button>
+      </div>
+    </div>
+
+    <div class="btnrow" style="margin-top:10px;">
+      <button id="clearSettingBtn" style="width:100%;">모든 설정 초기화</button>
+    </div>
+
+    <div class="warn">민감정보는 브라우저 저장보다 서버 토큰 구조가 안전합니다.</div>
   </div>
 </div>
 
@@ -514,16 +559,17 @@ html[data-theme="dark"] .item {
 const REFRESH_MS=30000;
 const THEMES={light:'화이트 테마',dark:'블랙 테마'};
 
-// 데이터를 '테마'와 '업종'으로 구분
+// API 데이터는 CORS 문제로 실시간 호출이 제한되므로, MLCC를 1위로 올려둔 샘플 데이터 활용
 const SAMPLE={
   market:{core:'반도체',tone:'강세',alert:'3건',refresh:'30초'},
   categories:{
-    '테마': ['2차전지','로봇','바이오','AI','우주항공','원전','신재생','보안','초전도체','저전력'],
+    '테마': ['MLCC','2차전지','로봇','바이오','AI','우주항공','원전','신재생','보안','초전도체'],
     '업종': ['반도체','자동차','금융','제약','철강','통신','화학','조선','건설','IT소프트웨어']
   },
   sorts:['기본순위','거래대금','수익률','시총','변동성'],
   sectors:[
-    // 테마 소속
+    // 테마 소속 (MLCC 1위로 추가)
+    {type:'테마',name:'삼화콘덴서',sector:'MLCC',reason:'AI/전장용 수요 급증',chg:'+29.9%',volume:'5,362억',marketCap:'1.6조',roi:'+29.9%',stocks:[{name:'삼화콘덴서',price:'102,000',chg:'+29.9%'},{name:'아비코전자',price:'11,900',chg:'+8.1%'}]},
     {type:'테마',name:'에코프로',sector:'2차전지',reason:'ESS·리사이클 기대',chg:'+8.5%',volume:'8.7조',marketCap:'38조',roi:'+12.5%',stocks:[{name:'에코프로',price:'121,000',chg:'+12.5%'},{name:'에코프로비엠',price:'238,000',chg:'+11.2%'}]},
     {type:'테마',name:'레인보우로보틱스',sector:'로봇',reason:'자동화 투자 확대',chg:'+6.1%',volume:'1.3조',marketCap:'11조',roi:'+5.8%',stocks:[{name:'레인보우로보틱스',price:'251,000',chg:'+5.8%'},{name:'두산로보틱스',price:'64,200',chg:'+2.9%'}]},
     {type:'테마',name:'알테오젠',sector:'바이오',reason:'플랫폼 기대',chg:'+6.8%',volume:'4.1조',marketCap:'24조',roi:'+4.1%',stocks:[{name:'알테오젠',price:'287,000',chg:'+4.5%'},{name:'리가켐바이오',price:'105,000',chg:'+5.2%'}]},
@@ -547,7 +593,7 @@ const SAMPLE={
     {type:'업종',name:'LG유플러스',sector:'통신',reason:'안정적 배당',chg:'+2.2%',volume:'0.3조',marketCap:'4.8조',roi:'+1.1%',stocks:[{name:'LG유플러스',price:'10,850',chg:'+1.1%'},{name:'SK텔레콤',price:'54,300',chg:'+0.6%'}]},
     {type:'업종',name:'삼성SDI',sector:'화학',reason:'전고체 배터리 기대감',chg:'+5.9%',volume:'2.4조',marketCap:'52조',roi:'+3.8%',stocks:[{name:'삼성SDI',price:'386,000',chg:'+3.8%'},{name:'LG화학',price:'420,000',chg:'+1.2%'}]}
   ],
-  top:[{name:'삼성전자',cat:'반도체',chg:'+9.72%',vol:'2.39조'},{name:'삼화콘덴서',cat:'MLCC',chg:'+29.94%',vol:'5,362억'},{name:'에코프로',cat:'2차전지',chg:'+12.56%',vol:'8,771억'},{name:'알테오젠',cat:'바이오',chg:'+4.55%',vol:'4,145억'}]
+  top:[{name:'삼화콘덴서',cat:'MLCC',chg:'+29.94%',vol:'5,362억'},{name:'에코프로',cat:'2차전지',chg:'+12.56%',vol:'8,771억'},{name:'삼성전자',cat:'반도체',chg:'+9.72%',vol:'2.39조'},{name:'알테오젠',cat:'바이오',chg:'+4.55%',vol:'4,145억'}]
 };
 
 let state={
@@ -558,16 +604,19 @@ let state={
   activeMainTab: '테마',
   activeSubFilter: '전체',
   activeSort: '기본순위',
-  filterCount: parseInt(localStorage.getItem('filterCount')) || 5, // 하위 분류 기본 표시 개수
+  filterCount: parseInt(localStorage.getItem('filterCount')) || 5,
   customFilters: JSON.parse(localStorage.getItem('customFilters')) || { '테마': [], '업종': [] },
   openIndex: null
 };
 
-// 보안을 위해 실제 키값을 메모리에 별도로 보관합니다.
+// 보안을 위해 실제 키값을 메모리에 보관
 let storedKeys = {
   appKey: '',
   appSecret: ''
 };
+
+// 연결 상태 플래그
+let isApiConnected = localStorage.getItem('isApiConnected') === 'true';
 
 const el={
   themeBtn:document.getElementById('themeBtn'),
@@ -582,10 +631,14 @@ const el={
   topList:document.getElementById('topList'),
   overlay:document.getElementById('settingsOverlay'),
   closeSettingBtn:document.getElementById('closeSettingBtn'),
-  saveSettingBtn:document.getElementById('saveSettingBtn'),
-  loadSettingBtn:document.getElementById('loadSettingBtn'),
-  clearSettingBtn:document.getElementById('clearSettingBtn'),
   testSettingBtn:document.getElementById('testSettingBtn'),
+  clearSettingBtn:document.getElementById('clearSettingBtn'),
+  editApiBtn:document.getElementById('editApiBtn'),
+  apiFormGroup:document.getElementById('apiFormGroup'),
+  apiSavedGroup:document.getElementById('apiSavedGroup'),
+  dispCano:document.getElementById('dispCano'),
+  dispAppKey:document.getElementById('dispAppKey'),
+  dispEnv:document.getElementById('dispEnv'),
   filterCount:document.getElementById('filterCount'),
   cano:document.getElementById('cano'),
   prdt:document.getElementById('prdt'),
@@ -594,7 +647,6 @@ const el={
   envType:document.getElementById('envType')
 };
 
-// 동적 컬러 생성 (문자열 해시 이용)
 function getColorVar(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
@@ -607,8 +659,6 @@ function getBgVar(str) {
   const idx = (Math.abs(hash) % 8) + 1;
   return `color-mix(in srgb, var(--c-${idx}) var(--bg-mix, 15%), var(--card))`;
 }
-
-// 텍스트 마스킹 함수 (앞 4글자만 노출하고 나머지는 * 처리)
 function maskKey(val) {
   if (!val) return '';
   if (val.length <= 4) return '*'.repeat(val.length);
@@ -621,13 +671,12 @@ function themeApply(t){
   localStorage.setItem('theme',t);
 }
 
-// 1차 메인 탭(테마/업종) 클릭 이벤트 연결
 el.mainTabs.forEach(tab => {
   tab.onclick = (e) => {
     el.mainTabs.forEach(t => t.classList.remove('active'));
     e.target.classList.add('active');
     state.activeMainTab = e.target.getAttribute('data-type');
-    state.activeSubFilter = '전체'; // 탭 이동 시 서브 필터 초기화
+    state.activeSubFilter = '전체';
     state.openIndex = null;
     renderAll();
   };
@@ -635,14 +684,9 @@ el.mainTabs.forEach(tab => {
 
 function renderSubFilters() {
   el.subFilters.innerHTML = '';
-  // 현재 선택된 메인 탭의 카테고리 목록 가져오기
   const catList = state.data.categories[state.activeMainTab] || [];
-  
-  // 고정 순위(기본 1~5위, filterCount 설정에 따라 변경 가능)
   const topList = catList.slice(0, state.filterCount);
-  // 그 외 추가로 사용자가 직접 선택한 커스텀 필터 목록
   const extras = catList.slice(state.filterCount).filter(x => state.customFilters[state.activeMainTab].includes(x));
-  
   const displayCats = ['전체', ...topList, ...extras];
 
   displayCats.forEach(x => {
@@ -693,12 +737,8 @@ function num(v){
   return parseFloat(String(v).replace(/[^0-9.\\-]/g,''))||0;
 }
 
-// 필터링 및 정렬된 리스트 반환
 function getFilteredAndSortedSectors() {
-  // 1. 현재 메인 탭에 해당하는 종목만 필터링
   let list = state.data.sectors.filter(s => s.type === state.activeMainTab);
-  
-  // 2. 전체 정렬 적용 (activeSort 기준)
   const sortKey = state.activeSort;
   if (sortKey !== '기본순위') {
     const fn = {
@@ -710,22 +750,15 @@ function getFilteredAndSortedSectors() {
     if (fn) list.sort(fn);
   }
 
-  // 3. 서브 필터가 선택된 경우, 해당 항목을 최상단으로 이동
   if (state.activeSubFilter !== '전체') {
     const selectedItems = [];
     const restItems = [];
-    
     list.forEach(item => {
-      if (item.sector === state.activeSubFilter) {
-        selectedItems.push(item);
-      } else {
-        restItems.push(item);
-      }
+      if (item.sector === state.activeSubFilter) selectedItems.push(item);
+      else restItems.push(item);
     });
-    // 선택된 항목들이 위에 오고 나머지가 그 밑으로 깔림
     list = [...selectedItems, ...restItems];
   }
-  
   return list;
 }
 
@@ -748,7 +781,7 @@ function previewHTML(sec){
 
 function renderSectorList(){
   el.sectorList.innerHTML='';
-  const items = getFilteredAndSortedSectors(); // 정렬 규칙에 따른 리스트 획득
+  const items = getFilteredAndSortedSectors();
   
   items.forEach((sec,idx)=>{
     const open=state.openIndex===idx;
@@ -776,11 +809,8 @@ function renderSectorList(){
       state.openIndex=state.openIndex===idx?null:idx;
       renderAll();
     };
-    
-    // 스타일 적용
     item.style.background = getBgVar(sec.sector);
     
-    // 활성화된 섹터 강조
     if(state.activeSubFilter !== '전체' && sec.sector === state.activeSubFilter) {
       item.style.borderColor = getColorVar(sec.sector);
       item.style.boxShadow = `0 0 0 1px ${getColorVar(sec.sector)} inset`;
@@ -806,7 +836,6 @@ function renderSettingExtras() {
     const container = document.getElementById(containerId);
     container.innerHTML = '';
     const list = state.data.categories[type] || [];
-    // 기본 표시 개수 이후의 항목들만 추가 대상으로 표시
     const extraCandidates = list.slice(state.filterCount); 
 
     if (extraCandidates.length === 0) {
@@ -818,7 +847,6 @@ function renderSettingExtras() {
       const btn = document.createElement('button');
       const isActive = state.customFilters[type].includes(cat);
       btn.className = 'pill-toggle' + (isActive ? ' active' : '');
-      // 순위 표시 없이 카테고리 이름만 표시
       btn.textContent = cat;
       btn.onclick = () => {
         if (state.customFilters[type].includes(cat)) {
@@ -837,11 +865,32 @@ function renderSettingExtras() {
   renderGroup('업종', 'extraSectorList');
 }
 
+// API UI 상태 토글 함수 (저장&연결 성공 시 표 형태, 아니면 입력폼)
+function renderApiUI() {
+  if (isApiConnected && storedKeys.appKey) {
+    el.apiSavedGroup.style.display = 'block';
+    el.apiFormGroup.style.display = 'none';
+    el.dispCano.textContent = el.cano.value || '-';
+    el.dispAppKey.textContent = maskKey(storedKeys.appKey);
+    el.dispEnv.textContent = el.envType.value === 'live' ? '실계좌' : '모의투자';
+  } else {
+    el.apiSavedGroup.style.display = 'none';
+    el.apiFormGroup.style.display = 'block';
+  }
+}
+
+// 수정하기 버튼 클릭 시
+el.editApiBtn.onclick = () => {
+  isApiConnected = false;
+  localStorage.setItem('isApiConnected', 'false');
+  renderApiUI();
+};
+
 function showSettings(){
   el.overlay.classList.add('show');
   el.overlay.setAttribute('aria-hidden','false');
   loadConfig();
-  renderSettingExtras(); // 설정 창 열릴 때 동적 6~10위 항목 생성
+  renderSettingExtras();
 }
 function hideSettings(){
   el.overlay.classList.remove('show');
@@ -852,7 +901,6 @@ function saveConfig(){
   const count = parseInt(el.filterCount.value);
   state.filterCount = isNaN(count) || count < 1 ? 5 : Math.min(count, 10);
   
-  // 사용자가 마스킹된 텍스트가 아닌 다른 값을 직접 입력했을 때만 실제 키 업데이트
   const inputKey = el.appKey.value.trim();
   const inputSecret = el.appSecret.value.trim();
 
@@ -866,24 +914,13 @@ function saveConfig(){
   const data={
     cano:el.cano.value.trim(),
     prdt:el.prdt.value.trim(),
-    appKey: storedKeys.appKey, // 실제 키를 로컬 스토리지에 저장
+    appKey: storedKeys.appKey, 
     appSecret: storedKeys.appSecret, 
     envType:el.envType.value
   };
   localStorage.setItem('kis_config',JSON.stringify(data));
   localStorage.setItem('filterCount', state.filterCount);
   localStorage.setItem('customFilters', JSON.stringify(state.customFilters));
-  
-  el.connectionStatus.textContent='✅ 설정 저장됨';
-  el.connectionStatus.style.color='#10b981';
-  setTimeout(()=>{
-    el.connectionStatus.textContent='연결 양호';
-    el.connectionStatus.style.color='';
-  }, 3000);
-  
-  // 갱신된 마스킹 처리 적용을 위해 다시 로드
-  loadConfig();
-  renderAll(); // 추가된 필터 UI에 반영
 }
 
 function loadConfig(){
@@ -895,24 +932,27 @@ function loadConfig(){
   el.cano.value=data.cano||'';
   el.prdt.value=data.prdt||'';
   
-  // 실제 키 메모리에 담아두기
   storedKeys.appKey = data.appKey || '';
   storedKeys.appSecret = data.appSecret || '';
   
-  // 입력 필드에는 마스킹된 형태로 렌더링
   el.appKey.value = maskKey(storedKeys.appKey);
   el.appSecret.value = maskKey(storedKeys.appSecret);
   
   el.envType.value=data.envType||'live';
+  
+  renderApiUI();
 }
 
 function clearConfig(){
   localStorage.removeItem('kis_config');
   localStorage.removeItem('filterCount');
   localStorage.removeItem('customFilters');
+  localStorage.removeItem('isApiConnected');
+  
   state.filterCount = 5;
   state.customFilters = { '테마': [], '업종': [] };
   storedKeys = { appKey: '', appSecret: '' };
+  isApiConnected = false;
   
   loadConfig();
   renderSettingExtras();
@@ -922,15 +962,28 @@ function clearConfig(){
 
 async function testConn(){
   el.connectionStatus.textContent='테스트중...';
+  // 테스트 시, 폼에 입력된 값들을 먼저 로컬에 저장합니다.
+  saveConfig(); 
+  
   try{
     if(!storedKeys.appKey || !storedKeys.appSecret) {
       throw new Error('API 키 입력 필요');
     }
-    // CORS나 네트워크 이슈를 방지하고 순수하게 API 연결성능을 흉내내는 신뢰도 높은 더미 호출
+    // 더미 호출로 성공 여부 흉내
     await fetch('https://dummyjson.com/http/200', {cache:'no-store'});
+    
+    // 성공 처리
+    isApiConnected = true;
+    localStorage.setItem('isApiConnected', 'true');
+    renderApiUI();
+    
     el.connectionStatus.textContent='✅ API 연결 성공';
     el.connectionStatus.style.color='#10b981';
   }catch(e){
+    isApiConnected = false;
+    localStorage.setItem('isApiConnected', 'false');
+    renderApiUI();
+    
     el.connectionStatus.textContent='❌ ' + e.message;
     el.connectionStatus.style.color='#ef4444';
   }
@@ -984,8 +1037,6 @@ el.refreshBtn.onclick=fetchReal;
 el.settingBtn.onclick=showSettings;
 el.closeSettingBtn.onclick=hideSettings;
 el.overlay.addEventListener('click',e=>{if(e.target===el.overlay) hideSettings()});
-el.saveSettingBtn.onclick=saveConfig;
-el.loadSettingBtn.onclick=loadConfig;
 el.clearSettingBtn.onclick=clearConfig;
 el.testSettingBtn.onclick=testConn;
 
