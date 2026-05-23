@@ -6,242 +6,102 @@
 <title>주도섹터 앱</title>
 <style>
 :root{
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --text: #0f172a;
-  --muted: #64748b;
-  --line: #e2e8f0;
-  --accent: #0f172a;
-  --text-on-accent: #ffffff;
-  --accent2: #2563eb;
-  --shadow: 0 8px 24px rgba(15,23,42,.06);
-  --radius: 20px;
-  --chip: #f1f5f9;
-  --preview: #f8fafc;
-  --preview2: #ffffff;
-  --bg-mix: 15%;
-  --c-1: #93c5fd; --c-2: #fca5a5; --c-3: #fde047; --c-4: #86efac;
-  --c-5: #d8b4fe; --c-6: #fdba74; --c-7: #67e8f9; --c-8: #f9a8d4;
-  --text-on-sec: #0f172a;
+  --bg:#f8fafc; --card:#fff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
+  --accent:#0f172a; --text-on-accent:#fff; --accent2:#2563eb; --shadow:0 8px 24px rgba(15,23,42,.06);
+  --radius:20px; --chip:#f1f5f9; --preview:#f8fafc; --preview2:#fff; --bg-mix:15%;
+  --c-1:#93c5fd; --c-2:#fca5a5; --c-3:#fde047; --c-4:#86efac; --c-5:#d8b4fe; --c-6:#fdba74; --c-7:#67e8f9; --c-8:#f9a8d4;
+  --text-on-sec:#0f172a;
 }
 html[data-theme="dark"]{
-  --bg: #0f172a;
-  --card: #1e293b;
-  --text: #f8fafc;
-  --muted: #94a3b8;
-  --line: #334155;
-  --accent: #3b82f6; 
-  --text-on-accent: #ffffff;
-  --accent2: #60a5fa;
-  --shadow: 0 10px 26px rgba(0,0,0,.4);
-  --chip: #334155;
-  --preview: #0f172a;
-  --preview2: #1e293b;
-  --bg-mix: 25%;
-  --c-1: #60a5fa; --c-2: #f87171; --c-3: #fde047; --c-4: #4ade80;
-  --c-5: #c084fc; --c-6: #fb923c; --c-7: #22d3ee; --c-8: #f472b6;
-  --text-on-sec: #0f172a;
+  --bg:#0f172a; --card:#1e293b; --text:#f8fafc; --muted:#94a3b8; --line:#334155;
+  --accent:#3b82f6; --text-on-accent:#fff; --accent2:#60a5fa; --shadow:0 10px 26px rgba(0,0,0,.4);
+  --chip:#334155; --preview:#0f172a; --preview2:#1e293b; --bg-mix:25%;
+  --c-1:#60a5fa; --c-2:#f87171; --c-3:#fde047; --c-4:#4ade80; --c-5:#c084fc; --c-6:#fb923c; --c-7:#22d3ee; --c-8:#f472b6;
+  --text-on-sec:#0f172a;
 }
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  transition: background-color 0.2s, color 0.2s;
-}
-.app{
-  max-width:430px;
-  margin:0 auto;
-  min-height:100vh;
-  padding:12px 12px 16px;
-  display:flex;
-  flex-direction:column;
-  gap:12px
-}
-.topbar{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  padding-top:2px
-}
-.topline{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:10px
-}
-.title h1{
-  margin:0;
-  font-size:22px;
-  letter-spacing:-.03em;
-  line-height:1.1
-}
-.actions{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  flex-wrap:nowrap;
-  justify-content:flex-end;
-  white-space:nowrap
-}
-button{
-  border:0;
-  border-radius:999px;
-  padding:10px 13px;
-  font-weight:800;
-  font-size:12px;
-  cursor:pointer;
-  color:var(--text);
-  background:var(--card);
-  box-shadow:var(--shadow);
-  border:1px solid var(--line);
-  transition: all 0.15s;
-}
-button:active { transform: scale(0.96); }
-button.primary{
-  background:var(--accent);
-  color:var(--text-on-accent);
-  border-color:transparent
-}
-.iconbtn{
-  width:40px; height:40px; padding:0; display:grid; place-items:center; border-radius:50%
-}
-.status{
-  display:flex; justify-content:flex-end; gap:12px; font-size:11px;
-  color:var(--muted); padding:0 2px; transition: color 0.2s;
-}
-.card{
-  background:var(--card); border:1px solid var(--line);
-  border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden
-}
-.card-h{
-  padding:14px 14px 0; display:flex; justify-content:space-between; align-items:center; gap:10px
-}
-.card-h h2{ margin:0; font-size:15px }
-.pill{
-  font-size:11px; padding:6px 9px; border-radius:999px;
-  background:rgba(37,99,235,.1); color:var(--accent2); font-weight:700
-}
-.tabs { display: flex; gap: 8px; padding: 14px 14px 0; }
-.tab {
-  flex: 1; text-align: center; padding: 10px; border-radius: 12px;
-  font-size: 13px; font-weight: 800; background: var(--chip);
-  color: var(--muted); box-shadow: none;
-}
-.tab.active { background: var(--accent); color: var(--text-on-accent); border-color: transparent; }
-.filters,.sortrow{
-  display:flex; gap:8px; overflow:auto; padding:12px 14px 0; scrollbar-width:none
-}
+body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Noto Sans KR,sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:430px;margin:0 auto;min-height:100vh;padding:12px 12px 16px;display:flex;flex-direction:column;gap:12px}
+.topbar{display:flex;flex-direction:column;gap:10px;padding-top:2px}
+.topline{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.title h1{margin:0;font-size:22px;letter-spacing:-.03em;line-height:1.1}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:nowrap;justify-content:flex-end}
+button{border:0;border-radius:999px;padding:10px 13px;font-weight:800;font-size:12px;cursor:pointer;color:var(--text);background:var(--card);box-shadow:var(--shadow);border:1px solid var(--line);transition:all .15s}
+button:active{transform:scale(.96)}
+button.primary{background:var(--accent);color:var(--text-on-accent);border-color:transparent}
+.iconbtn{width:40px;height:40px;padding:0;display:grid;place-items:center;border-radius:50%}
+.status{display:flex;justify-content:flex-end;gap:12px;font-size:11px;color:var(--muted);padding:0 2px;transition:color .2s;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card-h{padding:14px 14px 0;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card-h h2{margin:0;font-size:15px}
+.pill{font-size:11px;padding:6px 9px;border-radius:999px;background:rgba(37,99,235,.1);color:var(--accent2);font-weight:700}
+.tabs{display:flex;gap:8px;padding:14px 14px 0}
+.tab{flex:1;text-align:center;padding:10px;border-radius:12px;font-size:13px;font-weight:800;background:var(--chip);color:var(--muted);box-shadow:none}
+.tab.active{background:var(--accent);color:var(--text-on-accent);border-color:transparent}
+.filters,.sortrow{display:flex;gap:8px;overflow:auto;padding:12px 14px 0}
 .filters::-webkit-scrollbar,.sortrow::-webkit-scrollbar{display:none}
-.filter,.sort{
-  white-space:nowrap; padding:9px 13px; border-radius:999px;
-  border:1px solid transparent; font-size:12px; font-weight:800; color:var(--text); box-shadow:none
-}
-.sort{ background:var(--chip); border-color:var(--line); }
-.sort.active{ background:var(--accent); color:var(--text-on-accent); border-color:transparent }
-.list{ display:flex; flex-direction:column; gap:10px; padding:12px 14px 14px }
-.item{
-  border:1px solid var(--line); border-radius:18px; overflow:hidden;
-  background:var(--card); box-shadow: 0 4px 14px rgba(0,0,0,.03);
-}
-html[data-theme="dark"] .item { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
-.item-main{
-  display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; padding:12px; cursor:pointer
-}
-.rank{
-  width:32px; height:32px; border-radius:10px; background:color-mix(in srgb, var(--text) 10%, transparent);
-  display:grid; place-items:center; font-size:12px; font-weight:900; color:var(--text)
-}
+.filter,.sort{white-space:nowrap;padding:9px 13px;border-radius:999px;border:1px solid transparent;font-size:12px;font-weight:800;color:var(--text);box-shadow:none}
+.sort{background:var(--chip);border-color:var(--line)}
+.sort.active,.filter.active{background:var(--accent);color:var(--text-on-accent);border-color:transparent}
+.list{display:flex;flex-direction:column;gap:10px;padding:12px 14px 14px}
+.item{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card);box-shadow:0 4px 14px rgba(0,0,0,.03)}
+html[data-theme="dark"] .item{box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.item-main{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:12px;cursor:pointer}
+.rank{width:32px;height:32px;border-radius:10px;background:color-mix(in srgb, var(--text) 10%, transparent);display:grid;place-items:center;font-size:12px;font-weight:900;color:var(--text)}
 .item-info{min-width:0}
-.item-info .row1{ display:flex; align-items:center; gap:8px; flex-wrap:wrap }
-.item-info .name{ font-size:15px; font-weight:900; letter-spacing:-.02em; color:var(--text) }
-.badge{
-  font-size:11px; padding:4px 8px; border-radius:999px;
-  background:color-mix(in srgb, var(--text) 8%, transparent); color:var(--text);
-  border:1px solid color-mix(in srgb, var(--text) 15%, transparent);
-}
-.item-info .row2{
-  margin-top:4px; display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:12px
-}
-.arrow{
-  width:34px; height:34px; border-radius:50%; background:color-mix(in srgb, var(--text) 5%, transparent);
-  display:grid; place-items:center; font-weight:900; border:1px solid var(--line)
-}
+.item-info .row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.item-info .name{font-size:15px;font-weight:900;letter-spacing:-.02em;color:var(--text)}
+.badge{font-size:11px;padding:4px 8px;border-radius:999px;background:color-mix(in srgb, var(--text) 8%, transparent);color:var(--text);border:1px solid color-mix(in srgb, var(--text) 15%, transparent)}
+.item-info .row2{margin-top:4px;display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px}
+.arrow{width:34px;height:34px;border-radius:50%;background:color-mix(in srgb, var(--text) 5%, transparent);display:grid;place-items:center;font-weight:900;border:1px solid var(--line)}
 .item.open .item-preview{display:block}
-.item-preview{ display:none; border-top:1px solid var(--line); background:var(--preview); padding:12px }
-.preview-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px }
-.pbox{ background:var(--preview2); border:1px solid var(--line); border-radius:14px; padding:10px }
-.pbox .k{ font-size:11px; color:var(--muted); margin-bottom:5px }
-.pbox .v{ font-size:14px; font-weight:800; letter-spacing:-.01em; color:var(--text); }
-.preview-note{ margin-top:10px; font-size:12px; color:var(--text); line-height:1.5 }
-.miniList{ display:flex; flex-direction:column; gap:8px; padding:14px }
-.miniRow{
-  display:flex; justify-content:space-between; gap:8px; align-items:center;
-  padding:11px 12px; border-radius:16px; background:var(--chip); border:1px solid var(--line)
-}
-.miniRow b{font-size:14px; color:var(--text)}
+.item-preview{display:none;border-top:1px solid var(--line);background:var(--preview);padding:12px}
+.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pbox{background:var(--preview2);border:1px solid var(--line);border-radius:14px;padding:10px}
+.pbox .k{font-size:11px;color:var(--muted);margin-bottom:5px}
+.pbox .v{font-size:14px;font-weight:800;letter-spacing:-.01em;color:var(--text)}
+.preview-note{margin-top:10px;font-size:12px;color:var(--text);line-height:1.5}
+.miniList{display:flex;flex-direction:column;gap:8px;padding:14px}
+.miniRow{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 12px;border-radius:16px;background:var(--chip);border:1px solid var(--line)}
+.miniRow b{font-size:14px;color:var(--text)}
 .miniRow span{font-size:12px;color:var(--muted)}
-.overlay{
-  position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:flex-end; justify-content:center; z-index:30
-}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:30}
 .overlay.show{display:flex}
-.sheet{
-  width:min(430px,100%); background:var(--card); border-radius:24px 24px 0 0;
-  border:1px solid var(--line); box-shadow:0 -16px 32px rgba(0,0,0,.3); padding:14px; max-height:85vh; overflow:auto
-}
-.sheet-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px }
+.sheet{width:min(430px,100%);background:var(--card);border-radius:24px 24px 0 0;border:1px solid var(--line);box-shadow:0 -16px 32px rgba(0,0,0,.3);padding:14px;max-height:85vh;overflow:auto}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
 .sheet-head h3{margin:0;font-size:16px}
 .field{margin-bottom:12px}
-.field label{ display:block; font-size:12px; font-weight:800; margin:0 0 6px }
-.field input,.field select{
-  width:100%; border:1px solid var(--line); border-radius:14px; padding:12px 14px;
-  background:var(--bg); color:var(--text); font-size:14px; outline:none
-}
-.field input:focus,.field select:focus{ border-color: var(--accent2); }
-.btnrow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:4px }
-.pill-toggle {
-  padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line);
-  background: var(--chip); color: var(--text); font-size: 12px; font-weight: 800;
-  cursor: pointer; transition: all 0.2s; box-shadow: none;
-}
-.pill-toggle.active { background: var(--accent2); color: #fff; border-color: var(--accent2); }
-.api-saved-card {
-  display: none; padding: 16px; background: var(--chip); border-radius: 14px;
-  margin-bottom: 12px; border: 1px solid var(--line);
-}
-.api-table { width: 100%; font-size: 12px; border-collapse: collapse; }
-.api-table td { padding: 6px 0; color: var(--text); }
-.api-table td:first-child { color: var(--muted); width: 80px; }
-.api-table td:last-child { font-weight: 700; text-align: right; }
-.warn{
-  border-left:4px solid #f59e0b; background:rgba(245,158,11,.1); padding:10px 12px;
-  border-radius:14px; margin-top:12px; color:var(--text); font-size:12px; line-height:1.45
-}
-.footer{ color:var(--muted); text-align:center; font-size:11px; padding-top:2px }
-@media (max-width:390px){
-  .item-main{grid-template-columns:auto 1fr}
-  .arrow{display:none}
-  .title h1{font-size:20px}
-}
+.field label{display:block;font-size:12px;font-weight:800;margin:0 0 6px}
+.field input,.field select{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--bg);color:var(--text);font-size:14px;outline:none}
+.field input:focus,.field select:focus{border-color:var(--accent2)}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.pill-toggle{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--chip);color:var(--text);font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:none}
+.pill-toggle.active{background:var(--accent2);color:#fff;border-color:var(--accent2)}
+.api-saved-card{display:none;padding:16px;background:var(--chip);border-radius:14px;margin-bottom:12px;border:1px solid var(--line)}
+.api-table{width:100%;font-size:12px;border-collapse:collapse}
+.api-table td{padding:6px 0;color:var(--text)}
+.api-table td:first-child{color:var(--muted);width:80px}
+.api-table td:last-child{font-weight:700;text-align:right}
+.warn{border-left:4px solid #f59e0b;background:rgba(245,158,11,.1);padding:10px 12px;border-radius:14px;margin-top:12px;color:var(--text);font-size:12px;line-height:1.45}
+.footer{color:var(--muted);text-align:center;font-size:11px;padding-top:2px}
+@media(max-width:390px){.item-main{grid-template-columns:auto 1fr}.arrow{display:none}.title h1{font-size:20px}}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="topbar">
     <div class="topline">
-      <div class="title">
-        <h1>주도섹터</h1>
-      </div>
+      <div class="title"><h1>주도섹터 앱</h1></div>
       <div class="actions">
-        <button id="themeBtn" aria-label="테마 변경" title="테마 변경">🌙</button>
-        <button id="refreshBtn" class="primary" aria-label="새로고침" title="새로고침">⏳ 30</button>
-        <button id="settingBtn" class="iconbtn" aria-label="환경설정" title="환경설정">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.3l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 19.71 7l-.06.06A1.65 1.65 0 0 0 19.4 9c.38.31.77.71 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-        </button>
+        <button id="themeBtn" class="iconbtn" aria-label="theme">☾</button>
+        <button id="refreshBtn" class="primary" aria-label="refresh">30</button>
+        <button id="settingBtn" class="iconbtn" aria-label="settings">⚙</button>
       </div>
     </div>
-    <div class="status"><div id="lastUpdated">업데이트 대기중</div><div id="connectionStatus">연결 대기중</div></div>
+    <div class="status">
+      <div id="lastUpdated">최종 갱신: -</div>
+      <div id="connectionStatus">연결 대기중</div>
+    </div>
   </div>
 
   <div class="card">
@@ -255,557 +115,264 @@ html[data-theme="dark"] .item { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
   </div>
 
   <div class="card">
-    <div class="card-h"><h2>실시간 상위 종목</h2><span class="pill">웹 데이터</span></div>
+    <div class="card-h"><h2>상위 종목</h2><span class="pill">TOP</span></div>
     <div class="miniList" id="topList"></div>
   </div>
 
-  <div class="footer">실데이터 요청이 차단되면 샘플 데이터로 자동 대체됩니다.</div>
+  <div class="footer">관리자 1회 저장 후 모든 사용자가 공용 API를 사용</div>
 </div>
 
 <div class="overlay" id="settingsOverlay" aria-hidden="true">
   <div class="sheet">
-    <div class="sheet-head"><h3>환경설정 (클라우드 동기화 ☁️)</h3><button id="closeSettingBtn">닫기</button></div>
-    
-    <div class="field">
-      <label>테마 추가 (6~10위)</label>
-      <div id="extraThemeList" class="btnrow"></div>
+    <div class="sheet-head">
+      <h3>설정</h3>
+      <button id="closeSettingBtn">닫기</button>
     </div>
-    <div class="field">
-      <label>업종 추가 (6~10위)</label>
-      <div id="extraSectorList" class="btnrow"></div>
-    </div>
-
-    <div class="field">
-      <label>하위 분류 기본 표시 개수 (1~10)</label>
-      <input type="number" id="filterCount" min="1" max="10" placeholder="기본 5개" />
-    </div>
-
-    <hr style="border:0; border-top:1px solid var(--line); margin:16px 0;">
 
     <div id="apiSavedGroup" class="api-saved-card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-        <span style="font-size:14px; font-weight:800; color:var(--text);">✅ 클라우드 API 연동 완료</span>
-        <button id="editApiBtn" style="padding:6px 12px; font-size:12px;">수정하기</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-size:14px;font-weight:800;color:var(--text)">공용 API 상태</span>
+        <button id="editApiBtn" style="padding:6px 12px;font-size:12px">수정</button>
       </div>
       <table class="api-table">
-        <tr><td>계좌번호</td><td id="dispCano"></td></tr>
-        <tr><td>App Key</td><td id="dispAppKey"></td></tr>
-        <tr><td>환경</td><td id="dispEnv"></td></tr>
+        <tr><td>계좌</td><td id="dispCano">-</td></tr>
+        <tr><td>App Key</td><td id="dispAppKey">-</td></tr>
+        <tr><td>환경</td><td id="dispEnv">-</td></tr>
       </table>
     </div>
 
     <div id="apiFormGroup">
-      <div class="field"><label>계좌번호</label><input type="text" id="cano" placeholder="예: 44614025" /></div>
-      <div class="field"><label>상품코드</label><input type="text" id="prdt" placeholder="예: 01" /></div>
-      <div class="field"><label>App Key</label><input type="password" id="appKey" placeholder="API Key 입력" /></div>
-      <div class="field"><label>App Secret</label><input type="password" id="appSecret" placeholder="API Secret 입력" /></div>
-      <div class="field"><label>환경</label><select id="envType"><option value="live">실계좌</option><option value="paper">모의투자</option></select></div>
-      <div class="btnrow">
-        <button id="testSettingBtn" class="primary" style="flex:1;">클라우드 저장 및 연결 테스트</button>
+      <div class="field"><label>계좌</label><input type="text" id="cano" placeholder="44614025"></div>
+      <div class="field"><label>상품코드</label><input type="text" id="prdt" placeholder="01"></div>
+      <div class="field"><label>App Key</label><input type="password" id="appKey" placeholder="API Key"></div>
+      <div class="field"><label>App Secret</label><input type="password" id="appSecret" placeholder="API Secret"></div>
+      <div class="field">
+        <label>환경</label>
+        <select id="envType">
+          <option value="live">실계좌</option>
+          <option value="paper">모의투자</option>
+        </select>
       </div>
-    </div>
-
-    <div class="btnrow" style="margin-top:10px;">
-      <button id="clearSettingBtn" style="width:100%;">모든 설정 초기화</button>
-    </div>
-
-    <div class="warn">
-      ⚠️ <b>중요 경고</b><br>
-      현재 구현은 시연을 위해 데이터베이스를 통해 모든 접속자 브라우저로 API Key를 공유합니다.<br>
-      누구나 개발자 도구를 통해 App Secret을 훔쳐 금융 사고를 낼 수 있으므로, <b>실제 증권사 키를 절대로 입력하지 마세요.</b><br>
-      상용 서비스는 반드시 백엔드 서버(Node.js 등)를 별도로 구축하여 프록시 형태로 데이터를 제공해야 합니다.
+      <div class="btnrow">
+        <button id="testSettingBtn" class="primary" style="flex:1">연결 확인</button>
+      </div>
+      <div class="btnrow" style="margin-top:10px">
+        <button id="clearSettingBtn" style="width:100%">초기화</button>
+      </div>
+      <div class="warn"><b>주의</b><br>실제 운영에서는 App Secret을 프론트엔드에 직접 두지 말고 서버 프록시에서 관리해야 안전합니다.</div>
     </div>
   </div>
 </div>
 
 <script type="module">
-// Firebase 연동을 위한 모듈 임포트
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
-// 글로벌 설정 동기화를 위한 Firebase 초기화
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-let app = null, auth = null, db = null;
+const SERVER_API_BASE = 'https://YOUR-SERVER-DOMAIN.com';
+const firebaseConfig = typeof firebaseconfig !== 'undefined' ? JSON.parse(firebaseconfig) : {};
+const appId = typeof appid !== 'undefined' ? appid : 'default-app-id';
+let app=null, auth=null, db=null;
+if(Object.keys(firebaseConfig).length>0){ app=initializeApp(firebaseConfig); auth=getAuth(app); db=getFirestore(app); }
 
-if (Object.keys(firebaseConfig).length > 0) {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
+const SAMPLE={categories:{'테마':['AI','2차전지','반도체','바이오','로봇'], '업종':['IT','소재','금융','에너지','헬스케어']},sorts:['volume','roi','marketCap'],sectors:[{type:'테마',name:'AI',sector:'AI',reason:'수요 확대',chg:'29.9',volume:'5,362',marketCap:'1.6',roi:'29.9',stocks:[{name:'A',price:'102,000',chg:'29.9'},{name:'B',price:'11,900',chg:'8.1'}]},{type:'테마',name:'2차전지',sector:'2차전지',reason:'배터리 기대감',chg:'8.5',volume:'8.7',marketCap:'38',roi:'12.5',stocks:[{name:'C',price:'121,000',chg:'12.5'},{name:'D',price:'238,000',chg:'11.2'}]},{type:'업종',name:'IT',sector:'IT',reason:'클라우드',chg:'6.8',volume:'4.1',marketCap:'24',roi:'4.1',stocks:[{name:'E',price:'287,000',chg:'4.5'},{name:'F',price:'105,000',chg:'5.2'}]}],top:[{name:'MLCC',cat:'AI',chg:'29.9',vol:'5,362'},{name:'ESS',cat:'2차전지',chg:'12.5',vol:'8.7'},{name:'HBM',cat:'반도체',chg:'9.7',vol:'12.5'}]};
+
+let state={theme:localStorage.getItem('theme')||'light',timer:null,data:SAMPLE,countdown:30,activeMainTab:'테마',activeSubFilter:'',activeSort:'volume',filterCount:5,customFilters:{'테마':[],'업종':[]},openIndex:null};
+let stored={cano:'',prdt:'',envType:'live',appKey:'',isReady:false,lastSync:'-'}; 
+let isApiConnected=false;
+
+const el={themeBtn:document.getElementById('themeBtn'),refreshBtn:document.getElementById('refreshBtn'),settingBtn:document.getElementById('settingBtn'),lastUpdated:document.getElementById('lastUpdated'),connectionStatus:document.getElementById('connectionStatus'),mainTabs:document.querySelectorAll('.tab'),subFilters:document.getElementById('subFilters'),sortrow:document.getElementById('sortrow'),sectorList:document.getElementById('sectorList'),topList:document.getElementById('topList'),overlay:document.getElementById('settingsOverlay'),closeSettingBtn:document.getElementById('closeSettingBtn'),testSettingBtn:document.getElementById('testSettingBtn'),clearSettingBtn:document.getElementById('clearSettingBtn'),editApiBtn:document.getElementById('editApiBtn'),apiFormGroup:document.getElementById('apiFormGroup'),apiSavedGroup:document.getElementById('apiSavedGroup'),dispCano:document.getElementById('dispCano'),dispAppKey:document.getElementById('dispAppKey'),dispEnv:document.getElementById('dispEnv'),cano:document.getElementById('cano'),prdt:document.getElementById('prdt'),appKey:document.getElementById('appKey'),appSecret:document.getElementById('appSecret'),envType:document.getElementById('envType')};
+
+function maskKey(v){ if(!v) return ''; if(v.length<=4) return '*'.repeat(v.length); return v.substring(0,4)+'*'.repeat(v.length-4); }
+function themeApply(t){ document.documentElement.setAttribute('data-theme',t); el.themeBtn.textContent=t==='light'?'☾':'☀'; localStorage.setItem('theme',t); }
+
+function setStatus(text, color=''){ el.connectionStatus.textContent=text; el.connectionStatus.style.color=color; }
+function renderApiUI(){
+  el.apiSavedGroup.style.display='block';
+  el.apiFormGroup.style.display='none';
+  el.dispCano.textContent=stored.cano||'-';
+  el.dispAppKey.textContent=stored.appKey?maskKey(stored.appKey):'-';
+  el.dispEnv.textContent=stored.envType==='live'?'실계좌':'모의투자';
+  setStatus(isApiConnected?'✅ API 정상 연결':'❌ API 연결 실패', isApiConnected?'#10b981':'#ef4444');
 }
+function showSettings(){ el.overlay.classList.add('show'); el.overlay.setAttribute('aria-hidden','false'); }
+function hideSettings(){ el.overlay.classList.remove('show'); el.overlay.setAttribute('aria-hidden','true'); }
 
-const REFRESH_MS=30000;
-const THEMES={light:'화이트 테마',dark:'블랙 테마'};
-
-// 모의용 샘플 데이터 (MLCC 테마 1위 반영)
-const SAMPLE={
-  market:{core:'반도체',tone:'강세',alert:'3건',refresh:'30초'},
-  categories:{
-    '테마': ['MLCC','2차전지','로봇','바이오','AI','우주항공','원전','신재생','보안','초전도체'],
-    '업종': ['반도체','자동차','금융','제약','철강','통신','화학','조선','건설','IT소프트웨어']
-  },
-  sorts:['기본순위','거래대금','수익률','시총','변동성'],
-  sectors:[
-    {type:'테마',name:'삼화콘덴서',sector:'MLCC',reason:'AI/전장용 수요 급증',chg:'+29.9%',volume:'5,362억',marketCap:'1.6조',roi:'+29.9%',stocks:[{name:'삼화콘덴서',price:'102,000',chg:'+29.9%'},{name:'아비코전자',price:'11,900',chg:'+8.1%'}]},
-    {type:'테마',name:'에코프로',sector:'2차전지',reason:'ESS·리사이클 기대',chg:'+8.5%',volume:'8.7조',marketCap:'38조',roi:'+12.5%',stocks:[{name:'에코프로',price:'121,000',chg:'+12.5%'},{name:'에코프로비엠',price:'238,000',chg:'+11.2%'}]},
-    {type:'테마',name:'레인보우로보틱스',sector:'로봇',reason:'자동화 투자 확대',chg:'+6.1%',volume:'1.3조',marketCap:'11조',roi:'+5.8%',stocks:[{name:'레인보우로보틱스',price:'251,000',chg:'+5.8%'},{name:'두산로보틱스',price:'64,200',chg:'+2.9%'}]},
-    {type:'테마',name:'알테오젠',sector:'바이오',reason:'플랫폼 기대',chg:'+6.8%',volume:'4.1조',marketCap:'24조',roi:'+4.1%',stocks:[{name:'알테오젠',price:'287,000',chg:'+4.5%'},{name:'리가켐바이오',price:'105,000',chg:'+5.2%'}]},
-    {type:'테마',name:'루닛',sector:'AI',reason:'의료 AI 공급 확대',chg:'+11.2%',volume:'2.1조',marketCap:'1.5조',roi:'+8.1%',stocks:[{name:'루닛',price:'52,000',chg:'+8.1%'},{name:'뷰노',price:'38,000',chg:'+5.5%'}]},
-    {type:'테마',name:'한화에어로스페이스',sector:'우주항공',reason:'수출 모멘텀',chg:'+3.4%',volume:'1.8조',marketCap:'10조',roi:'+2.1%',stocks:[{name:'한화에어로',price:'210,000',chg:'+2.1%'},{name:'LIG넥스원',price:'160,000',chg:'+1.5%'}]},
-    {type:'테마',name:'두산에너빌리티',sector:'원전',reason:'해외 수주 기대',chg:'+5.5%',volume:'3.2조',marketCap:'14조',roi:'+3.2%',stocks:[{name:'두산에너빌리티',price:'18,500',chg:'+3.2%'},{name:'한전기술',price:'75,000',chg:'+4.1%'}]},
-    {type:'테마',name:'에코프로비엠',sector:'2차전지',reason:'양극재 수출 회복',chg:'+4.5%',volume:'4.5조',marketCap:'29조',roi:'+11.2%',stocks:[{name:'에코프로비엠',price:'238,000',chg:'+11.2%'},{name:'엘앤에프',price:'156,000',chg:'+2.7%'}]},
-    {type:'테마',name:'두산로보틱스',sector:'로봇',reason:'협동로봇 점유율 1위',chg:'+4.9%',volume:'0.9조',marketCap:'7조',roi:'+2.8%',stocks:[{name:'두산로보틱스',price:'64,200',chg:'+2.9%'},{name:'에스피지',price:'34,750',chg:'+4.1%'}]},
-    {type:'테마',name:'HLB',sector:'바이오',reason:'FDA 승인 재도전',chg:'+4.8%',volume:'3.5조',marketCap:'10조',roi:'+3.2%',stocks:[{name:'HLB',price:'91,800',chg:'+3.2%'},{name:'HLB생명과학',price:'12,000',chg:'+1.5%'}]},
-    {type:'테마',name:'리가켐바이오',sector:'바이오',reason:'ADC 플랫폼 기술수출',chg:'+5.1%',volume:'1.2조',marketCap:'8조',roi:'+5.2%',stocks:[{name:'리가켐바이오',price:'105,000',chg:'+5.2%'},{name:'레고켐바이오',price:'45,000',chg:'+1.1%'}]},
-    
-    // 업종 소속
-    {type:'업종',name:'삼성전자',sector:'반도체',reason:'메모리 턴어라운드',chg:'+9.7%',volume:'12.5조',marketCap:'458조',roi:'+1.8%',stocks:[{name:'삼성전자',price:'72,000',chg:'+1.8%'},{name:'SK하이닉스',price:'168,000',chg:'+2.3%'}]},
-    {type:'업종',name:'SK하이닉스',sector:'반도체',reason:'HBM 독점적 지위',chg:'+9.1%',volume:'8.2조',marketCap:'122조',roi:'+2.6%',stocks:[{name:'SK하이닉스',price:'168,000',chg:'+2.6%'},{name:'한미반도체',price:'182,000',chg:'+6.4%'}]},
-    {type:'업종',name:'현대차',sector:'자동차',reason:'사상 최대 실적',chg:'+2.1%',volume:'3.1조',marketCap:'55조',roi:'+1.5%',stocks:[{name:'현대차',price:'245,000',chg:'+1.5%'},{name:'기아',price:'115,000',chg:'+1.8%'}]},
-    {type:'업종',name:'기아',sector:'자동차',reason:'EV 판매 호조',chg:'+3.2%',volume:'2.5조',marketCap:'45조',roi:'+1.8%',stocks:[{name:'기아',price:'115,000',chg:'+1.8%'},{name:'현대모비스',price:'235,000',chg:'+0.5%'}]},
-    {type:'업종',name:'KB금융',sector:'금융',reason:'밸류업 및 배당 확대',chg:'+1.5%',volume:'1.1조',marketCap:'32조',roi:'+0.8%',stocks:[{name:'KB금융',price:'78,000',chg:'+0.8%'},{name:'신한지주',price:'45,000',chg:'+0.5%'}]},
-    {type:'업종',name:'삼성바이오로직스',sector:'제약',reason:'4공장 풀가동',chg:'+7.2%',volume:'2.8조',marketCap:'73조',roi:'+2.1%',stocks:[{name:'삼성바이오로직스',price:'1,020,000',chg:'+2.1%'},{name:'셀트리온',price:'185,000',chg:'+1.2%'}]},
-    {type:'업종',name:'POSCO홀딩스',sector:'철강',reason:'리튬 가치 재부각',chg:'+2.8%',volume:'3.5조',marketCap:'35조',roi:'+1.4%',stocks:[{name:'POSCO홀딩스',price:'415,000',chg:'+1.4%'},{name:'현대제철',price:'32,000',chg:'+0.5%'}]},
-    {type:'업종',name:'KT',sector:'통신',reason:'AI 수익화 가시화',chg:'+2.4%',volume:'0.8조',marketCap:'9조',roi:'+1.2%',stocks:[{name:'KT',price:'38,250',chg:'+1.2%'},{name:'SK텔레콤',price:'54,300',chg:'+0.6%'}]},
-    {type:'업종',name:'LG유플러스',sector:'통신',reason:'안정적 배당',chg:'+2.2%',volume:'0.3조',marketCap:'4.8조',roi:'+1.1%',stocks:[{name:'LG유플러스',price:'10,850',chg:'+1.1%'},{name:'SK텔레콤',price:'54,300',chg:'+0.6%'}]},
-    {type:'업종',name:'삼성SDI',sector:'화학',reason:'전고체 배터리 기대감',chg:'+5.9%',volume:'2.4조',marketCap:'52조',roi:'+3.8%',stocks:[{name:'삼성SDI',price:'386,000',chg:'+3.8%'},{name:'LG화학',price:'420,000',chg:'+1.2%'}]}
-  ],
-  top:[{name:'삼화콘덴서',cat:'MLCC',chg:'+29.94%',vol:'5,362억'},{name:'에코프로',cat:'2차전지',chg:'+12.56%',vol:'8,771억'},{name:'삼성전자',cat:'반도체',chg:'+9.72%',vol:'2.39조'},{name:'알테오젠',cat:'바이오',chg:'+4.55%',vol:'4,145억'}]
-};
-
-let state={
-  theme: localStorage.getItem('theme') || 'light',
-  timer: null,
-  data: SAMPLE,
-  countdown: 30,
-  activeMainTab: '테마',
-  activeSubFilter: '전체',
-  activeSort: '기본순위',
-  filterCount: 5,
-  customFilters: { '테마': [], '업종': [] },
-  openIndex: null
-};
-
-// 보안을 위해 실제 키값을 메모리에 보관
-let storedKeys = { appKey: '', appSecret: '' };
-let isApiConnected = false;
-
-const el={
-  themeBtn:document.getElementById('themeBtn'),
-  refreshBtn:document.getElementById('refreshBtn'),
-  settingBtn:document.getElementById('settingBtn'),
-  lastUpdated:document.getElementById('lastUpdated'),
-  connectionStatus:document.getElementById('connectionStatus'),
-  mainTabs:document.querySelectorAll('.tab'),
-  subFilters:document.getElementById('subFilters'),
-  sortrow:document.getElementById('sortrow'),
-  sectorList:document.getElementById('sectorList'),
-  topList:document.getElementById('topList'),
-  overlay:document.getElementById('settingsOverlay'),
-  closeSettingBtn:document.getElementById('closeSettingBtn'),
-  testSettingBtn:document.getElementById('testSettingBtn'),
-  clearSettingBtn:document.getElementById('clearSettingBtn'),
-  editApiBtn:document.getElementById('editApiBtn'),
-  apiFormGroup:document.getElementById('apiFormGroup'),
-  apiSavedGroup:document.getElementById('apiSavedGroup'),
-  dispCano:document.getElementById('dispCano'),
-  dispAppKey:document.getElementById('dispAppKey'),
-  dispEnv:document.getElementById('dispEnv'),
-  filterCount:document.getElementById('filterCount'),
-  cano:document.getElementById('cano'),
-  prdt:document.getElementById('prdt'),
-  appKey:document.getElementById('appKey'),
-  appSecret:document.getElementById('appSecret'),
-  envType:document.getElementById('envType')
-};
-
-function getColorVar(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  return `var(--c-${(Math.abs(hash) % 8) + 1})`;
-}
-function getBgVar(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  return `color-mix(in srgb, var(--c-${(Math.abs(hash) % 8) + 1}) var(--bg-mix, 15%), var(--card))`;
-}
-function maskKey(val) {
-  if (!val) return '';
-  if (val.length <= 4) return '*'.repeat(val.length);
-  return val.substring(0, 4) + '*'.repeat(val.length - 4);
-}
-
-function themeApply(t){
-  document.documentElement.setAttribute('data-theme',t);
-  el.themeBtn.textContent=t==='light'?'🌙':'☀️';
-  localStorage.setItem('theme',t);
-}
-
-el.mainTabs.forEach(tab => {
-  tab.onclick = (e) => {
-    el.mainTabs.forEach(t => t.classList.remove('active'));
-    e.target.classList.add('active');
-    state.activeMainTab = e.target.getAttribute('data-type');
-    state.activeSubFilter = '전체';
-    state.openIndex = null;
-    renderAll();
-  };
-});
-
-function renderSubFilters() {
-  el.subFilters.innerHTML = '';
-  const catList = state.data.categories[state.activeMainTab] || [];
-  const topList = catList.slice(0, state.filterCount);
-  const extras = catList.slice(state.filterCount).filter(x => state.customFilters[state.activeMainTab].includes(x));
-  const displayCats = ['전체', ...topList, ...extras];
-
-  displayCats.forEach(x => {
-    const b = document.createElement('button');
-    b.className = 'filter';
-    b.textContent = x;
-    const active = state.activeSubFilter === x;
-    
-    if (active && x !== '전체') {
-      b.style.background = getColorVar(x); b.style.color = 'var(--text-on-sec)'; b.style.borderColor = 'transparent';
-    } else if (active && x === '전체') {
-      b.style.background = 'var(--accent)'; b.style.color = 'var(--text-on-accent)'; b.style.borderColor = 'transparent';
-    } else {
-      b.style.background = 'var(--chip)'; b.style.color = 'var(--text)'; b.style.borderColor = 'transparent';
-    }
-    b.onclick = () => { state.activeSubFilter = x; state.openIndex = null; renderAll(); };
-    el.subFilters.appendChild(b);
-  });
-}
-
-function renderSorts(items){
-  el.sortrow.innerHTML='';
-  items.forEach(x=>{
-    const b=document.createElement('button');
-    b.className='sort'+(state.activeSort===x?' active':'');
-    b.textContent=x;
-    b.onclick=()=>{ state.activeSort=x; state.openIndex=null; renderAll(); };
-    el.sortrow.appendChild(b);
-  });
-}
-
-function num(v){ return parseFloat(String(v).replace(/[^0-9.\\-]/g,''))||0; }
-
-function getFilteredAndSortedSectors() {
-  let list = state.data.sectors.filter(s => s.type === state.activeMainTab);
-  const sortKey = state.activeSort;
-  if (sortKey !== '기본순위') {
-    const fn = {
-      '거래대금': (a,b) => num(b.volume) - num(a.volume),
-      '수익률': (a,b) => num(b.roi) - num(a.roi),
-      '시총': (a,b) => num(b.marketCap) - num(a.marketCap),
-      '변동성': (a,b) => b.name.length - a.name.length
-    }[sortKey];
-    if (fn) list.sort(fn);
+async function saveConfigToCloud(){
+  if(db && auth && auth.currentUser){
+    const docRef=doc(db,'artifacts',appId,'public','data','global_config');
+    await setDoc(docRef,{...stored,customFilters:state.customFilters,filterCount:state.filterCount,isApiConnected});
   }
+}
 
-  if (state.activeSubFilter !== '전체') {
-    const selectedItems = [], restItems = [];
-    list.forEach(item => {
-      if (item.sector === state.activeSubFilter) selectedItems.push(item);
-      else restItems.push(item);
+async function loadConfigFromCloud(){
+  if(!auth || !db) return;
+  return new Promise((resolve)=>{
+    onAuthStateChanged(auth, user=>{
+      if(user && db){
+        const docRef=doc(db,'artifacts',appId,'public','data','global_config');
+        onSnapshot(docRef,snap=>{
+          if(snap.exists()){
+            const d=snap.data();
+            stored.cano=d.cano||'';
+            stored.prdt=d.prdt||'';
+            stored.envType=d.envType||'live';
+            stored.appKey=d.appKey||'';
+            isApiConnected=d.isApiConnected===true;
+            state.filterCount=parseInt(d.filterCount)||5;
+            state.customFilters=d.customFilters||{'테마':[],'업종':[]};
+            el.envType.value=stored.envType;
+            renderApiUI();
+            renderAll();
+          }
+          resolve();
+        });
+      } else resolve();
     });
-    list = [...selectedItems, ...restItems];
-  }
-  return list;
-}
-
-function previewHTML(sec){
-  return `
-    <div class="item-preview">
-      <div class="preview-grid">
-        <div class="pbox"><div class="k">현재가 기준</div><div class="v">${sec.stocks[0].price}</div></div>
-        <div class="pbox"><div class="k">등락률</div><div class="v">${sec.chg}</div></div>
-        <div class="pbox"><div class="k">거래대금</div><div class="v">${sec.volume}</div></div>
-        <div class="pbox"><div class="k">시가총액</div><div class="v">${sec.marketCap}</div></div>
-      </div>
-      <div class="preview-note">핵심 포인트: ${sec.reason}<br>관련 종목: ${sec.stocks.map(s=>s.name).join(' · ')}</div>
-    </div>`;
-}
-
-function renderSectorList(){
-  el.sectorList.innerHTML='';
-  const items = getFilteredAndSortedSectors();
-  items.forEach((sec,idx)=>{
-    const open=state.openIndex===idx;
-    const item=document.createElement('div');
-    item.className='item'+(open?' open':'');
-    item.innerHTML=`
-      <div class="item-main">
-        <div class="rank">${idx+1}</div>
-        <div class="item-info">
-          <div class="row1"><div class="name">${sec.name}</div><span class="badge">${sec.sector}</span></div>
-          <div class="row2"><span>거래대금 ${sec.volume}</span><span>수익률 ${sec.roi}</span><span>강도 A+</span></div>
-        </div>
-        <div class="arrow">${open?'−':'＋'}</div>
-      </div>
-      ${open?previewHTML(sec):''}
-    `;
-    item.querySelector('.item-main').onclick=()=>{ state.openIndex=state.openIndex===idx?null:idx; renderAll(); };
-    item.style.background = getBgVar(sec.sector);
-    
-    if(state.activeSubFilter !== '전체' && sec.sector === state.activeSubFilter) {
-      item.style.borderColor = getColorVar(sec.sector); item.style.boxShadow = `0 0 0 1px ${getColorVar(sec.sector)} inset`;
-    } else {
-      item.style.borderColor = 'var(--line)';
-    }
-    el.sectorList.appendChild(item);
   });
-}
-
-function renderTop(d){
-  el.topList.innerHTML=d.top.map((x,i)=>`
-    <div class="miniRow">
-      <div><b>${i+1}. ${x.name}</b><div><span>${x.cat}</span></div></div>
-      <div style="text-align:right"><b>${x.chg}</b><div><span>${x.vol}</span></div></div>
-    </div>
-  `).join('');
-}
-
-function renderSettingExtras() {
-  const renderGroup = (type, containerId) => {
-    const container = document.getElementById(containerId);
-    container.innerHTML = '';
-    const list = state.data.categories[type] || [];
-    const extraCandidates = list.slice(state.filterCount); 
-
-    if (extraCandidates.length === 0) {
-      container.innerHTML = '<span style="font-size:12px; color:var(--muted)">추가할 수 있는 항목이 없습니다.</span>';
-      return;
-    }
-
-    extraCandidates.forEach((cat) => {
-      const btn = document.createElement('button');
-      const isActive = state.customFilters[type].includes(cat);
-      btn.className = 'pill-toggle' + (isActive ? ' active' : '');
-      btn.textContent = cat;
-      btn.onclick = () => {
-        if (state.customFilters[type].includes(cat)) {
-          state.customFilters[type] = state.customFilters[type].filter(x => x !== cat);
-          btn.classList.remove('active');
-        } else {
-          state.customFilters[type].push(cat);
-          btn.classList.add('active');
-        }
-      };
-      container.appendChild(btn);
-    });
-  };
-  renderGroup('테마', 'extraThemeList');
-  renderGroup('업종', 'extraSectorList');
-}
-
-function renderApiUI() {
-  if (isApiConnected && storedKeys.appKey) {
-    el.apiSavedGroup.style.display = 'block';
-    el.apiFormGroup.style.display = 'none';
-    el.dispCano.textContent = el.cano.value || '-';
-    el.dispAppKey.textContent = maskKey(storedKeys.appKey);
-    el.dispEnv.textContent = el.envType.value === 'live' ? '실계좌' : '모의투자';
-  } else {
-    el.apiSavedGroup.style.display = 'none';
-    el.apiFormGroup.style.display = 'block';
-  }
-}
-
-el.editApiBtn.onclick = () => {
-  isApiConnected = false;
-  renderApiUI();
-};
-
-function showSettings(){
-  el.overlay.classList.add('show');
-  el.overlay.setAttribute('aria-hidden','false');
-  renderSettingExtras();
-}
-function hideSettings(){
-  el.overlay.classList.remove('show');
-  el.overlay.setAttribute('aria-hidden','true');
-}
-
-// ----------------------------------------------------
-// [Firebase 클라우드 연동] - 모든 사용자가 설정을 실시간 공유
-// ----------------------------------------------------
-async function initFirebaseAuth() {
-  if(!auth) return;
-  if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-    await signInWithCustomToken(auth, __initial_auth_token);
-  } else {
-    await signInAnonymously(auth);
-  }
-
-  // 실시간으로 클라우드의 공용 설정을 읽어옵니다. (PC에서 저장하면 모바일도 즉시 업데이트됨)
-  onAuthStateChanged(auth, user => {
-    if(user && db) {
-      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'global_config');
-      onSnapshot(docRef, (snap) => {
-        if(snap.exists()) {
-          const cloudData = snap.data();
-          state.filterCount = parseInt(cloudData.filterCount) || 5;
-          state.customFilters = cloudData.customFilters || { '테마': [], '업종': [] };
-          el.filterCount.value = state.filterCount;
-          el.cano.value = cloudData.cano || '';
-          el.prdt.value = cloudData.prdt || '';
-          el.envType.value = cloudData.envType || 'live';
-          
-          storedKeys.appKey = cloudData.appKey || '';
-          storedKeys.appSecret = cloudData.appSecret || '';
-          el.appKey.value = maskKey(storedKeys.appKey);
-          el.appSecret.value = maskKey(storedKeys.appSecret);
-
-          isApiConnected = cloudData.isApiConnected === true;
-          
-          renderApiUI();
-          renderSettingExtras();
-          renderAll();
-        }
-      });
-    }
-  });
-}
-if(auth) initFirebaseAuth();
-
-async function saveConfigToCloud() {
-  const count = parseInt(el.filterCount.value);
-  state.filterCount = isNaN(count) || count < 1 ? 5 : Math.min(count, 10);
-  
-  const inputKey = el.appKey.value.trim();
-  const inputSecret = el.appSecret.value.trim();
-  if (inputKey !== maskKey(storedKeys.appKey)) storedKeys.appKey = inputKey;
-  if (inputSecret !== maskKey(storedKeys.appSecret)) storedKeys.appSecret = inputSecret;
-
-  const dataToSave = {
-    cano: el.cano.value.trim(),
-    prdt: el.prdt.value.trim(),
-    appKey: storedKeys.appKey, 
-    appSecret: storedKeys.appSecret, 
-    envType: el.envType.value,
-    filterCount: state.filterCount,
-    customFilters: state.customFilters,
-    isApiConnected: isApiConnected
-  };
-
-  // 클라우드(Firestore)에 저장
-  if (db && auth.currentUser) {
-    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'global_config');
-    await setDoc(docRef, dataToSave);
-  }
 }
 
 async function testConn(){
-  el.connectionStatus.textContent='테스트중...';
-  
+  setStatus('테스트중...');
   try{
-    const inputKey = el.appKey.value.trim();
-    if((inputKey !== maskKey(storedKeys.appKey) ? inputKey : storedKeys.appKey) === '') {
-      throw new Error('API 키 입력 필요');
-    }
-    
-    // (모의 연결 성공 처리)
+    const res = await fetch(`${SERVER_API_BASE}/api/status`, { method:'GET' });
+    const data = await res.json();
+    if(!res.ok || !data.ok) throw new Error(data.message || '연결 실패');
     isApiConnected = true;
+    stored.cano = el.cano.value.trim() || stored.cano;
+    stored.prdt = el.prdt.value.trim() || stored.prdt;
+    stored.envType = el.envType.value;
+    stored.appKey = el.appKey.value.trim() || stored.appKey;
     await saveConfigToCloud();
     renderApiUI();
-    
-    el.connectionStatus.textContent='✅ 클라우드 저장 및 연결 성공';
-    el.connectionStatus.style.color='#10b981';
+    setStatus('✅ 서버 연결 성공', '#10b981');
   }catch(e){
     isApiConnected = false;
     await saveConfigToCloud();
     renderApiUI();
-    el.connectionStatus.textContent='❌ ' + e.message;
-    el.connectionStatus.style.color='#ef4444';
+    setStatus('❌ '+e.message, '#ef4444');
   }
-  
-  setTimeout(()=>{
-    el.connectionStatus.textContent='연결 대기중';
-    el.connectionStatus.style.color='';
-  }, 3000);
+  setTimeout(()=>{ if(isApiConnected) setStatus('연결 양호'); }, 3000);
 }
 
-// ----------------------------------------------------
-// [API 데이터 통신 및 샘플 대체 로직]
-// ----------------------------------------------------
-async function fetchReal(){
-  el.connectionStatus.textContent='데이터 갱신중...';
+async function fetchApiData(){
   try{
-    if (!isApiConnected || !storedKeys.appKey) throw new Error('CORS 차단됨');
-
-    // 💡 [실제 통신 구조 예시] - 브라우저 단독으로는 KIS API를 직접 호출할 수 없어 catch 블록으로 빠집니다.
-    const baseUrl = el.envType.value === 'live' ? 'https://openapi.koreainvestment.com:9443' : 'https://openapivts.koreainvestment.com:29443';
-    const res = await fetch(`${baseUrl}/uapi/domestic-stock/v1/quotations/inquire-price`, {
-        headers: { 'appkey': storedKeys.appKey, 'appsecret': storedKeys.appSecret, 'tr_id': 'FHKST01010100' }
-    });
-
-    if(!res.ok) throw new Error('CORS 차단 또는 통신 실패');
-    // 통신 성공 시 파싱 로직 (생략됨)
-    // state.data = parsedData;
-
-    el.connectionStatus.textContent='✅ 갱신 완료';
+    const res = await fetch(`${SERVER_API_BASE}/api/market-data?env=${encodeURIComponent(stored.envType)}`);
+    const data = await res.json();
+    if(!res.ok || !data.ok) throw new Error(data.message || '데이터 실패');
+    state.data = data.payload;
+    isApiConnected = true;
+    renderApiUI();
+    setStatus('✅ API 데이터 갱신', '#10b981');
   }catch(e){
-    // 브라우저에서는 외부(타 도메인) API 직접 호출 시 CORS 보안 정책으로 차단되므로 
-    // 예외 처리(catch)되어 무조건 안전하게 미리 구성된 샘플 데이터를 띄웁니다.
-    state.data=SAMPLE;
-    el.connectionStatus.textContent='⚠️ API 차단됨 (샘플 데이터)';
+    state.data = SAMPLE;
+    isApiConnected = false;
+    renderApiUI();
+    setStatus('⚠️ API 미연결 - 샘플 데이터', '#f59e0b');
   }
-  setTimeout(()=>{
-    if(el.connectionStatus.textContent.includes('완료') || el.connectionStatus.textContent.includes('차단됨')){
-      el.connectionStatus.textContent='연결 양호';
-    }
-  }, 3000);
-  
-  state.countdown=30;
+  state.countdown = 30;
   renderAll();
-  el.lastUpdated.textContent='최종 갱신: '+new Date().toLocaleTimeString('ko-KR');
-}
-
-async function clearConfig(){
-  state.filterCount = 5;
-  state.customFilters = { '테마': [], '업종': [] };
-  storedKeys = { appKey: '', appSecret: '' };
-  isApiConnected = false;
-  
-  el.cano.value = ''; el.prdt.value = ''; el.appKey.value = ''; el.appSecret.value = '';
-  
+  el.lastUpdated.textContent = '최종 갱신: ' + new Date().toLocaleTimeString('ko-KR');
   await saveConfigToCloud();
-  renderSettingExtras();
-  el.connectionStatus.textContent='설정 초기화됨';
-  renderAll();
 }
 
-function renderAll(){
-  renderSubFilters();
-  renderSorts(state.data.sorts);
-  renderSectorList();
-  renderTop(state.data);
-  el.refreshBtn.textContent='⏳ '+state.countdown;
+function renderSubFilters(){
+  el.subFilters.innerHTML='';
+  const list=(state.data.categories[state.activeMainTab]||[]).slice(0,state.filterCount);
+  list.forEach(x=>{
+    const b=document.createElement('button');
+    b.className='filter'+(state.activeSubFilter===x?' active':'');
+    b.textContent=x;
+    b.onclick=()=>{ state.activeSubFilter=state.activeSubFilter===x?'':x; renderAll(); };
+    el.subFilters.appendChild(b);
+  });
 }
+function renderSorts(){
+  el.sortrow.innerHTML='';
+  (state.data.sorts||[]).forEach(x=>{
+    const b=document.createElement('button');
+    b.className='sort'+(state.activeSort===x?' active':'');
+    b.textContent=x;
+    b.onclick=()=>{ state.activeSort=x; renderAll(); };
+    el.sortrow.appendChild(b);
+  });
+}
+function renderSectorList(){
+  el.sectorList.innerHTML='';
+  (state.data.sectors||[]).filter(s=>s.type===state.activeMainTab).forEach((sec,idx)=>{
+    const item=document.createElement('div');
+    item.className='item'+(state.openIndex===idx?' open':'');
+    item.innerHTML=`<div class="item-main"><div class="rank">${idx+1}</div><div class="item-info"><div class="row1"><div class="name">${sec.name}</div><span class="badge">${sec.sector}</span></div><div class="row2"><span>${sec.volume}</span><span>${sec.roi}</span><span>${sec.chg}%</span></div></div><div class="arrow">${state.openIndex===idx?'−':'+'}</div></div><div class="item-preview"><div class="preview-grid"><div class="pbox"><div class="k">대표주가</div><div class="v">${sec.stocks?.[0]?.price||'-'}</div></div><div class="pbox"><div class="k">변동률</div><div class="v">${sec.chg}%</div></div></div><div class="preview-note">${sec.reason}</div></div>`;
+    item.querySelector('.item-main').onclick=()=>{ state.openIndex=state.openIndex===idx?null:idx; renderAll(); };
+    el.sectorList.appendChild(item);
+  });
+}
+function renderTop(){
+  el.topList.innerHTML='';
+  (state.data.top||[]).forEach((x,i)=>{
+    const d=document.createElement('div');
+    d.className='miniRow';
+    d.innerHTML=`<div><b>${i+1}. ${x.name}</b></div><span>${x.cat}</span><div style="text-align:right"><b>${x.chg}%</b><br><span>${x.vol}</span></div>`;
+    el.topList.appendChild(d);
+  });
+}
+function renderAll(){ renderSubFilters(); renderSorts(); renderSectorList(); renderTop(); el.refreshBtn.textContent='⏳ '+state.countdown; }
 
 function poll(){
   clearInterval(state.timer);
   state.timer=setInterval(()=>{
     state.countdown=Math.max(0,state.countdown-1);
     el.refreshBtn.textContent='⏳ '+state.countdown;
-    if(state.countdown<=0) fetchReal();
+    if(state.countdown<=0) fetchApiData();
   },1000);
 }
 
-// 이벤트 연결
+el.mainTabs.forEach(tab=>tab.onclick=e=>{
+  el.mainTabs.forEach(t=>t.classList.remove('active'));
+  e.target.classList.add('active');
+  state.activeMainTab=e.target.getAttribute('data-type');
+  state.activeSubFilter='';
+  state.openIndex=null;
+  renderAll();
+});
+
 el.themeBtn.onclick=()=>themeApply(state.theme=state.theme==='light'?'dark':'light');
-el.refreshBtn.onclick=fetchReal;
+el.refreshBtn.onclick=fetchApiData;
 el.settingBtn.onclick=showSettings;
 el.closeSettingBtn.onclick=hideSettings;
-el.overlay.addEventListener('click',e=>{if(e.target===el.overlay) hideSettings()});
-el.clearSettingBtn.onclick=clearConfig;
-el.testSettingBtn.onclick=testConn;
+el.overlay.addEventListener('click',e=>{ if(e.target===el.overlay) hideSettings(); });
+el.clearSettingBtn.onclick=async()=>{
+  stored={cano:'',prdt:'',envType:'live',appKey:'',isReady:false,lastSync:'-'};
+  isApiConnected=false;
+  el.cano.value='';
+  el.prdt.value='';
+  el.appKey.value='';
+  el.appSecret.value='';
+  el.envType.value='live';
+  await saveConfigToCloud();
+  renderApiUI();
+};
+el.testSettingBtn.onclick=async()=>{
+  stored.cano=el.cano.value.trim();
+  stored.prdt=el.prdt.value.trim();
+  stored.envType=el.envType.value;
+  stored.appKey=el.appKey.value.trim();
+  await testConn();
+};
 
 themeApply(state.theme);
-fetchReal();
-poll();
+
+async function init(){
+  if(auth){
+    if(typeof __initial_auth_token!=='undefined' && __initial_auth_token) await signInWithCustomToken(auth,__initial_auth_token);
+    else await signInAnonymously(auth);
+    await loadConfigFromCloud();
+  }
+  renderApiUI();
+  await fetchApiData();
+  poll();
+}
+init();
 </script>
 </body>
 </html>
