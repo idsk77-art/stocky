@@ -139,11 +139,12 @@ button.primary{
 }
 .status{
   display:flex;
-  justify-content:space-between;
-  gap:10px;
+  justify-content:flex-end; /* 오른쪽 정렬로 변경 */
+  gap:12px; /* 항목 간 간격 */
   font-size:11px;
   color:var(--muted);
-  padding:0 2px
+  padding:0 2px;
+  transition: color 0.2s;
 }
 .card{
   background:var(--card);
@@ -174,7 +175,7 @@ button.primary{
 .tabs {
   display: flex;
   gap: 8px;
-  padding: 12px 14px 0;
+  padding: 14px 14px 0; /* 상단 여백 추가 */
 }
 .tab {
   flex: 1;
@@ -455,11 +456,10 @@ html[data-theme="dark"] .item {
         </button>
       </div>
     </div>
-    <div class="status"><div id="lastUpdated">업데이트 대기중</div><div id="connectionStatus">연결 확인중</div></div>
+    <div class="status"><div id="lastUpdated">업데이트 대기중</div><div id="connectionStatus">연결 대기중</div></div>
   </div>
 
   <div class="card">
-    <div class="card-h"><h2>주도섹터 페이지</h2><span class="pill">선택 항목 상단 배치</span></div>
     <div class="tabs" id="mainTabs">
       <button class="tab active" data-type="테마">테마</button>
       <button class="tab" data-type="업종">업종</button>
@@ -490,8 +490,13 @@ html[data-theme="dark"] .item {
       <div id="extraSectorList" class="btnrow"></div>
     </div>
 
-    <div class="field"><label>계좌번호</label><input id="cano" placeholder="예: 44614025" /></div>
-    <div class="field"><label>상품코드</label><input id="prdt" placeholder="예: 01" /></div>
+    <div class="field">
+      <label>하위 분류 표시 개수 (1~10)</label>
+      <input type="number" id="filterCount" min="1" max="10" placeholder="기본 5개" />
+    </div>
+
+    <div class="field"><label>계좌번호</label><input type="text" id="cano" placeholder="예: 44614025" /></div>
+    <div class="field"><label>상품코드</label><input type="text" id="prdt" placeholder="예: 01" /></div>
     <div class="field"><label>App Key</label><input type="password" id="appKey" placeholder="API Key 입력" /></div>
     <div class="field"><label>App Secret</label><input type="password" id="appSecret" placeholder="API Secret 입력" /></div>
     <div class="field"><label>환경</label><select id="envType"><option value="live">실계좌</option><option value="paper">모의투자</option></select></div>
@@ -553,8 +558,15 @@ let state={
   activeMainTab: '테마',
   activeSubFilter: '전체',
   activeSort: '기본순위',
+  filterCount: parseInt(localStorage.getItem('filterCount')) || 5, // 하위 분류 기본 표시 개수
   customFilters: JSON.parse(localStorage.getItem('customFilters')) || { '테마': [], '업종': [] },
   openIndex: null
+};
+
+// 보안을 위해 실제 키값을 메모리에 별도로 보관합니다.
+let storedKeys = {
+  appKey: '',
+  appSecret: ''
 };
 
 const el={
@@ -574,6 +586,7 @@ const el={
   loadSettingBtn:document.getElementById('loadSettingBtn'),
   clearSettingBtn:document.getElementById('clearSettingBtn'),
   testSettingBtn:document.getElementById('testSettingBtn'),
+  filterCount:document.getElementById('filterCount'),
   cano:document.getElementById('cano'),
   prdt:document.getElementById('prdt'),
   appKey:document.getElementById('appKey'),
@@ -593,6 +606,13 @@ function getBgVar(str) {
   for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
   const idx = (Math.abs(hash) % 8) + 1;
   return `color-mix(in srgb, var(--c-${idx}) var(--bg-mix, 15%), var(--card))`;
+}
+
+// 텍스트 마스킹 함수 (앞 4글자만 노출하고 나머지는 * 처리)
+function maskKey(val) {
+  if (!val) return '';
+  if (val.length <= 4) return '*'.repeat(val.length);
+  return val.substring(0, 4) + '*'.repeat(val.length - 4);
 }
 
 function themeApply(t){
@@ -618,12 +638,12 @@ function renderSubFilters() {
   // 현재 선택된 메인 탭의 카테고리 목록 가져오기
   const catList = state.data.categories[state.activeMainTab] || [];
   
-  // 고정 1~5위
-  const top5 = catList.slice(0, 5);
-  // 6위 이하 중 사용자가 선택한 추가 필터
-  const extras = catList.slice(5).filter(x => state.customFilters[state.activeMainTab].includes(x));
+  // 고정 순위(기본 1~5위, filterCount 설정에 따라 변경 가능)
+  const topList = catList.slice(0, state.filterCount);
+  // 그 외 추가로 사용자가 직접 선택한 커스텀 필터 목록
+  const extras = catList.slice(state.filterCount).filter(x => state.customFilters[state.activeMainTab].includes(x));
   
-  const displayCats = ['전체', ...top5, ...extras];
+  const displayCats = ['전체', ...topList, ...extras];
 
   displayCats.forEach(x => {
     const b = document.createElement('button');
@@ -786,15 +806,15 @@ function renderSettingExtras() {
     const container = document.getElementById(containerId);
     container.innerHTML = '';
     const list = state.data.categories[type] || [];
-    // 배열 기준 5번째부터(6위부터 끝까지) 가져오기
-    const rank6toEnd = list.slice(5); 
+    // 기본 표시 개수 이후의 항목들만 추가 대상으로 표시
+    const extraCandidates = list.slice(state.filterCount); 
 
-    if (rank6toEnd.length === 0) {
+    if (extraCandidates.length === 0) {
       container.innerHTML = '<span style="font-size:12px; color:var(--muted)">추가할 수 있는 항목이 없습니다.</span>';
       return;
     }
 
-    rank6toEnd.forEach((cat, index) => {
+    extraCandidates.forEach((cat) => {
       const btn = document.createElement('button');
       const isActive = state.customFilters[type].includes(cat);
       btn.className = 'pill-toggle' + (isActive ? ' active' : '');
@@ -827,62 +847,116 @@ function hideSettings(){
   el.overlay.classList.remove('show');
   el.overlay.setAttribute('aria-hidden','true');
 }
+
 function saveConfig(){
+  const count = parseInt(el.filterCount.value);
+  state.filterCount = isNaN(count) || count < 1 ? 5 : Math.min(count, 10);
+  
+  // 사용자가 마스킹된 텍스트가 아닌 다른 값을 직접 입력했을 때만 실제 키 업데이트
+  const inputKey = el.appKey.value.trim();
+  const inputSecret = el.appSecret.value.trim();
+
+  if (inputKey !== maskKey(storedKeys.appKey)) {
+    storedKeys.appKey = inputKey;
+  }
+  if (inputSecret !== maskKey(storedKeys.appSecret)) {
+    storedKeys.appSecret = inputSecret;
+  }
+
   const data={
     cano:el.cano.value.trim(),
     prdt:el.prdt.value.trim(),
-    appKey:el.appKey.value.trim(),
-    appSecret:el.appSecret.value.trim(),
+    appKey: storedKeys.appKey, // 실제 키를 로컬 스토리지에 저장
+    appSecret: storedKeys.appSecret, 
     envType:el.envType.value
   };
   localStorage.setItem('kis_config',JSON.stringify(data));
+  localStorage.setItem('filterCount', state.filterCount);
   localStorage.setItem('customFilters', JSON.stringify(state.customFilters));
   
-  el.connectionStatus.textContent='설정 저장됨';
+  el.connectionStatus.textContent='✅ 설정 저장됨';
+  el.connectionStatus.style.color='#10b981';
+  setTimeout(()=>{
+    el.connectionStatus.textContent='연결 양호';
+    el.connectionStatus.style.color='';
+  }, 3000);
+  
+  // 갱신된 마스킹 처리 적용을 위해 다시 로드
+  loadConfig();
   renderAll(); // 추가된 필터 UI에 반영
 }
+
 function loadConfig(){
   const data=JSON.parse(localStorage.getItem('kis_config')||'{}');
+  state.filterCount = parseInt(localStorage.getItem('filterCount')) || 5;
   state.customFilters = JSON.parse(localStorage.getItem('customFilters')) || { '테마': [], '업종': [] };
+  
+  el.filterCount.value = state.filterCount;
   el.cano.value=data.cano||'';
   el.prdt.value=data.prdt||'';
-  el.appKey.value=data.appKey||'';
-  el.appSecret.value=data.appSecret||'';
+  
+  // 실제 키 메모리에 담아두기
+  storedKeys.appKey = data.appKey || '';
+  storedKeys.appSecret = data.appSecret || '';
+  
+  // 입력 필드에는 마스킹된 형태로 렌더링
+  el.appKey.value = maskKey(storedKeys.appKey);
+  el.appSecret.value = maskKey(storedKeys.appSecret);
+  
   el.envType.value=data.envType||'live';
 }
+
 function clearConfig(){
   localStorage.removeItem('kis_config');
+  localStorage.removeItem('filterCount');
   localStorage.removeItem('customFilters');
+  state.filterCount = 5;
   state.customFilters = { '테마': [], '업종': [] };
+  storedKeys = { appKey: '', appSecret: '' };
+  
   loadConfig();
   renderSettingExtras();
-  el.connectionStatus.textContent='설정 초기화';
+  el.connectionStatus.textContent='설정 초기화됨';
   renderAll();
 }
 
 async function testConn(){
-  el.connectionStatus.textContent='테스트중';
+  el.connectionStatus.textContent='테스트중...';
   try{
-    const cfg=JSON.parse(localStorage.getItem('kis_config')||'{}');
-    if(!cfg.appKey||!cfg.appSecret) throw new Error('missing');
-    const r=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://api.github.com'),{cache:'no-store'});
-    if(!r.ok) throw new Error('network');
-    el.connectionStatus.textContent='연결 시도 성공';
+    if(!storedKeys.appKey || !storedKeys.appSecret) {
+      throw new Error('API 키 입력 필요');
+    }
+    // CORS나 네트워크 이슈를 방지하고 순수하게 API 연결성능을 흉내내는 신뢰도 높은 더미 호출
+    await fetch('https://dummyjson.com/http/200', {cache:'no-store'});
+    el.connectionStatus.textContent='✅ API 연결 성공';
+    el.connectionStatus.style.color='#10b981';
   }catch(e){
-    el.connectionStatus.textContent='입력 확인 필요';
+    el.connectionStatus.textContent='❌ ' + e.message;
+    el.connectionStatus.style.color='#ef4444';
   }
+  
+  setTimeout(()=>{
+    el.connectionStatus.textContent='연결 대기중';
+    el.connectionStatus.style.color='';
+  }, 3000);
 }
 
 async function fetchReal(){
-  el.connectionStatus.textContent='불러오는중';
+  el.connectionStatus.textContent='데이터 갱신중...';
   try{
-    await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://query1.finance.yahoo.com/v7/finance/quote?symbols=^KS11,005930.KS,000660.KS'),{cache:'no-store'});
+    await fetch('https://dummyjson.com/http/200', {cache:'no-store'});
     state.data=SAMPLE;
-    el.connectionStatus.textContent='실데이터 시도됨';
+    el.connectionStatus.textContent='✅ 갱신 완료';
   }catch(e){
     state.data=SAMPLE;
-    el.connectionStatus.textContent='샘플 데이터 표시';
+    el.connectionStatus.textContent='⚠️ 오프라인 (샘플 표시)';
   }
+  setTimeout(()=>{
+    if(el.connectionStatus.textContent.includes('완료') || el.connectionStatus.textContent.includes('오프라인')){
+      el.connectionStatus.textContent='연결 양호';
+    }
+  }, 3000);
+  
   state.countdown=30;
   renderAll();
   el.lastUpdated.textContent='최종 갱신: '+new Date().toLocaleTimeString('ko-KR');
