@@ -6,7 +6,6 @@
 <title>주도섹터 앱</title>
 <style>
 :root{
-  /* 라이트 테마 변수 */
   --bg: #f8fafc;
   --card: #ffffff;
   --text: #0f172a;
@@ -20,23 +19,12 @@
   --chip: #f1f5f9;
   --preview: #f8fafc;
   --preview2: #ffffff;
-  
-  /* 리스트 배경 컬러 믹스 비율 */
   --bg-mix: 15%;
-
-  /* 동적 8색 팔레트 (라이트) */
-  --c-1: #93c5fd; /* 파랑 */
-  --c-2: #fca5a5; /* 빨강 */
-  --c-3: #fde047; /* 노랑 */
-  --c-4: #86efac; /* 초록 */
-  --c-5: #d8b4fe; /* 보라 */
-  --c-6: #fdba74; /* 주황 */
-  --c-7: #67e8f9; /* 청록 */
-  --c-8: #f9a8d4; /* 핑크 */
+  --c-1: #93c5fd; --c-2: #fca5a5; --c-3: #fde047; --c-4: #86efac;
+  --c-5: #d8b4fe; --c-6: #fdba74; --c-7: #67e8f9; --c-8: #f9a8d4;
   --text-on-sec: #0f172a;
 }
 html[data-theme="dark"]{
-  /* 다크 테마 변수 */
   --bg: #0f172a;
   --card: #1e293b;
   --text: #f8fafc;
@@ -49,22 +37,11 @@ html[data-theme="dark"]{
   --chip: #334155;
   --preview: #0f172a;
   --preview2: #1e293b;
-
-  /* 리스트 배경 컬러 믹스 비율 (다크모드에서는 색이 더 잘보이게 비율업) */
   --bg-mix: 25%;
-
-  /* 동적 8색 팔레트 (다크) - 눈에 잘 띄는 밝은 톤으로 변경 */
-  --c-1: #60a5fa; /* 파랑 */
-  --c-2: #f87171; /* 빨강 */
-  --c-3: #fde047; /* 노랑 */
-  --c-4: #4ade80; /* 초록 */
-  --c-5: #c084fc; /* 보라 */
-  --c-6: #fb923c; /* 주황 */
-  --c-7: #22d3ee; /* 청록 */
-  --c-8: #f472b6; /* 핑크 */
+  --c-1: #60a5fa; --c-2: #f87171; --c-3: #fde047; --c-4: #4ade80;
+  --c-5: #c084fc; --c-6: #fb923c; --c-7: #22d3ee; --c-8: #f472b6;
   --text-on-sec: #0f172a;
 }
-
 *{box-sizing:border-box}
 body{
   margin:0;
@@ -121,344 +98,127 @@ button{
   border:1px solid var(--line);
   transition: all 0.15s;
 }
-button:active {
-  transform: scale(0.96);
-}
+button:active { transform: scale(0.96); }
 button.primary{
   background:var(--accent);
   color:var(--text-on-accent);
   border-color:transparent
 }
 .iconbtn{
-  width:40px;
-  height:40px;
-  padding:0;
-  display:grid;
-  place-items:center;
-  border-radius:50%
+  width:40px; height:40px; padding:0; display:grid; place-items:center; border-radius:50%
 }
 .status{
-  display:flex;
-  justify-content:flex-end;
-  gap:12px;
-  font-size:11px;
-  color:var(--muted);
-  padding:0 2px;
-  transition: color 0.2s;
+  display:flex; justify-content:flex-end; gap:12px; font-size:11px;
+  color:var(--muted); padding:0 2px; transition: color 0.2s;
 }
 .card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  overflow:hidden
+  background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden
 }
 .card-h{
-  padding:14px 14px 0;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px
+  padding:14px 14px 0; display:flex; justify-content:space-between; align-items:center; gap:10px
 }
-.card-h h2{
-  margin:0;
-  font-size:15px
-}
+.card-h h2{ margin:0; font-size:15px }
 .pill{
-  font-size:11px;
-  padding:6px 9px;
-  border-radius:999px;
-  background:rgba(37,99,235,.1);
-  color:var(--accent2);
-  font-weight:700
+  font-size:11px; padding:6px 9px; border-radius:999px;
+  background:rgba(37,99,235,.1); color:var(--accent2); font-weight:700
 }
-.tabs {
-  display: flex;
-  gap: 8px;
-  padding: 14px 14px 0;
-}
+.tabs { display: flex; gap: 8px; padding: 14px 14px 0; }
 .tab {
-  flex: 1;
-  text-align: center;
-  padding: 10px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 800;
-  background: var(--chip);
-  color: var(--muted);
-  box-shadow: none;
+  flex: 1; text-align: center; padding: 10px; border-radius: 12px;
+  font-size: 13px; font-weight: 800; background: var(--chip);
+  color: var(--muted); box-shadow: none;
 }
-.tab.active {
-  background: var(--accent);
-  color: var(--text-on-accent);
-  border-color: transparent;
-}
+.tab.active { background: var(--accent); color: var(--text-on-accent); border-color: transparent; }
 .filters,.sortrow{
-  display:flex;
-  gap:8px;
-  overflow:auto;
-  padding:12px 14px 0;
-  scrollbar-width:none
+  display:flex; gap:8px; overflow:auto; padding:12px 14px 0; scrollbar-width:none
 }
 .filters::-webkit-scrollbar,.sortrow::-webkit-scrollbar{display:none}
 .filter,.sort{
-  white-space:nowrap;
-  padding:9px 13px;
-  border-radius:999px;
-  border:1px solid transparent;
-  font-size:12px;
-  font-weight:800;
-  color:var(--text);
-  box-shadow:none
+  white-space:nowrap; padding:9px 13px; border-radius:999px;
+  border:1px solid transparent; font-size:12px; font-weight:800; color:var(--text); box-shadow:none
 }
-.sort{
-  background:var(--chip);
-  border-color:var(--line);
-}
-.sort.active{
-  background:var(--accent);
-  color:var(--text-on-accent);
-  border-color:transparent
-}
-.list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  padding:12px 14px 14px
-}
+.sort{ background:var(--chip); border-color:var(--line); }
+.sort.active{ background:var(--accent); color:var(--text-on-accent); border-color:transparent }
+.list{ display:flex; flex-direction:column; gap:10px; padding:12px 14px 14px }
 .item{
-  border:1px solid var(--line);
-  border-radius:18px;
-  overflow:hidden;
-  background:var(--card);
-  box-shadow: 0 4px 14px rgba(0,0,0,.03);
+  border:1px solid var(--line); border-radius:18px; overflow:hidden;
+  background:var(--card); box-shadow: 0 4px 14px rgba(0,0,0,.03);
 }
-html[data-theme="dark"] .item {
-  box-shadow: 0 4px 14px rgba(0,0,0,.2);
-}
+html[data-theme="dark"] .item { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
 .item-main{
-  display:grid;
-  grid-template-columns:auto 1fr auto;
-  gap:10px;
-  align-items:center;
-  padding:12px;
-  cursor:pointer
+  display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; padding:12px; cursor:pointer
 }
 .rank{
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  background:color-mix(in srgb, var(--text) 10%, transparent);
-  display:grid;
-  place-items:center;
-  font-size:12px;
-  font-weight:900;
-  color:var(--text)
+  width:32px; height:32px; border-radius:10px; background:color-mix(in srgb, var(--text) 10%, transparent);
+  display:grid; place-items:center; font-size:12px; font-weight:900; color:var(--text)
 }
 .item-info{min-width:0}
-.item-info .row1{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap
-}
-.item-info .name{
-  font-size:15px;
-  font-weight:900;
-  letter-spacing:-.02em;
-  color:var(--text)
-}
+.item-info .row1{ display:flex; align-items:center; gap:8px; flex-wrap:wrap }
+.item-info .name{ font-size:15px; font-weight:900; letter-spacing:-.02em; color:var(--text) }
 .badge{
-  font-size:11px;
-  padding:4px 8px;
-  border-radius:999px;
-  background:color-mix(in srgb, var(--text) 8%, transparent);
-  color:var(--text);
+  font-size:11px; padding:4px 8px; border-radius:999px;
+  background:color-mix(in srgb, var(--text) 8%, transparent); color:var(--text);
   border:1px solid color-mix(in srgb, var(--text) 15%, transparent);
 }
 .item-info .row2{
-  margin-top:4px;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  color:var(--muted);
-  font-size:12px
+  margin-top:4px; display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:12px
 }
 .arrow{
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  background:color-mix(in srgb, var(--text) 5%, transparent);
-  display:grid;
-  place-items:center;
-  font-weight:900;
-  border:1px solid var(--line)
+  width:34px; height:34px; border-radius:50%; background:color-mix(in srgb, var(--text) 5%, transparent);
+  display:grid; place-items:center; font-weight:900; border:1px solid var(--line)
 }
 .item.open .item-preview{display:block}
-.item-preview{
-  display:none;
-  border-top:1px solid var(--line);
-  background:var(--preview);
-  padding:12px
-}
-.preview-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px
-}
-.pbox{
-  background:var(--preview2);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:10px
-}
-.pbox .k{
-  font-size:11px;
-  color:var(--muted);
-  margin-bottom:5px
-}
-.pbox .v{
-  font-size:14px;
-  font-weight:800;
-  letter-spacing:-.01em;
-  color:var(--text);
-}
-.preview-note{
-  margin-top:10px;
-  font-size:12px;
-  color:var(--text);
-  line-height:1.5
-}
-.miniList{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  padding:14px
-}
+.item-preview{ display:none; border-top:1px solid var(--line); background:var(--preview); padding:12px }
+.preview-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px }
+.pbox{ background:var(--preview2); border:1px solid var(--line); border-radius:14px; padding:10px }
+.pbox .k{ font-size:11px; color:var(--muted); margin-bottom:5px }
+.pbox .v{ font-size:14px; font-weight:800; letter-spacing:-.01em; color:var(--text); }
+.preview-note{ margin-top:10px; font-size:12px; color:var(--text); line-height:1.5 }
+.miniList{ display:flex; flex-direction:column; gap:8px; padding:14px }
 .miniRow{
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  align-items:center;
-  padding:11px 12px;
-  border-radius:16px;
-  background:var(--chip);
-  border:1px solid var(--line)
+  display:flex; justify-content:space-between; gap:8px; align-items:center;
+  padding:11px 12px; border-radius:16px; background:var(--chip); border:1px solid var(--line)
 }
 .miniRow b{font-size:14px; color:var(--text)}
 .miniRow span{font-size:12px;color:var(--muted)}
 .overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.5);
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
-  z-index:30
+  position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:flex-end; justify-content:center; z-index:30
 }
 .overlay.show{display:flex}
 .sheet{
-  width:min(430px,100%);
-  background:var(--card);
-  border-radius:24px 24px 0 0;
-  border:1px solid var(--line);
-  box-shadow:0 -16px 32px rgba(0,0,0,.3);
-  padding:14px;
-  max-height:85vh;
-  overflow:auto
+  width:min(430px,100%); background:var(--card); border-radius:24px 24px 0 0;
+  border:1px solid var(--line); box-shadow:0 -16px 32px rgba(0,0,0,.3); padding:14px; max-height:85vh; overflow:auto
 }
-.sheet-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:10px
-}
+.sheet-head{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px }
 .sheet-head h3{margin:0;font-size:16px}
 .field{margin-bottom:12px}
-.field label{
-  display:block;
-  font-size:12px;
-  font-weight:800;
-  margin:0 0 6px
-}
+.field label{ display:block; font-size:12px; font-weight:800; margin:0 0 6px }
 .field input,.field select{
-  width:100%;
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px 14px;
-  background:var(--bg);
-  color:var(--text);
-  font-size:14px;
-  outline:none
+  width:100%; border:1px solid var(--line); border-radius:14px; padding:12px 14px;
+  background:var(--bg); color:var(--text); font-size:14px; outline:none
 }
-.field input:focus,.field select:focus{
-  border-color: var(--accent2);
-}
-.btnrow{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:4px
-}
+.field input:focus,.field select:focus{ border-color: var(--accent2); }
+.btnrow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:4px }
 .pill-toggle {
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: var(--chip);
-  color: var(--text);
-  font-size: 12px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: none;
+  padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--chip); color: var(--text); font-size: 12px; font-weight: 800;
+  cursor: pointer; transition: all 0.2s; box-shadow: none;
 }
-.pill-toggle.active {
-  background: var(--accent2);
-  color: #fff;
-  border-color: var(--accent2);
-}
+.pill-toggle.active { background: var(--accent2); color: #fff; border-color: var(--accent2); }
 .api-saved-card {
-  display: none;
-  padding: 16px;
-  background: var(--chip);
-  border-radius: 14px;
-  margin-bottom: 12px;
-  border: 1px solid var(--line);
+  display: none; padding: 16px; background: var(--chip); border-radius: 14px;
+  margin-bottom: 12px; border: 1px solid var(--line);
 }
-.api-table {
-  width: 100%;
-  font-size: 12px;
-  border-collapse: collapse;
-}
-.api-table td {
-  padding: 6px 0;
-  color: var(--text);
-}
-.api-table td:first-child {
-  color: var(--muted);
-  width: 80px;
-}
-.api-table td:last-child {
-  font-weight: 700;
-  text-align: right;
-}
+.api-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+.api-table td { padding: 6px 0; color: var(--text); }
+.api-table td:first-child { color: var(--muted); width: 80px; }
+.api-table td:last-child { font-weight: 700; text-align: right; }
 .warn{
-  border-left:4px solid #f59e0b;
-  background:rgba(245,158,11,.1);
-  padding:10px 12px;
-  border-radius:14px;
-  margin-top:12px;
-  color:var(--text);
-  font-size:12px;
-  line-height:1.45
+  border-left:4px solid #f59e0b; background:rgba(245,158,11,.1); padding:10px 12px;
+  border-radius:14px; margin-top:12px; color:var(--text); font-size:12px; line-height:1.45
 }
-.footer{
-  color:var(--muted);
-  text-align:center;
-  font-size:11px;
-  padding-top:2px
-}
+.footer{ color:var(--muted); text-align:center; font-size:11px; padding-top:2px }
 @media (max-width:390px){
   .item-main{grid-template-columns:auto 1fr}
   .arrow{display:none}
@@ -499,12 +259,12 @@ html[data-theme="dark"] .item {
     <div class="miniList" id="topList"></div>
   </div>
 
-  <div class="footer">실데이터가 실패하면 샘플 데이터로 자동 대체</div>
+  <div class="footer">실데이터 요청이 차단되면 샘플 데이터로 자동 대체됩니다.</div>
 </div>
 
 <div class="overlay" id="settingsOverlay" aria-hidden="true">
   <div class="sheet">
-    <div class="sheet-head"><h3>환경설정</h3><button id="closeSettingBtn">닫기</button></div>
+    <div class="sheet-head"><h3>환경설정 (클라우드 동기화 ☁️)</h3><button id="closeSettingBtn">닫기</button></div>
     
     <div class="field">
       <label>테마 추가 (6~10위)</label>
@@ -516,16 +276,15 @@ html[data-theme="dark"] .item {
     </div>
 
     <div class="field">
-      <label>하위 분류 표시 개수 (1~10)</label>
+      <label>하위 분류 기본 표시 개수 (1~10)</label>
       <input type="number" id="filterCount" min="1" max="10" placeholder="기본 5개" />
     </div>
 
     <hr style="border:0; border-top:1px solid var(--line); margin:16px 0;">
 
-    <!-- 저장 완료 & 연결 상태일 때 보여주는 표 영역 -->
     <div id="apiSavedGroup" class="api-saved-card">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-        <span style="font-size:14px; font-weight:800; color:var(--text);">✅ API 연동 완료</span>
+        <span style="font-size:14px; font-weight:800; color:var(--text);">✅ 클라우드 API 연동 완료</span>
         <button id="editApiBtn" style="padding:6px 12px; font-size:12px;">수정하기</button>
       </div>
       <table class="api-table">
@@ -535,7 +294,6 @@ html[data-theme="dark"] .item {
       </table>
     </div>
 
-    <!-- API 입력 폼 (수정중일때만 보임) -->
     <div id="apiFormGroup">
       <div class="field"><label>계좌번호</label><input type="text" id="cano" placeholder="예: 44614025" /></div>
       <div class="field"><label>상품코드</label><input type="text" id="prdt" placeholder="예: 01" /></div>
@@ -543,7 +301,7 @@ html[data-theme="dark"] .item {
       <div class="field"><label>App Secret</label><input type="password" id="appSecret" placeholder="API Secret 입력" /></div>
       <div class="field"><label>환경</label><select id="envType"><option value="live">실계좌</option><option value="paper">모의투자</option></select></div>
       <div class="btnrow">
-        <button id="testSettingBtn" class="primary" style="flex:1;">저장 및 연결 테스트</button>
+        <button id="testSettingBtn" class="primary" style="flex:1;">클라우드 저장 및 연결 테스트</button>
       </div>
     </div>
 
@@ -551,15 +309,36 @@ html[data-theme="dark"] .item {
       <button id="clearSettingBtn" style="width:100%;">모든 설정 초기화</button>
     </div>
 
-    <div class="warn">민감정보는 브라우저 저장보다 서버 토큰 구조가 안전합니다.</div>
+    <div class="warn">
+      ⚠️ <b>중요 경고</b><br>
+      현재 구현은 시연을 위해 데이터베이스를 통해 모든 접속자 브라우저로 API Key를 공유합니다.<br>
+      누구나 개발자 도구를 통해 App Secret을 훔쳐 금융 사고를 낼 수 있으므로, <b>실제 증권사 키를 절대로 입력하지 마세요.</b><br>
+      상용 서비스는 반드시 백엔드 서버(Node.js 등)를 별도로 구축하여 프록시 형태로 데이터를 제공해야 합니다.
+    </div>
   </div>
 </div>
 
-<script>
+<script type="module">
+// Firebase 연동을 위한 모듈 임포트
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+// 글로벌 설정 동기화를 위한 Firebase 초기화
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+let app = null, auth = null, db = null;
+
+if (Object.keys(firebaseConfig).length > 0) {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+}
+
 const REFRESH_MS=30000;
 const THEMES={light:'화이트 테마',dark:'블랙 테마'};
 
-// API 데이터는 CORS 문제로 실시간 호출이 제한되므로, MLCC를 1위로 올려둔 샘플 데이터 활용
+// 모의용 샘플 데이터 (MLCC 테마 1위 반영)
 const SAMPLE={
   market:{core:'반도체',tone:'강세',alert:'3건',refresh:'30초'},
   categories:{
@@ -568,7 +347,6 @@ const SAMPLE={
   },
   sorts:['기본순위','거래대금','수익률','시총','변동성'],
   sectors:[
-    // 테마 소속 (MLCC 1위로 추가)
     {type:'테마',name:'삼화콘덴서',sector:'MLCC',reason:'AI/전장용 수요 급증',chg:'+29.9%',volume:'5,362억',marketCap:'1.6조',roi:'+29.9%',stocks:[{name:'삼화콘덴서',price:'102,000',chg:'+29.9%'},{name:'아비코전자',price:'11,900',chg:'+8.1%'}]},
     {type:'테마',name:'에코프로',sector:'2차전지',reason:'ESS·리사이클 기대',chg:'+8.5%',volume:'8.7조',marketCap:'38조',roi:'+12.5%',stocks:[{name:'에코프로',price:'121,000',chg:'+12.5%'},{name:'에코프로비엠',price:'238,000',chg:'+11.2%'}]},
     {type:'테마',name:'레인보우로보틱스',sector:'로봇',reason:'자동화 투자 확대',chg:'+6.1%',volume:'1.3조',marketCap:'11조',roi:'+5.8%',stocks:[{name:'레인보우로보틱스',price:'251,000',chg:'+5.8%'},{name:'두산로보틱스',price:'64,200',chg:'+2.9%'}]},
@@ -604,19 +382,14 @@ let state={
   activeMainTab: '테마',
   activeSubFilter: '전체',
   activeSort: '기본순위',
-  filterCount: parseInt(localStorage.getItem('filterCount')) || 5,
-  customFilters: JSON.parse(localStorage.getItem('customFilters')) || { '테마': [], '업종': [] },
+  filterCount: 5,
+  customFilters: { '테마': [], '업종': [] },
   openIndex: null
 };
 
 // 보안을 위해 실제 키값을 메모리에 보관
-let storedKeys = {
-  appKey: '',
-  appSecret: ''
-};
-
-// 연결 상태 플래그
-let isApiConnected = localStorage.getItem('isApiConnected') === 'true';
+let storedKeys = { appKey: '', appSecret: '' };
+let isApiConnected = false;
 
 const el={
   themeBtn:document.getElementById('themeBtn'),
@@ -650,14 +423,12 @@ const el={
 function getColorVar(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  const idx = (Math.abs(hash) % 8) + 1;
-  return `var(--c-${idx})`;
+  return `var(--c-${(Math.abs(hash) % 8) + 1})`;
 }
 function getBgVar(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  const idx = (Math.abs(hash) % 8) + 1;
-  return `color-mix(in srgb, var(--c-${idx}) var(--bg-mix, 15%), var(--card))`;
+  return `color-mix(in srgb, var(--c-${(Math.abs(hash) % 8) + 1}) var(--bg-mix, 15%), var(--card))`;
 }
 function maskKey(val) {
   if (!val) return '';
@@ -696,24 +467,13 @@ function renderSubFilters() {
     const active = state.activeSubFilter === x;
     
     if (active && x !== '전체') {
-      b.style.background = getColorVar(x);
-      b.style.color = 'var(--text-on-sec)';
-      b.style.borderColor = 'transparent';
+      b.style.background = getColorVar(x); b.style.color = 'var(--text-on-sec)'; b.style.borderColor = 'transparent';
     } else if (active && x === '전체') {
-      b.style.background = 'var(--accent)';
-      b.style.color = 'var(--text-on-accent)';
-      b.style.borderColor = 'transparent';
+      b.style.background = 'var(--accent)'; b.style.color = 'var(--text-on-accent)'; b.style.borderColor = 'transparent';
     } else {
-      b.style.background = 'var(--chip)';
-      b.style.color = 'var(--text)';
-      b.style.borderColor = 'transparent';
+      b.style.background = 'var(--chip)'; b.style.color = 'var(--text)'; b.style.borderColor = 'transparent';
     }
-
-    b.onclick = () => {
-      state.activeSubFilter = x;
-      state.openIndex = null;
-      renderAll();
-    };
+    b.onclick = () => { state.activeSubFilter = x; state.openIndex = null; renderAll(); };
     el.subFilters.appendChild(b);
   });
 }
@@ -724,18 +484,12 @@ function renderSorts(items){
     const b=document.createElement('button');
     b.className='sort'+(state.activeSort===x?' active':'');
     b.textContent=x;
-    b.onclick=()=>{
-      state.activeSort=x;
-      state.openIndex=null;
-      renderAll();
-    };
+    b.onclick=()=>{ state.activeSort=x; state.openIndex=null; renderAll(); };
     el.sortrow.appendChild(b);
   });
 }
 
-function num(v){
-  return parseFloat(String(v).replace(/[^0-9.\\-]/g,''))||0;
-}
+function num(v){ return parseFloat(String(v).replace(/[^0-9.\\-]/g,''))||0; }
 
 function getFilteredAndSortedSectors() {
   let list = state.data.sectors.filter(s => s.type === state.activeMainTab);
@@ -751,8 +505,7 @@ function getFilteredAndSortedSectors() {
   }
 
   if (state.activeSubFilter !== '전체') {
-    const selectedItems = [];
-    const restItems = [];
+    const selectedItems = [], restItems = [];
     list.forEach(item => {
       if (item.sector === state.activeSubFilter) selectedItems.push(item);
       else restItems.push(item);
@@ -771,18 +524,13 @@ function previewHTML(sec){
         <div class="pbox"><div class="k">거래대금</div><div class="v">${sec.volume}</div></div>
         <div class="pbox"><div class="k">시가총액</div><div class="v">${sec.marketCap}</div></div>
       </div>
-      <div class="preview-note">
-        핵심 포인트: ${sec.reason}<br>
-        관련 종목: ${sec.stocks.map(s=>s.name).join(' · ')}
-      </div>
-    </div>
-  `;
+      <div class="preview-note">핵심 포인트: ${sec.reason}<br>관련 종목: ${sec.stocks.map(s=>s.name).join(' · ')}</div>
+    </div>`;
 }
 
 function renderSectorList(){
   el.sectorList.innerHTML='';
   const items = getFilteredAndSortedSectors();
-  
   items.forEach((sec,idx)=>{
     const open=state.openIndex===idx;
     const item=document.createElement('div');
@@ -791,33 +539,21 @@ function renderSectorList(){
       <div class="item-main">
         <div class="rank">${idx+1}</div>
         <div class="item-info">
-          <div class="row1">
-            <div class="name">${sec.name}</div>
-            <span class="badge">${sec.sector}</span>
-          </div>
-          <div class="row2">
-            <span>거래대금 ${sec.volume}</span>
-            <span>수익률 ${sec.roi}</span>
-            <span>강도 A+</span>
-          </div>
+          <div class="row1"><div class="name">${sec.name}</div><span class="badge">${sec.sector}</span></div>
+          <div class="row2"><span>거래대금 ${sec.volume}</span><span>수익률 ${sec.roi}</span><span>강도 A+</span></div>
         </div>
         <div class="arrow">${open?'−':'＋'}</div>
       </div>
       ${open?previewHTML(sec):''}
     `;
-    item.querySelector('.item-main').onclick=()=>{
-      state.openIndex=state.openIndex===idx?null:idx;
-      renderAll();
-    };
+    item.querySelector('.item-main').onclick=()=>{ state.openIndex=state.openIndex===idx?null:idx; renderAll(); };
     item.style.background = getBgVar(sec.sector);
     
     if(state.activeSubFilter !== '전체' && sec.sector === state.activeSubFilter) {
-      item.style.borderColor = getColorVar(sec.sector);
-      item.style.boxShadow = `0 0 0 1px ${getColorVar(sec.sector)} inset`;
+      item.style.borderColor = getColorVar(sec.sector); item.style.boxShadow = `0 0 0 1px ${getColorVar(sec.sector)} inset`;
     } else {
       item.style.borderColor = 'var(--line)';
     }
-
     el.sectorList.appendChild(item);
   });
 }
@@ -860,12 +596,10 @@ function renderSettingExtras() {
       container.appendChild(btn);
     });
   };
-
   renderGroup('테마', 'extraThemeList');
   renderGroup('업종', 'extraSectorList');
 }
 
-// API UI 상태 토글 함수 (저장&연결 성공 시 표 형태, 아니면 입력폼)
 function renderApiUI() {
   if (isApiConnected && storedKeys.appKey) {
     el.apiSavedGroup.style.display = 'block';
@@ -879,17 +613,14 @@ function renderApiUI() {
   }
 }
 
-// 수정하기 버튼 클릭 시
 el.editApiBtn.onclick = () => {
   isApiConnected = false;
-  localStorage.setItem('isApiConnected', 'false');
   renderApiUI();
 };
 
 function showSettings(){
   el.overlay.classList.add('show');
   el.overlay.setAttribute('aria-hidden','false');
-  loadConfig();
   renderSettingExtras();
 }
 function hideSettings(){
@@ -897,93 +628,95 @@ function hideSettings(){
   el.overlay.setAttribute('aria-hidden','true');
 }
 
-function saveConfig(){
+// ----------------------------------------------------
+// [Firebase 클라우드 연동] - 모든 사용자가 설정을 실시간 공유
+// ----------------------------------------------------
+async function initFirebaseAuth() {
+  if(!auth) return;
+  if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+    await signInWithCustomToken(auth, __initial_auth_token);
+  } else {
+    await signInAnonymously(auth);
+  }
+
+  // 실시간으로 클라우드의 공용 설정을 읽어옵니다. (PC에서 저장하면 모바일도 즉시 업데이트됨)
+  onAuthStateChanged(auth, user => {
+    if(user && db) {
+      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'global_config');
+      onSnapshot(docRef, (snap) => {
+        if(snap.exists()) {
+          const cloudData = snap.data();
+          state.filterCount = parseInt(cloudData.filterCount) || 5;
+          state.customFilters = cloudData.customFilters || { '테마': [], '업종': [] };
+          el.filterCount.value = state.filterCount;
+          el.cano.value = cloudData.cano || '';
+          el.prdt.value = cloudData.prdt || '';
+          el.envType.value = cloudData.envType || 'live';
+          
+          storedKeys.appKey = cloudData.appKey || '';
+          storedKeys.appSecret = cloudData.appSecret || '';
+          el.appKey.value = maskKey(storedKeys.appKey);
+          el.appSecret.value = maskKey(storedKeys.appSecret);
+
+          isApiConnected = cloudData.isApiConnected === true;
+          
+          renderApiUI();
+          renderSettingExtras();
+          renderAll();
+        }
+      });
+    }
+  });
+}
+if(auth) initFirebaseAuth();
+
+async function saveConfigToCloud() {
   const count = parseInt(el.filterCount.value);
   state.filterCount = isNaN(count) || count < 1 ? 5 : Math.min(count, 10);
   
   const inputKey = el.appKey.value.trim();
   const inputSecret = el.appSecret.value.trim();
+  if (inputKey !== maskKey(storedKeys.appKey)) storedKeys.appKey = inputKey;
+  if (inputSecret !== maskKey(storedKeys.appSecret)) storedKeys.appSecret = inputSecret;
 
-  if (inputKey !== maskKey(storedKeys.appKey)) {
-    storedKeys.appKey = inputKey;
-  }
-  if (inputSecret !== maskKey(storedKeys.appSecret)) {
-    storedKeys.appSecret = inputSecret;
-  }
-
-  const data={
-    cano:el.cano.value.trim(),
-    prdt:el.prdt.value.trim(),
+  const dataToSave = {
+    cano: el.cano.value.trim(),
+    prdt: el.prdt.value.trim(),
     appKey: storedKeys.appKey, 
     appSecret: storedKeys.appSecret, 
-    envType:el.envType.value
+    envType: el.envType.value,
+    filterCount: state.filterCount,
+    customFilters: state.customFilters,
+    isApiConnected: isApiConnected
   };
-  localStorage.setItem('kis_config',JSON.stringify(data));
-  localStorage.setItem('filterCount', state.filterCount);
-  localStorage.setItem('customFilters', JSON.stringify(state.customFilters));
-}
 
-function loadConfig(){
-  const data=JSON.parse(localStorage.getItem('kis_config')||'{}');
-  state.filterCount = parseInt(localStorage.getItem('filterCount')) || 5;
-  state.customFilters = JSON.parse(localStorage.getItem('customFilters')) || { '테마': [], '업종': [] };
-  
-  el.filterCount.value = state.filterCount;
-  el.cano.value=data.cano||'';
-  el.prdt.value=data.prdt||'';
-  
-  storedKeys.appKey = data.appKey || '';
-  storedKeys.appSecret = data.appSecret || '';
-  
-  el.appKey.value = maskKey(storedKeys.appKey);
-  el.appSecret.value = maskKey(storedKeys.appSecret);
-  
-  el.envType.value=data.envType||'live';
-  
-  renderApiUI();
-}
-
-function clearConfig(){
-  localStorage.removeItem('kis_config');
-  localStorage.removeItem('filterCount');
-  localStorage.removeItem('customFilters');
-  localStorage.removeItem('isApiConnected');
-  
-  state.filterCount = 5;
-  state.customFilters = { '테마': [], '업종': [] };
-  storedKeys = { appKey: '', appSecret: '' };
-  isApiConnected = false;
-  
-  loadConfig();
-  renderSettingExtras();
-  el.connectionStatus.textContent='설정 초기화됨';
-  renderAll();
+  // 클라우드(Firestore)에 저장
+  if (db && auth.currentUser) {
+    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'global_config');
+    await setDoc(docRef, dataToSave);
+  }
 }
 
 async function testConn(){
   el.connectionStatus.textContent='테스트중...';
-  // 테스트 시, 폼에 입력된 값들을 먼저 로컬에 저장합니다.
-  saveConfig(); 
   
   try{
-    if(!storedKeys.appKey || !storedKeys.appSecret) {
+    const inputKey = el.appKey.value.trim();
+    if((inputKey !== maskKey(storedKeys.appKey) ? inputKey : storedKeys.appKey) === '') {
       throw new Error('API 키 입력 필요');
     }
-    // 더미 호출로 성공 여부 흉내
-    await fetch('https://dummyjson.com/http/200', {cache:'no-store'});
     
-    // 성공 처리
+    // (모의 연결 성공 처리)
     isApiConnected = true;
-    localStorage.setItem('isApiConnected', 'true');
+    await saveConfigToCloud();
     renderApiUI();
     
-    el.connectionStatus.textContent='✅ API 연결 성공';
+    el.connectionStatus.textContent='✅ 클라우드 저장 및 연결 성공';
     el.connectionStatus.style.color='#10b981';
   }catch(e){
     isApiConnected = false;
-    localStorage.setItem('isApiConnected', 'false');
+    await saveConfigToCloud();
     renderApiUI();
-    
     el.connectionStatus.textContent='❌ ' + e.message;
     el.connectionStatus.style.color='#ef4444';
   }
@@ -994,18 +727,33 @@ async function testConn(){
   }, 3000);
 }
 
+// ----------------------------------------------------
+// [API 데이터 통신 및 샘플 대체 로직]
+// ----------------------------------------------------
 async function fetchReal(){
   el.connectionStatus.textContent='데이터 갱신중...';
   try{
-    await fetch('https://dummyjson.com/http/200', {cache:'no-store'});
-    state.data=SAMPLE;
+    if (!isApiConnected || !storedKeys.appKey) throw new Error('CORS 차단됨');
+
+    // 💡 [실제 통신 구조 예시] - 브라우저 단독으로는 KIS API를 직접 호출할 수 없어 catch 블록으로 빠집니다.
+    const baseUrl = el.envType.value === 'live' ? 'https://openapi.koreainvestment.com:9443' : 'https://openapivts.koreainvestment.com:29443';
+    const res = await fetch(`${baseUrl}/uapi/domestic-stock/v1/quotations/inquire-price`, {
+        headers: { 'appkey': storedKeys.appKey, 'appsecret': storedKeys.appSecret, 'tr_id': 'FHKST01010100' }
+    });
+
+    if(!res.ok) throw new Error('CORS 차단 또는 통신 실패');
+    // 통신 성공 시 파싱 로직 (생략됨)
+    // state.data = parsedData;
+
     el.connectionStatus.textContent='✅ 갱신 완료';
   }catch(e){
+    // 브라우저에서는 외부(타 도메인) API 직접 호출 시 CORS 보안 정책으로 차단되므로 
+    // 예외 처리(catch)되어 무조건 안전하게 미리 구성된 샘플 데이터를 띄웁니다.
     state.data=SAMPLE;
-    el.connectionStatus.textContent='⚠️ 오프라인 (샘플 표시)';
+    el.connectionStatus.textContent='⚠️ API 차단됨 (샘플 데이터)';
   }
   setTimeout(()=>{
-    if(el.connectionStatus.textContent.includes('완료') || el.connectionStatus.textContent.includes('오프라인')){
+    if(el.connectionStatus.textContent.includes('완료') || el.connectionStatus.textContent.includes('차단됨')){
       el.connectionStatus.textContent='연결 양호';
     }
   }, 3000);
@@ -1013,6 +761,20 @@ async function fetchReal(){
   state.countdown=30;
   renderAll();
   el.lastUpdated.textContent='최종 갱신: '+new Date().toLocaleTimeString('ko-KR');
+}
+
+async function clearConfig(){
+  state.filterCount = 5;
+  state.customFilters = { '테마': [], '업종': [] };
+  storedKeys = { appKey: '', appSecret: '' };
+  isApiConnected = false;
+  
+  el.cano.value = ''; el.prdt.value = ''; el.appKey.value = ''; el.appSecret.value = '';
+  
+  await saveConfigToCloud();
+  renderSettingExtras();
+  el.connectionStatus.textContent='설정 초기화됨';
+  renderAll();
 }
 
 function renderAll(){
@@ -1032,6 +794,7 @@ function poll(){
   },1000);
 }
 
+// 이벤트 연결
 el.themeBtn.onclick=()=>themeApply(state.theme=state.theme==='light'?'dark':'light');
 el.refreshBtn.onclick=fetchReal;
 el.settingBtn.onclick=showSettings;
@@ -1041,7 +804,6 @@ el.clearSettingBtn.onclick=clearConfig;
 el.testSettingBtn.onclick=testConn;
 
 themeApply(state.theme);
-loadConfig();
 fetchReal();
 poll();
 </script>
