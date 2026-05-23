@@ -5,385 +5,27 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
 <title>주도섹터 앱</title>
 <style>
-:root{
-  --bg:#f6f8fc;
-  --card:#ffffff;
-  --text:#0f172a;
-  --muted:#64748b;
-  --line:#e2e8f0;
-  --accent:#111827;
-  --accent2:#2563eb;
-  --shadow:0 8px 24px rgba(15,23,42,.08);
-  --radius:20px;
-  --chip:#eef4ff;
-  --preview:rgba(255,255,255,.72);
-  --preview2:rgba(255,255,255,.86)
-}
-html[data-theme="dark"]{
-  --bg:#0b1220;
-  --card:#111827;
-  --text:#e2e8f0;
-  --muted:#a7b3c7;
-  --line:#334155;
-  --accent:#f8fafc;
-  --accent2:#60a5fa;
-  --shadow:0 10px 26px rgba(0,0,0,.32);
-  --chip:#172235;
-  --preview:rgba(15,23,42,.78);
-  --preview2:rgba(15,23,42,.88)
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
-  background:var(--bg);
-  color:var(--text)
-}
-.app{
-  max-width:430px;
-  margin:0 auto;
-  min-height:100vh;
-  padding:12px 12px 16px;
-  display:flex;
-  flex-direction:column;
-  gap:12px
-}
-.topbar{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  padding-top:2px
-}
-.topline{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:10px
-}
-.title h1{
-  margin:0;
-  font-size:22px;
-  letter-spacing:-.03em;
-  line-height:1.1
-}
-.title p{
-  margin:6px 0 0;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.4
-}
-.actions{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  flex-wrap:nowrap;
-  justify-content:flex-end;
-  white-space:nowrap
-}
-button{
-  border:0;
-  border-radius:999px;
-  padding:10px 13px;
-  font-weight:800;
-  font-size:12px;
-  cursor:pointer;
-  color:var(--text);
-  background:var(--card);
-  box-shadow:var(--shadow);
-  border:1px solid var(--line)
-}
-button.primary{
-  background:var(--accent);
-  color:#fff;
-  border-color:transparent
-}
-.iconbtn{
-  width:40px;
-  height:40px;
-  padding:0;
-  display:grid;
-  place-items:center;
-  border-radius:50%
-}
-.status{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  font-size:11px;
-  color:var(--muted);
-  padding:0 2px
-}
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  overflow:hidden
-}
-.card-h{
-  padding:14px 14px 0;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px
-}
-.card-h h2{
-  margin:0;
-  font-size:15px
-}
-.pill{
-  font-size:11px;
-  padding:6px 9px;
-  border-radius:999px;
-  background:rgba(37,99,235,.1);
-  color:var(--accent2);
-  font-weight:700
-}
-.summary{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  padding:14px
-}
-.stat{
-  background:color-mix(in srgb, var(--card) 75%, var(--bg));
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:12px
-}
-.stat .k{
-  font-size:11px;
-  color:var(--muted);
-  margin-bottom:7px
-}
-.stat .v{
-  font-size:17px;
-  font-weight:800;
-  letter-spacing:-.02em
-}
-.filters,.sortrow{
-  display:flex;
-  gap:8px;
-  overflow:auto;
-  padding:12px 14px 0;
-  scrollbar-width:none
-}
-.filters::-webkit-scrollbar,.sortrow::-webkit-scrollbar{display:none}
-.filter,.sort{
-  white-space:nowrap;
-  padding:9px 13px;
-  border-radius:999px;
-  border:1px solid transparent;
-  font-size:12px;
-  font-weight:800;
-  color:#0f172a;
-  box-shadow:none
-}
-.sort{
-  background:var(--chip);
-  border-color:var(--line);
-  color:var(--text)
-}
-.sort.active{
-  background:var(--accent);
-  color:#fff;
-  border-color:transparent
-}
-.list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  padding:12px 14px 14px
-}
-.item{
-  border:1px solid var(--line);
-  border-radius:18px;
-  overflow:hidden;
-  background:var(--card);
-  box-shadow:0 4px 14px rgba(15,23,42,.05)
-}
-.item-main{
-  display:grid;
-  grid-template-columns:auto 1fr auto;
-  gap:10px;
-  align-items:center;
-  padding:12px;
-  cursor:pointer
-}
-.rank{
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  background:var(--chip);
-  display:grid;
-  place-items:center;
-  font-size:12px;
-  font-weight:900;
-  color:var(--text)
-}
-.item-info{min-width:0}
-.item-info .row1{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap
-}
-.item-info .name{
-  font-size:15px;
-  font-weight:900;
-  letter-spacing:-.02em
-}
-.badge{
-  font-size:11px;
-  padding:4px 8px;
-  border-radius:999px;
-  background:var(--chip);
-  color:var(--muted);
-  border:1px solid var(--line)
-}
-.item-info .row2{
-  margin-top:4px;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  color:var(--muted);
-  font-size:12px
-}
-.arrow{
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  background:var(--chip);
-  display:grid;
-  place-items:center;
-  font-weight:900;
-  border:1px solid var(--line)
-}
-.item.open .item-preview{display:block}
-.item-preview{
-  display:none;
-  border-top:1px solid var(--line);
-  background:var(--preview);
-  padding:12px
-}
-.preview-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px
-}
-.pbox{
-  background:var(--preview2);
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:10px
-}
-.pbox .k{
-  font-size:11px;
-  color:var(--muted);
-  margin-bottom:5px
-}
-.pbox .v{
-  font-size:14px;
-  font-weight:800;
-  letter-spacing:-.01em
-}
-.preview-note{
-  margin-top:10px;
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.5
-}
-.miniList{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  padding:14px
-}
-.miniRow{
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  align-items:center;
-  padding:11px 12px;
-  border-radius:16px;
-  background:color-mix(in srgb, var(--card) 72%, var(--bg));
-  border:1px solid var(--line)
-}
-.miniRow b{font-size:14px}
-.miniRow span{font-size:12px;color:var(--muted)}
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.35);
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
-  z-index:30
-}
-.overlay.show{display:flex}
-.sheet{
-  width:min(430px,100%);
-  background:var(--card);
-  border-radius:24px 24px 0 0;
-  border:1px solid var(--line);
-  box-shadow:0 -16px 32px rgba(0,0,0,.22);
-  padding:14px;
-  max-height:85vh;
-  overflow:auto
-}
-.sheet-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:10px
-}
-.sheet-head h3{margin:0;font-size:16px}
-.field{margin-bottom:12px}
-.field label{
-  display:block;
-  font-size:12px;
-  font-weight:800;
-  margin:0 0 6px
-}
-.field input,.field select{
-  width:100%;
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px 14px;
-  background:transparent;
-  color:var(--text);
-  font-size:14px;
-  outline:none
-}
-.btnrow{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:4px
-}
-.warn{
-  border-left:4px solid #f59e0b;
-  background:rgba(245,158,11,.08);
-  padding:10px 12px;
-  border-radius:14px;
-  margin-top:12px;
-  color:var(--text);
-  font-size:12px;
-  line-height:1.45
-}
-.footer{
-  color:var(--muted);
-  text-align:center;
-  font-size:11px;
-  padding-top:2px
-}
-@media (max-width:390px){
-  .summary{grid-template-columns:1fr}
-  .item-main{grid-template-columns:auto 1fr}
-  .arrow{display:none}
-  .title h1{font-size:20px}
-}
+:root{--bg:#f6f8fc;--card:#fff;--text:#0f172a;--muted:#475569;--line:#dbe3ef;--accent:#111827;--accent2:#2563eb;--shadow:0 8px 24px rgba(15,23,42,.08);--radius:20px;--chip:#eef4ff;--preview:rgba(255,255,255,.76);--preview2:rgba(255,255,255,.92);--text2:#0b1220}
+html[data-theme="dark"]{--bg:#0b1220;--card:#111827;--text:#f8fafc;--muted:#cbd5e1;--line:#3b4b61;--accent:#f8fafc;--accent2:#93c5fd;--shadow:0 10px 26px rgba(0,0,0,.36);--chip:#1b2940;--preview:rgba(15,23,42,.82);--preview2:rgba(15,23,42,.94);--text2:#f8fafc}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:430px;margin:0 auto;min-height:100vh;padding:12px 12px 16px;display:flex;flex-direction:column;gap:12px}
+.topbar{display:flex;flex-direction:column;gap:10px;padding-top:2px}.topline{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.title h1{margin:0;font-size:22px;letter-spacing:-.03em;line-height:1.1}.title p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.4}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:nowrap;justify-content:flex-end;white-space:nowrap}
+button{border:0;border-radius:999px;padding:10px 13px;font-weight:800;font-size:12px;cursor:pointer;color:var(--text);background:var(--card);box-shadow:var(--shadow);border:1px solid var(--line)}button.primary{background:var(--accent);color:var(--bg);border-color:transparent}.iconbtn{width:40px;height:40px;padding:0;display:grid;place-items:center;border-radius:50%}
+.status{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);padding:0 2px}.status div{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.card-h{padding:14px 14px 0;display:flex;justify-content:space-between;align-items:center;gap:10px}.card-h h2{margin:0;font-size:15px;color:var(--text)}.pill{font-size:11px;padding:6px 9px;border-radius:999px;background:rgba(37,99,235,.1);color:var(--accent2);font-weight:700}
+.filters,.sortrow{display:flex;gap:8px;overflow:auto;padding:12px 14px 0;scrollbar-width:none}.filters::-webkit-scrollbar,.sortrow::-webkit-scrollbar{display:none}
+.filter,.sort{white-space:nowrap;padding:9px 13px;border-radius:999px;border:1px solid transparent;font-size:12px;font-weight:800;box-shadow:none}.filter{color:var(--text2)}.sort{background:var(--chip);border-color:var(--line);color:var(--text)}.sort.active{background:var(--accent);color:var(--bg);border-color:transparent}
+.list{display:flex;flex-direction:column;gap:10px;padding:12px 14px 14px}
+.item{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card);box-shadow:0 4px 14px rgba(15,23,42,.05)}
+.item-main{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:12px;cursor:pointer}.rank{width:32px;height:32px;border-radius:10px;background:var(--chip);display:grid;place-items:center;font-size:12px;font-weight:900;color:var(--text)}
+.item-info{min-width:0}.item-info .row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.item-info .name{font-size:15px;font-weight:900;letter-spacing:-.02em;color:var(--text)}.badge{font-size:11px;padding:4px 8px;border-radius:999px;background:var(--chip);color:var(--muted);border:1px solid var(--line)}
+.item-info .row2{margin-top:4px;display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px}.arrow{width:34px;height:34px;border-radius:50%;background:var(--chip);display:grid;place-items:center;font-weight:900;border:1px solid var(--line);color:var(--text)}
+.item.open .item-preview{display:block}.item-preview{display:none;border-top:1px solid var(--line);background:var(--preview);padding:12px}.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pbox{background:var(--preview2);border:1px solid var(--line);border-radius:14px;padding:10px}.pbox .k{font-size:11px;color:var(--muted);margin-bottom:5px}.pbox .v{font-size:14px;font-weight:800;letter-spacing:-.01em;color:var(--text)}.preview-note{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.5}
+.miniList{display:flex;flex-direction:column;gap:8px;padding:14px}.miniRow{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 12px;border-radius:16px;background:color-mix(in srgb, var(--card) 72%, var(--bg));border:1px solid var(--line)}.miniRow b{font-size:14px;color:var(--text)}.miniRow span{font-size:12px;color:var(--muted)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;justify-content:center;z-index:30}.overlay.show{display:flex}.sheet{width:min(430px,100%);background:var(--card);border-radius:24px 24px 0 0;border:1px solid var(--line);box-shadow:0 -16px 32px rgba(0,0,0,.22);padding:14px;max-height:85vh;overflow:auto}.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.sheet-head h3{margin:0;font-size:16px;color:var(--text)}.field{margin-bottom:12px}.field label{display:block;font-size:12px;font-weight:800;margin:0 0 6px;color:var(--text)}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:transparent;color:var(--text);font-size:14px;outline:none}.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}.warn{border-left:4px solid #f59e0b;background:rgba(245,158,11,.08);padding:10px 12px;border-radius:14px;margin-top:12px;color:var(--text);font-size:12px;line-height:1.45}.footer{color:var(--muted);text-align:center;font-size:11px;padding-top:2px}
+@media (max-width:390px){.item-main{grid-template-columns:auto 1fr}.arrow{display:none}.title h1{font-size:20px}}
 </style>
 </head>
 <body>
@@ -392,7 +34,7 @@ button.primary{
     <div class="topline">
       <div class="title">
         <h1>주도섹터</h1>
-        <p>전체 종목 20개를 먼저 보여주고, 분야 선택 시 최상단으로 올립니다.</p>
+        <p>테마/업종을 나눠 보고, 선택한 분류를 최상단으로 올립니다.</p>
       </div>
       <div class="actions">
         <button id="themeBtn" aria-label="테마 변경" title="테마 변경">🌙</button>
@@ -404,27 +46,15 @@ button.primary{
     </div>
     <div class="status"><div id="lastUpdated">업데이트 대기중</div><div id="connectionStatus">연결 확인중</div></div>
   </div>
-
   <div class="card">
-    <div class="card-h"><h2>첫화면 요약</h2><span class="pill" id="modePill">화이트 테마</span></div>
-    <div class="summary" id="homeSummary"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-h"><h2>주도섹터 페이지</h2><span class="pill">전체 20개 + 선택 상단 배치</span></div>
+    <div class="card-h"><h2>주도섹터 페이지</h2><span class="pill">테마/업종 + 10위 확장</span></div>
     <div class="filters" id="filters"></div>
     <div class="sortrow" id="sortrow"></div>
     <div class="list" id="sectorList"></div>
   </div>
-
-  <div class="card">
-    <div class="card-h"><h2>실시간 상위 종목</h2><span class="pill">웹 데이터</span></div>
-    <div class="miniList" id="topList"></div>
-  </div>
-
+  <div class="card"><div class="card-h"><h2>실시간 상위 종목</h2><span class="pill">웹 데이터</span></div><div class="miniList" id="topList"></div></div>
   <div class="footer">실데이터가 실패하면 샘플 데이터로 자동 대체</div>
 </div>
-
 <div class="overlay" id="settingsOverlay" aria-hidden="true">
   <div class="sheet">
     <div class="sheet-head"><h3>환경설정</h3><button id="closeSettingBtn">닫기</button></div>
@@ -433,302 +63,38 @@ button.primary{
     <div class="field"><label>App Key</label><input id="appKey" placeholder="API Key 입력" /></div>
     <div class="field"><label>App Secret</label><input id="appSecret" placeholder="API Secret 입력" /></div>
     <div class="field"><label>환경</label><select id="envType"><option value="live">실계좌</option><option value="paper">모의투자</option></select></div>
-    <div class="btnrow">
-      <button id="saveSettingBtn" class="primary">저장</button>
-      <button id="loadSettingBtn">불러오기</button>
-      <button id="clearSettingBtn">초기화</button>
-      <button id="testSettingBtn">연결 테스트</button>
-    </div>
+    <div class="field"><label>최대 노출 수</label><select id="maxItems"><option value="5">5개</option><option value="10">10개</option></select></div>
+    <div class="btnrow"><button id="saveSettingBtn" class="primary">저장</button><button id="loadSettingBtn">불러오기</button><button id="clearSettingBtn">초기화</button><button id="testSettingBtn">연결 테스트</button></div>
     <div class="warn">민감정보는 브라우저 저장보다 서버 토큰 구조가 안전하다.</div>
   </div>
 </div>
-
 <script>
 const REFRESH_MS=30000;
 const THEMES={light:'화이트 테마',dark:'블랙 테마'};
-const SAMPLE={
-  market:{core:'반도체',tone:'강세',alert:'3건',refresh:'30초'},
-  filters:['전체','반도체','2차전지','바이오','로봇','방어주'],
-  sorts:['기본순위','거래대금','수익률','시총','변동성'],
-  sectors:[
-    {name:'삼성전자',sector:'반도체',reason:'AI 메모리 수요 확대',color:'#BFD7FF',chg:'+9.7%',volume:'2.39조',marketCap:'458조',roi:'+1.8%',stocks:[{name:'삼성전자',tag:'메모리',price:'72,000',chg:'+1.8%'},{name:'SK하이닉스',tag:'HBM',price:'168,000',chg:'+2.3%'},{name:'한미반도체',tag:'장비',price:'182,000',chg:'+6.4%'}]},
-    {name:'에코프로',sector:'2차전지',reason:'ESS·리사이클 기대',color:'#FFC7D1',chg:'+8.5%',volume:'거래 집중',marketCap:'38조',roi:'+12.5%',stocks:[{name:'에코프로',tag:'소재',price:'121,000',chg:'+12.5%'},{name:'에코프로비엠',tag:'양극재',price:'238,000',chg:'+11.2%'},{name:'포스코퓨처엠',tag:'양극재',price:'284,000',chg:'+4.7%'}]},
-    {name:'삼성바이오로직스',sector:'바이오',reason:'임상/실적 모멘텀',color:'#FFE8A3',chg:'+7.2%',volume:'이벤트 집중',marketCap:'73조',roi:'+2.1%',stocks:[{name:'삼성바이오로직스',tag:'실적',price:'1,020,000',chg:'+2.1%'},{name:'알테오젠',tag:'플랫폼',price:'287,000',chg:'+4.5%'},{name:'HLB',tag:'이슈',price:'91,800',chg:'+3.2%'}]},
-    {name:'레인보우로보틱스',sector:'로봇',reason:'자동화 투자 확대',color:'#C9EFD5',chg:'+6.1%',volume:'후속주 확산',marketCap:'11조',roi:'+5.8%',stocks:[{name:'레인보우로보틱스',tag:'대장주',price:'251,000',chg:'+5.8%'},{name:'두산로보틱스',tag:'협동로봇',price:'64,200',chg:'+2.9%'},{name:'에스피지',tag:'감속기',price:'34,750',chg:'+4.1%'}]},
-    {name:'KT',sector:'방어주',reason:'배당·수급 안정',color:'#DCCBFF',chg:'+2.4%',volume:'안정',marketCap:'9조',roi:'+1.2%',stocks:[{name:'KT',tag:'통신',price:'38,250',chg:'+0.9%'},{name:'SK텔레콤',tag:'통신',price:'54,300',chg:'+0.6%'},{name:'LG유플러스',tag:'통신',price:'10,850',chg:'+1.1%'}]},
-    {name:'삼성SDI',sector:'2차전지',reason:'전고체 기대',color:'#FFD8B8',chg:'+5.9%',volume:'상승',marketCap:'52조',roi:'+3.8%',stocks:[{name:'삼성SDI',tag:'셀',price:'386,000',chg:'+4.3%'},{name:'에코프로머티',tag:'소재',price:'87,000',chg:'+6.1%'},{name:'엘앤에프',tag:'양극재',price:'156,000',chg:'+2.7%'}]},
-    {name:'SK하이닉스',sector:'반도체',reason:'HBM 수요 확대',color:'#CFE8FF',chg:'+9.1%',volume:'2.11조',marketCap:'122조',roi:'+2.6%',stocks:[{name:'SK하이닉스',tag:'HBM',price:'168,000',chg:'+2.3%'},{name:'한미반도체',tag:'장비',price:'182,000',chg:'+6.4%'},{name:'테크윙',tag:'장비',price:'39,400',chg:'+3.1%'}]},
-    {name:'알테오젠',sector:'바이오',reason:'플랫폼 기대',color:'#FFF0B8',chg:'+6.8%',volume:'이슈',marketCap:'24조',roi:'+4.1%',stocks:[{name:'알테오젠',tag:'플랫폼',price:'287,000',chg:'+4.5%'},{name:'리가켐바이오',tag:'ADC',price:'105,000',chg:'+5.2%'},{name:'HLB',tag:'이슈',price:'91,800',chg:'+3.2%'}]},
-    {name:'두산로보틱스',sector:'로봇',reason:'협동로봇 확산',color:'#D9F2DD',chg:'+4.9%',volume:'후속',marketCap:'7조',roi:'+2.8%',stocks:[{name:'두산로보틱스',tag:'협동로봇',price:'64,200',chg:'+2.9%'},{name:'레인보우로보틱스',tag:'대장주',price:'251,000',chg:'+5.8%'},{name:'에스피지',tag:'감속기',price:'34,750',chg:'+4.1%'}]},
-    {name:'삼화콘덴서',sector:'반도체',reason:'MLCC 수급 개선',color:'#C8D9FF',chg:'+4.6%',volume:'상승',marketCap:'1.6조',roi:'+29.9%',stocks:[{name:'삼화콘덴서',tag:'MLCC',price:'102,000',chg:'+29.9%'},{name:'아비코전자',tag:'부품',price:'11,900',chg:'+8.1%'},{name:'대주전자재료',tag:'소재',price:'158,000',chg:'+19.2%'}]},
-    {name:'포스코퓨처엠',sector:'2차전지',reason:'양극재 모멘텀',color:'#FFD7C2',chg:'+4.3%',volume:'거래 집중',marketCap:'34조',roi:'+4.7%',stocks:[{name:'포스코퓨처엠',tag:'양극재',price:'284,000',chg:'+4.7%'},{name:'에코프로비엠',tag:'양극재',price:'238,000',chg:'+11.2%'},{name:'엘앤에프',tag:'양극재',price:'156,000',chg:'+2.7%'}]},
-    {name:'한미반도체',sector:'반도체',reason:'장비 투자 확대',color:'#D6E8FF',chg:'+4.1%',volume:'1.2조',marketCap:'18조',roi:'+6.4%',stocks:[{name:'한미반도체',tag:'장비',price:'182,000',chg:'+6.4%'},{name:'테크윙',tag:'장비',price:'39,400',chg:'+3.1%'},{name:'원익IPS',tag:'장비',price:'33,100',chg:'+2.0%'}]},
-    {name:'LG유플러스',sector:'방어주',reason:'배당수요',color:'#E2D7FF',chg:'+2.2%',volume:'안정',marketCap:'4.8조',roi:'+1.1%',stocks:[{name:'LG유플러스',tag:'통신',price:'10,850',chg:'+1.1%'},{name:'SK텔레콤',tag:'통신',price:'54,300',chg:'+0.6%'},{name:'KT',tag:'통신',price:'38,250',chg:'+0.9%'}]},
-    {name:'HLB',sector:'바이오',reason:'이벤트 모멘텀',color:'#FFF3BF',chg:'+4.8%',volume:'이슈',marketCap:'10조',roi:'+3.2%',stocks:[{name:'HLB',tag:'이슈',price:'91,800',chg:'+3.2%'},{name:'알테오젠',tag:'플랫폼',price:'287,000',chg:'+4.5%'},{name:'리가켐바이오',tag:'ADC',price:'105,000',chg:'+5.2%'}]},
-    {name:'에스피지',sector:'로봇',reason:'감속기 수요',color:'#D1F5DA',chg:'+3.9%',volume:'후속',marketCap:'1.9조',roi:'+4.1%',stocks:[{name:'에스피지',tag:'감속기',price:'34,750',chg:'+4.1%'},{name:'두산로보틱스',tag:'협동로봇',price:'64,200',chg:'+2.9%'},{name:'레인보우로보틱스',tag:'대장주',price:'251,000',chg:'+5.8%'}]},
-    {name:'에코프로비엠',sector:'2차전지',reason:'양극재 기대',color:'#FFD1DB',chg:'+4.5%',volume:'거래 집중',marketCap:'29조',roi:'+11.2%',stocks:[{name:'에코프로비엠',tag:'양극재',price:'238,000',chg:'+11.2%'},{name:'에코프로',tag:'소재',price:'121,000',chg:'+12.5%'},{name:'포스코퓨처엠',tag:'양극재',price:'284,000',chg:'+4.7%'}]},
-    {name:'원익IPS',sector:'반도체',reason:'장비 업황',color:'#C9E1FF',chg:'+3.4%',volume:'상승',marketCap:'3.2조',roi:'+2.0%',stocks:[{name:'원익IPS',tag:'장비',price:'33,100',chg:'+2.0%'},{name:'한미반도체',tag:'장비',price:'182,000',chg:'+6.4%'},{name:'테크윙',tag:'장비',price:'39,400',chg:'+3.1%'}]},
-    {name:'리가켐바이오',sector:'바이오',reason:'ADC 모멘텀',color:'#FFF1C9',chg:'+5.1%',volume:'이슈',marketCap:'8조',roi:'+5.2%',stocks:[{name:'리가켐바이오',tag:'ADC',price:'105,000',chg:'+5.2%'},{name:'HLB',tag:'이슈',price:'91,800',chg:'+3.2%'},{name:'알테오젠',tag:'플랫폼',price:'287,000',chg:'+4.5%'}]},
-    {name:'테크윙',sector:'반도체',reason:'장비 수급',color:'#DCEBFF',chg:'+2.8%',volume:'상승',marketCap:'1.4조',roi:'+3.1%',stocks:[{name:'테크윙',tag:'장비',price:'39,400',chg:'+3.1%'},{name:'한미반도체',tag:'장비',price:'182,000',chg:'+6.4%'},{name:'원익IPS',tag:'장비',price:'33,100',chg:'+2.0%'}]},
-    {name:'SK텔레콤',sector:'방어주',reason:'통신 안정',color:'#E0D2FF',chg:'+1.8%',volume:'안정',marketCap:'11조',roi:'+0.6%',stocks:[{name:'SK텔레콤',tag:'통신',price:'54,300',chg:'+0.6%'},{name:'KT',tag:'통신',price:'38,250',chg:'+0.9%'},{name:'LG유플러스',tag:'통신',price:'10,850',chg:'+1.1%'}]},
-  ],
-  top:[{name:'삼성전자',cat:'반도체',chg:'+9.72%',vol:'2.39조'},{name:'삼화콘덴서',cat:'MLCC',chg:'+29.94%',vol:'5,362억'},{name:'에코프로',cat:'2차전지',chg:'+12.56%',vol:'8,771억'},{name:'알테오젠',cat:'바이오',chg:'+4.55%',vol:'4,145억'}]
-};
-let state={theme:localStorage.getItem('theme')||'light',timer:null,data:SAMPLE,countdown:30,activeSector:'전체',activeSort:'기본순위',openIndex:null};
-const el={themeBtn:document.getElementById('themeBtn'),refreshBtn:document.getElementById('refreshBtn'),settingBtn:document.getElementById('settingBtn'),modePill:document.getElementById('modePill'),lastUpdated:document.getElementById('lastUpdated'),connectionStatus:document.getElementById('connectionStatus'),homeSummary:document.getElementById('homeSummary'),filters:document.getElementById('filters'),sortrow:document.getElementById('sortrow'),sectorList:document.getElementById('sectorList'),topList:document.getElementById('topList'),overlay:document.getElementById('settingsOverlay'),closeSettingBtn:document.getElementById('closeSettingBtn'),saveSettingBtn:document.getElementById('saveSettingBtn'),loadSettingBtn:document.getElementById('loadSettingBtn'),clearSettingBtn:document.getElementById('clearSettingBtn'),testSettingBtn:document.getElementById('testSettingBtn'),cano:document.getElementById('cano'),prdt:document.getElementById('prdt'),appKey:document.getElementById('appKey'),appSecret:document.getElementById('appSecret'),envType:document.getElementById('envType')};
-
-function themeApply(t){
-  document.documentElement.setAttribute('data-theme',t);
-  el.themeBtn.textContent=t==='light'?'🌙':'☀️';
-  el.modePill.textContent=THEMES[t];
-  localStorage.setItem('theme',t);
-}
-
-function renderHome(d){
-  el.homeSummary.innerHTML=`
-    <div class="stat"><div class="k">핵심 섹터</div><div class="v">${d.market.core}</div></div>
-    <div class="stat"><div class="k">시장 온도</div><div class="v">${d.market.tone}</div></div>
-    <div class="stat"><div class="k">알림</div><div class="v">${d.market.alert}</div></div>
-    <div class="stat"><div class="k">갱신 주기</div><div class="v">${d.market.refresh}</div></div>
-  `;
-}
-
-function renderFilters(items){
-  el.filters.innerHTML='';
-  items.forEach(x=>{
-    const b=document.createElement('button');
-    b.className='filter';
-    b.textContent=x;
-    const active = state.activeSector===x;
-    b.style.background=active?getSectorColor(x):'var(--chip)';
-    b.style.color=active?'#0f172a':'var(--text)';
-    b.style.borderColor='var(--line)';
-    b.onclick=()=>{
-      state.activeSector=x;
-      if(x!=='전체'){
-        const idx=state.data.sectors.findIndex(s=>s.sector===x);
-        if(idx>=0){
-          const picked=state.data.sectors.splice(idx,1)[0];
-          state.data.sectors.unshift(picked);
-        }
-      }
-      state.openIndex=null;
-      renderAll();
-    };
-    el.filters.appendChild(b);
-  });
-}
-
-function renderSorts(items){
-  el.sortrow.innerHTML='';
-  items.forEach(x=>{
-    const b=document.createElement('button');
-    b.className='sort'+(state.activeSort===x?' active':'');
-    b.textContent=x;
-    b.onclick=()=>{
-      state.activeSort=x;
-      sortData();
-      renderAll();
-    };
-    el.sortrow.appendChild(b);
-  });
-}
-
-function sortData(){
-  const key=state.activeSort;
-  if(key==='기본순위') return;
-  const fn={
-    '거래대금':(a,b)=>num(b.volume)-num(a.volume),
-    '수익률':(a,b)=>num(b.roi)-num(a.roi),
-    '시총':(a,b)=>num(b.marketCap)-num(a.marketCap),
-    '변동성':(a,b)=>b.name.length-a.name.length
-  }[key];
-  if(fn) state.data.sectors.sort(fn);
-}
-
-function num(v){
-  return parseFloat(String(v).replace(/[^0-9.\-]/g,''))||0;
-}
-
-function getSectorColor(sector){
-  return ({
-    '반도체':'#BFD7FF',
-    '2차전지':'#FFC7D1',
-    '바이오':'#FFE8A3',
-    '로봇':'#C9EFD5',
-    '방어주':'#DCCBFF'
-  }[sector]) || 'var(--chip)';
-}
-
-function previewHTML(sec){
-  return `
-    <div class="item-preview">
-      <div class="preview-grid">
-        <div class="pbox"><div class="k">현재가 기준</div><div class="v">${sec.stocks[0].price}</div></div>
-        <div class="pbox"><div class="k">등락률</div><div class="v">${sec.chg}</div></div>
-        <div class="pbox"><div class="k">거래대금</div><div class="v">${sec.volume}</div></div>
-        <div class="pbox"><div class="k">시가총액</div><div class="v">${sec.marketCap}</div></div>
-      </div>
-      <div class="preview-note">
-        핵심 포인트: ${sec.reason}<br>
-        관련 종목: ${sec.stocks.map(s=>s.name).join(' · ')}
-      </div>
-    </div>
-  `;
-}
-
-function renderSectorList(data){
-  el.sectorList.innerHTML='';
-  const items=data.sectors.slice(0,20);
-  items.forEach((sec,idx)=>{
-    const open=state.openIndex===idx;
-    const item=document.createElement('div');
-    item.className='item'+(open?' open':'');
-    item.innerHTML=`
-      <div class="item-main">
-        <div class="rank">${idx+1}</div>
-        <div class="item-info">
-          <div class="row1">
-            <div class="name">${sec.name}</div>
-            <span class="badge">${sec.sector}</span>
-            ${state.activeSector!=='전체'&&sec.sector===state.activeSector?'<span class="badge">선택됨</span>':''}
-          </div>
-          <div class="row2">
-            <span>거래대금 ${sec.volume}</span>
-            <span>수익률 ${sec.roi}</span>
-            <span>강도 A+</span>
-          </div>
-        </div>
-        <div class="arrow">${open?'−':'＋'}</div>
-      </div>
-      ${open?previewHTML(sec):''}
-    `;
-    item.querySelector('.item-main').onclick=()=>{
-      state.openIndex=state.openIndex===idx?null:idx;
-      renderAll();
-    };
-    item.style.borderColor=state.activeSector!=='전체'&&sec.sector===state.activeSector?'rgba(15,23,42,.35)':'var(--line)';
-    if(state.activeSector!=='전체'&&sec.sector===state.activeSector) item.style.boxShadow='0 0 0 2px rgba(37,99,235,.08) inset';
-    item.style.background=getSoftColor(idx);
-    el.sectorList.appendChild(item);
-  });
-}
-
-function getSoftColor(i){
-  const colors=[
-    'linear-gradient(180deg, rgba(191,215,255,.18), rgba(191,215,255,.05))',
-    'linear-gradient(180deg, rgba(255,199,209,.18), rgba(255,199,209,.05))',
-    'linear-gradient(180deg, rgba(255,232,163,.18), rgba(255,232,163,.05))',
-    'linear-gradient(180deg, rgba(201,239,213,.18), rgba(201,239,213,.05))',
-    'linear-gradient(180deg, rgba(220,203,255,.18), rgba(220,203,255,.05))'
-  ];
-  return colors[i%colors.length];
-}
-
-function renderTop(d){
-  el.topList.innerHTML=d.top.map((x,i)=>`
-    <div class="miniRow">
-      <div><b>${i+1}. ${x.name}</b><div><span>${x.cat}</span></div></div>
-      <div style="text-align:right"><b>${x.chg}</b><div><span>${x.vol}</span></div></div>
-    </div>
-  `).join('');
-}
-
-function showSettings(){
-  el.overlay.classList.add('show');
-  el.overlay.setAttribute('aria-hidden','false');
-  loadConfig();
-}
-function hideSettings(){
-  el.overlay.classList.remove('show');
-  el.overlay.setAttribute('aria-hidden','true');
-}
-function saveConfig(){
-  const data={
-    cano:el.cano.value.trim(),
-    prdt:el.prdt.value.trim(),
-    appKey:el.appKey.value.trim(),
-    appSecret:el.appSecret.value.trim(),
-    envType:el.envType.value
-  };
-  localStorage.setItem('kis_config',JSON.stringify(data));
-  el.connectionStatus.textContent='설정 저장됨';
-}
-function loadConfig(){
-  const data=JSON.parse(localStorage.getItem('kis_config')||'{}');
-  el.cano.value=data.cano||'';
-  el.prdt.value=data.prdt||'';
-  el.appKey.value=data.appKey||'';
-  el.appSecret.value=data.appSecret||'';
-  el.envType.value=data.envType||'live';
-}
-function clearConfig(){
-  localStorage.removeItem('kis_config');
-  loadConfig();
-  el.connectionStatus.textContent='설정 초기화';
-}
-
-async function testConn(){
-  el.connectionStatus.textContent='테스트중';
-  try{
-    const cfg=JSON.parse(localStorage.getItem('kis_config')||'{}');
-    if(!cfg.appKey||!cfg.appSecret) throw new Error('missing');
-    const r=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://api.github.com'),{cache:'no-store'});
-    if(!r.ok) throw new Error('network');
-    el.connectionStatus.textContent='연결 시도 성공';
-  }catch(e){
-    el.connectionStatus.textContent='입력 확인 필요';
-  }
-}
-
-async function fetchReal(){
-  el.connectionStatus.textContent='불러오는중';
-  try{
-    await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://query1.finance.yahoo.com/v7/finance/quote?symbols=^KS11,005930.KS,000660.KS'),{cache:'no-store'});
-    state.data=SAMPLE;
-    el.connectionStatus.textContent='실데이터 시도됨';
-  }catch(e){
-    state.data=SAMPLE;
-    el.connectionStatus.textContent='샘플 데이터 표시';
-  }
-  state.countdown=30;
-  renderAll();
-  el.lastUpdated.textContent='최종 갱신: '+new Date().toLocaleTimeString('ko-KR');
-}
-
-function renderAll(){
-  renderHome(state.data);
-  renderFilters(state.data.filters);
-  renderSorts(state.data.sorts);
-  renderSectorList(state.data);
-  renderTop(state.data);
-  el.refreshBtn.textContent='⏳ '+state.countdown;
-}
-
-function poll(){
-  clearInterval(state.timer);
-  state.timer=setInterval(()=>{
-    state.countdown=Math.max(0,state.countdown-1);
-    el.refreshBtn.textContent='⏳ '+state.countdown;
-    if(state.countdown<=0) fetchReal();
-  },1000);
-}
-
-el.themeBtn.onclick=()=>themeApply(state.theme=state.theme==='light'?'dark':'light');
-el.refreshBtn.onclick=fetchReal;
-el.settingBtn.onclick=showSettings;
-el.closeSettingBtn.onclick=hideSettings;
-el.overlay.addEventListener('click',e=>{if(e.target===el.overlay) hideSettings()});
-el.saveSettingBtn.onclick=saveConfig;
-el.loadSettingBtn.onclick=loadConfig;
-el.clearSettingBtn.onclick=clearConfig;
-el.testSettingBtn.onclick=testConn;
-
-themeApply(state.theme);
-renderAll();
-loadConfig();
-fetchReal();
-poll();
+const SAMPLE={market:{core:'반도체',tone:'강세',alert:'3건',refresh:'30초'},filters:['전체','테마','업종'],sorts:['기본순위','거래대금','수익률','시총','변동성'],items:[{name:'삼성전자',type:'업종',category:'반도체',reason:'AI 메모리 수요 확대',color:'#8EC5FF',chg:'+9.7%',volume:'2.39조',marketCap:'458조',roi:'+1.8%',stocks:[{name:'삼성전자',tag:'메모리',price:'72,000',chg:'+1.8%'},{name:'SK하이닉스',tag:'HBM',price:'168,000',chg:'+2.3%'},{name:'한미반도체',tag:'장비',price:'182,000',chg:'+6.4%'}]},{name:'에코프로',type:'테마',category:'2차전지',reason:'ESS·리사이클 기대',color:'#FF8FA3',chg:'+8.5%',volume:'거래 집중',marketCap:'38조',roi:'+12.5%',stocks:[{name:'에코프로',tag:'소재',price:'121,000',chg:'+12.5%'},{name:'에코프로비엠',tag:'양극재',price:'238,000',chg:'+11.2%'},{name:'포스코퓨처엠',tag:'양극재',price:'284,000',chg:'+4.7%'}]},{name:'삼성바이오로직스',type:'업종',category:'바이오',reason:'임상/실적 모멘텀',color:'#F7D86A',chg:'+7.2%',volume:'이벤트 집중',marketCap:'73조',roi:'+2.1%',stocks:[{name:'삼성바이오로직스',tag:'실적',price:'1,020,000',chg:'+2.1%'},{name:'알테오젠',tag:'플랫폼',price:'287,000',chg:'+4.5%'},{name:'HLB',tag:'이슈',price:'91,800',chg:'+3.2%'}]},{name:'레인보우로보틱스',type:'테마',category:'로봇',reason:'자동화 투자 확대',color:'#83D8A7',chg:'+6.1%',volume:'후속주 확산',marketCap:'11조',roi:'+5.8%',stocks:[{name:'레인보우로보틱스',tag:'대장주',price:'251,000',chg:'+5.8%'},{name:'두산로보틱스',tag:'협동로봇',price:'64,200',chg:'+2.9%'},{name:'에스피지',tag:'감속기',price:'34,750',chg:'+4.1%'}]},{name:'KT',type:'업종',category:'방어주',reason:'배당·수급 안정',color:'#B69BFF',chg:'+2.4%',volume:'안정',marketCap:'9조',roi:'+1.2%',stocks:[{name:'KT',tag:'통신',price:'38,250',chg:'+0.9%'},{name:'SK텔레콤',tag:'통신',price:'54,300',chg:'+0.6%'},{name:'LG유플러스',tag:'통신',price:'10,850',chg:'+1.1%'}]},{name:'삼성SDI',type:'테마',category:'2차전지',reason:'전고체 기대',color:'#FFB77E',chg:'+5.9%',volume:'상승',marketCap:'52조',roi:'+3.8%',stocks:[{name:'삼성SDI',tag:'셀',price:'386,000',chg:'+4.3%'},{name:'에코프로머티',tag:'소재',price:'87,000',chg:'+6.1%'},{name:'엘앤에프',tag:'양극재',price:'156,000',chg:'+2.7%'}]},{name:'SK하이닉스',type:'업종',category:'반도체',reason:'HBM 수요 확대',color:'#69B6FF',chg:'+9.1%',volume:'2.11조',marketCap:'122조',roi:'+2.6%',stocks:[{name:'SK하이닉스',tag:'HBM',price:'168,000',chg:'+2.3%'},{name:'한미반도체',tag:'장비',price:'182,000',chg:'+6.4%'},{name:'테크윙',tag:'장비',price:'39,400',chg:'+3.1%'}]},{name:'알테오젠',type:'테마',category:'바이오',reason:'플랫폼 기대',color:'#F5C84C',chg:'+6.8%',volume:'이슈',marketCap:'24조',roi:'+4.1%',stocks:[{name:'알테오젠',tag:'플랫폼',price:'287,000',chg:'+4.5%'},{name:'리가켐바이오',tag:'ADC',price:'105,000',chg:'+5.2%'},{name:'HLB',tag:'이슈',price:'91,800',chg:'+3.2%'}]},{name:'두산로보틱스',type:'테마',category:'로봇',reason:'협동로봇 확산',color:'#83D8A7',chg:'+4.9%',volume:'후속',marketCap:'7조',roi:'+2.8%',stocks:[{name:'두산로보틱스',tag:'협동로봇',price:'64,200',chg:'+2.9%'},{name:'레인보우로보틱스',tag:'대장주',price:'251,000',chg:'+5.8%'},{name:'에스피지',tag:'감속기',price:'34,750',chg:'+4.1%'}]},{name:'삼화콘덴서',type:'업종',category:'반도체',reason:'MLCC 수급 개선',color:'#7CB2FF',chg:'+4.6%',volume:'상승',marketCap:'1.6조',roi:'+29.9%',stocks:[{name:'삼화콘덴서',tag:'MLCC',price:'102,000',chg:'+29.9%'},{name:'아비코전자',tag:'부품',price:'11,900',chg:'+8.1%'},{name:'대주전자재료',tag:'소재',price:'158,000',chg:'+19.2%'}]},{name:'포스코퓨처엠',type:'테마',category:'2차전지',reason:'양극재 모멘텀',color:'#FF9E7A',chg:'+4.3%',volume:'거래 집중',marketCap:'34조',roi:'+4.7%',stocks:[{name:'포스코퓨처엠',tag:'양극재',price:'284,000',chg:'+4.7%'},{name:'에코프로비엠',tag:'양극재',price:'238,000',chg:'+11.2%'},{name:'엘앤에프',tag:'양극재',price:'156,000',chg:'+2.7%'}]},{name:'한미반도체',type:'업종',category:'반도체',reason:'장비 투자 확대',color:'#86C3FF',chg:'+4.1%',volume:'1.2조',marketCap:'18조',roi:'+6.4%',stocks:[{name:'한미반도체',tag:'장비',price:'182,000',chg:'+6.4%'},{name:'테크윙',tag:'장비',price:'39,400',chg:'+3.1%'},{name:'원익IPS',tag:'장비',price:'33,100',chg:'+2.0%'}]},{name:'LG유플러스',type:'업종',category:'방어주',reason:'배당수요',color:'#A78BFA',chg:'+2.2%',volume:'안정',marketCap:'4.8조',roi:'+1.1%',stocks:[{name:'LG유플러스',tag:'통신',price:'10,850',chg:'+1.1%'},{name:'SK텔레콤',tag:'통신',price:'54,300',chg:'+0.6%'},{name:'KT',tag:'통신',price:'38,250',chg:'+0.9%'}]},{name:'HLB',type:'테마',category:'바이오',reason:'이벤트 모멘텀',color:'#F4D35E',chg:'+4.8%',volume:'이슈',marketCap:'10조',roi:'+3.2%',stocks:[{name:'HLB',tag:'이슈',price:'91,800',chg:'+3.2%'},{name:'알테오젠',tag:'플랫폼',price:'287,000',chg:'+4.5%'},{name:'리가켐바이오',tag:'ADC',price:'105,000',chg:'+5.2%'}]},{name:'에스피지',type:'테마',category:'로봇',reason:'감속기 수요',color:'#84E0A2',chg:'+3.9%',volume:'후속',marketCap:'1.9조',roi:'+4.1%',stocks:[{name:'에스피지',tag:'감속기',price:'34,750',chg:'+4.1%'},{name:'두산로보틱스',tag:'협동로봇',price:'64,200',chg:'+2.9%'},{name:'레인보우로보틱스',tag:'대장주',price:'251,000',chg:'+5.8%'}]},{name:'에코프로비엠',type:'테마',category:'2차전지',reason:'양극재 기대',color:'#FFB0C1',chg:'+4.5%',volume:'거래 집중',marketCap:'29조',roi:'+11.2%',stocks:[{name:'에코프로비엠',tag:'양극재',price:'238,000',chg:'+11.2%'},{name:'에코프로',tag:'소재',price:'121,000',chg:'+12.5%'},{name:'포스코퓨처엠',tag:'양극재',price:'284,000',chg:'+4.7%'}]},{name:'원익IPS',type:'업종',category:'반도체',reason:'장비 업황',color:'#74AFFF',chg:'+3.4%',volume:'상승',marketCap:'3.2조',roi:'+2.0%',stocks:[{name:'원익IPS',tag:'장비',price:'33,100',chg:'+2.0%'},{name:'한미반도체',tag:'장비',price:'182,000',chg:'+6.4%'},{name:'테크윙',tag:'장비',price:'39,400',chg:'+3.1%'}]},{name:'리가켐바이오',type:'테마',category:'바이오',reason:'ADC 모멘텀',color:'#F7D98F',chg:'+5.1%',volume:'이슈',marketCap:'8조',roi:'+5.2%',stocks:[{name:'리가켐바이오',tag:'ADC',price:'105,000',chg:'+5.2%'},{name:'HLB',tag:'이슈',price:'91,800',chg:'+3.2%'},{name:'알테오젠',tag:'플랫폼',price:'287,000',chg:'+4.5%'}]},{name:'테크윙',type:'업종',category:'반도체',reason:'장비 수급',color:'#9AC8FF',chg:'+2.8%',volume:'상승',marketCap:'1.4조',roi:'+3.1%',stocks:[{name:'테크윙',tag:'장비',price:'39,400',chg:'+3.1%'},{name:'한미반도체',tag:'장비',price:'182,000',chg:'+6.4%'},{name:'원익IPS',tag:'장비',price:'33,100',chg:'+2.0%'}]},{name:'SK텔레콤',type:'업종',category:'방어주',reason:'통신 안정',color:'#BFA3FF',chg:'+1.8%',volume:'안정',marketCap:'11조',roi:'+0.6%',stocks:[{name:'SK텔레콤',tag:'통신',price:'54,300',chg:'+0.6%'},{name:'KT',tag:'통신',price:'38,250',chg:'+0.9%'},{name:'LG유플러스',tag:'통신',price:'10,850',chg:'+1.1%'}]}],top:[{name:'삼성전자',cat:'반도체',chg:'+9.72%',vol:'2.39조'},{name:'삼화콘덴서',cat:'MLCC',chg:'+29.94%',vol:'5,362억'},{name:'에코프로',cat:'2차전지',chg:'+12.56%',vol:'8,771억'},{name:'알테오젠',cat:'바이오',chg:'+4.55%',vol:'4,145억'}]};
+let state={theme:localStorage.getItem('theme')||'light',timer:null,data:SAMPLE,countdown:30,mode:'전체',activeSort:'기본순위',openIndex:null,maxItems:5};
+const el={themeBtn:document.getElementById('themeBtn'),refreshBtn:document.getElementById('refreshBtn'),settingBtn:document.getElementById('settingBtn'),modePill:document.getElementById('modePill'),lastUpdated:document.getElementById('lastUpdated'),connectionStatus:document.getElementById('connectionStatus'),filters:document.getElementById('filters'),sortrow:document.getElementById('sortrow'),sectorList:document.getElementById('sectorList'),topList:document.getElementById('topList'),overlay:document.getElementById('settingsOverlay'),closeSettingBtn:document.getElementById('closeSettingBtn'),saveSettingBtn:document.getElementById('saveSettingBtn'),loadSettingBtn:document.getElementById('loadSettingBtn'),clearSettingBtn:document.getElementById('clearSettingBtn'),testSettingBtn:document.getElementById('testSettingBtn'),cano:document.getElementById('cano'),prdt:document.getElementById('prdt'),appKey:document.getElementById('appKey'),appSecret:document.getElementById('appSecret'),envType:document.getElementById('envType'),maxItems:document.getElementById('maxItems')};
+function themeApply(t){document.documentElement.setAttribute('data-theme',t);el.themeBtn.textContent=t==='light'?'🌙':'☀️';el.modePill.textContent=THEMES[t];localStorage.setItem('theme',t)}
+function renderFilters(items){el.filters.innerHTML='';items.forEach(x=>{const b=document.createElement('button');b.className='filter';b.textContent=x;const active=state.mode===x;b.style.background=active?getModeColor(x):'var(--chip)';b.style.color=active?'#0b1220':'var(--text)';b.style.borderColor='var(--line)';b.onclick=()=>{state.mode=x;state.openIndex=null;reorderByMode();renderAll()};el.filters.appendChild(b)})}
+function renderSorts(items){el.sortrow.innerHTML='';items.forEach(x=>{const b=document.createElement('button');b.className='sort'+(state.activeSort===x?' active':'');b.textContent=x;b.onclick=()=>{state.activeSort=x;sortData();renderAll()};el.sortrow.appendChild(b)})}
+function sortData(){const key=state.activeSort;if(key==='기본순위')return;const fn={'거래대금':(a,b)=>num(b.volume)-num(a.volume),'수익률':(a,b)=>num(b.roi)-num(a.roi),'시총':(a,b)=>num(b.marketCap)-num(a.marketCap),'변동성':(a,b)=>b.name.length-a.name.length}[key];if(fn)state.data.items.sort(fn)}
+function num(v){return parseFloat(String(v).replace(/[^0-9.\-]/g,''))||0}
+function getModeColor(mode){return mode==='테마'?'#A7D8FF':mode==='업종'?'#FFD59E':'#DDE6F7'}
+function reorderByMode(){const base=[...SAMPLE.items];if(state.mode==='전체'){state.data.items=base;return}const selected=base.filter(x=>x.type===state.mode);const rest=base.filter(x=>x.type!==state.mode);state.data.items=[...selected,...rest]}
+function previewHTML(sec){return `<div class="item-preview"><div class="preview-grid"><div class="pbox"><div class="k">현재가 기준</div><div class="v">${sec.stocks[0].price}</div></div><div class="pbox"><div class="k">등락률</div><div class="v">${sec.chg}</div></div><div class="pbox"><div class="k">거래대금</div><div class="v">${sec.volume}</div></div><div class="pbox"><div class="k">시가총액</div><div class="v">${sec.marketCap}</div></div></div><div class="preview-note">핵심 포인트: ${sec.reason}<br>관련 종목: ${sec.stocks.map(s=>s.name).join(' · ')}</div></div>`}
+function renderSectorList(data){el.sectorList.innerHTML='';const items=data.items.slice(0,20).slice(0,Number(state.maxItems));items.forEach((sec,idx)=>{const open=state.openIndex===idx;const item=document.createElement('div');item.className='item'+(open?' open':'');item.innerHTML=`<div class="item-main"><div class="rank">${idx+1}</div><div class="item-info"><div class="row1"><div class="name">${sec.name}</div><span class="badge" style="background:${sec.color};color:#0b1220;border-color:transparent">${sec.category}</span>${state.mode!=='전체'&&sec.type===state.mode?'<span class="badge">선택됨</span>':''}</div><div class="row2"><span>거래대금 ${sec.volume}</span><span>수익률 ${sec.roi}</span><span>강도 A+</span></div></div><div class="arrow">${open?'−':'＋'}</div></div>${open?previewHTML(sec):''}`;item.querySelector('.item-main').onclick=()=>{state.openIndex=state.openIndex===idx?null:idx;renderAll()};item.style.borderColor=state.mode!=='전체'&&sec.type===state.mode?'rgba(15,23,42,.35)':'var(--line)';if(state.mode!=='전체'&&sec.type===state.mode)item.style.boxShadow='0 0 0 2px rgba(37,99,235,.08) inset';item.style.background=getSoftColor(idx);el.sectorList.appendChild(item)})}
+function getSoftColor(i){const colors=['linear-gradient(180deg, rgba(135,191,255,.20), rgba(135,191,255,.06))','linear-gradient(180deg, rgba(255,143,163,.20), rgba(255,143,163,.06))','linear-gradient(180deg, rgba(245,207,93,.20), rgba(245,207,93,.06))','linear-gradient(180deg, rgba(123,216,160,.20), rgba(123,216,160,.06))','linear-gradient(180deg, rgba(182,155,255,.20), rgba(182,155,255,.06))'];return colors[i%colors.length]}
+function renderTop(d){el.topList.innerHTML=d.top.map((x,i)=>`<div class="miniRow"><div><b>${i+1}. ${x.name}</b><div><span>${x.cat}</span></div></div><div style="text-align:right"><b>${x.chg}</b><div><span>${x.vol}</span></div></div></div>`).join('')}
+function showSettings(){el.overlay.classList.add('show');el.overlay.setAttribute('aria-hidden','false');loadConfig()}
+function hideSettings(){el.overlay.classList.remove('show');el.overlay.setAttribute('aria-hidden','true')}
+function saveConfig(){const data={cano:el.cano.value.trim(),prdt:el.prdt.value.trim(),appKey:el.appKey.value.trim(),appSecret:el.appSecret.value.trim(),envType:el.envType.value,maxItems:el.maxItems.value};localStorage.setItem('kis_config',JSON.stringify(data));state.maxItems=Number(el.maxItems.value||5);el.connectionStatus.textContent='설정 저장됨'}
+function loadConfig(){const data=JSON.parse(localStorage.getItem('kis_config')||'{}');el.cano.value=data.cano||'';el.prdt.value=data.prdt||'';el.appKey.value=data.appKey||'';el.appSecret.value=data.appSecret||'';el.envType.value=data.envType||'live';el.maxItems.value=data.maxItems||'5';state.maxItems=Number(el.maxItems.value||5)}
+function clearConfig(){localStorage.removeItem('kis_config');loadConfig();el.connectionStatus.textContent='설정 초기화'}
+async function testConn(){el.connectionStatus.textContent='테스트중';try{const cfg=JSON.parse(localStorage.getItem('kis_config')||'{}');if(!cfg.appKey||!cfg.appSecret) throw new Error('missing');const r=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://api.github.com'),{cache:'no-store'});if(!r.ok) throw new Error('network');el.connectionStatus.textContent='연결 시도 성공'}catch(e){el.connectionStatus.textContent='입력 확인 필요'}}
+async function fetchReal(){el.connectionStatus.textContent='불러오는중';try{await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent('https://query1.finance.yahoo.com/v7/finance/quote?symbols=^KS11,005930.KS,000660.KS'),{cache:'no-store'});state.data=SAMPLE;el.connectionStatus.textContent='실데이터 시도됨'}catch(e){state.data=SAMPLE;el.connectionStatus.textContent='샘플 데이터 표시'}state.countdown=30;reorderByMode();sortData();renderAll();el.lastUpdated.textContent='최종 갱신: '+new Date().toLocaleTimeString('ko-KR')}
+function renderAll(){renderFilters(state.data.filters);renderSorts(state.data.sorts);renderSectorList(state.data);renderTop(state.data);el.refreshBtn.textContent='⏳ '+state.countdown}
+function poll(){clearInterval(state.timer);state.timer=setInterval(()=>{state.countdown=Math.max(0,state.countdown-1);el.refreshBtn.textContent='⏳ '+state.countdown;if(state.countdown<=0) fetchReal()},1000)}
+el.themeBtn.onclick=()=>themeApply(state.theme=state.theme==='light'?'dark':'light');el.refreshBtn.onclick=fetchReal;el.settingBtn.onclick=showSettings;el.closeSettingBtn.onclick=hideSettings;el.overlay.addEventListener('click',e=>{if(e.target===el.overlay) hideSettings()});el.saveSettingBtn.onclick=saveConfig;el.loadSettingBtn.onclick=loadConfig;el.clearSettingBtn.onclick=clearConfig;el.testSettingBtn.onclick=testConn;el.maxItems.onchange=()=>state.maxItems=Number(el.maxItems.value||5);themeApply(state.theme);state.maxItems=5;state.mode='전체';state.data=SAMPLE;reorderByMode();sortData();renderAll();loadConfig();fetchReal();poll();
 </script>
 </body>
 </html>
