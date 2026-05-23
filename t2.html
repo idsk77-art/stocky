@@ -20,6 +20,9 @@
   --chip: #f1f5f9;
   --preview: #f8fafc;
   --preview2: #ffffff;
+  
+  /* 리스트 배경 컬러 믹스 비율 */
+  --bg-mix: 15%;
 
   /* 동적 8색 팔레트 (라이트) */
   --c-1: #93c5fd; /* 파랑 */
@@ -47,16 +50,19 @@ html[data-theme="dark"]{
   --preview: #0f172a;
   --preview2: #1e293b;
 
-  /* 동적 8색 팔레트 (다크) */
-  --c-1: #1e3a8a;
-  --c-2: #7f1d1d;
-  --c-3: #713f12;
-  --c-4: #14532d;
-  --c-5: #581c87;
-  --c-6: #7c2d12;
-  --c-7: #164e63;
-  --c-8: #831843;
-  --text-on-sec: #f8fafc;
+  /* 리스트 배경 컬러 믹스 비율 (다크모드에서는 색이 더 잘보이게 비율업) */
+  --bg-mix: 25%;
+
+  /* 동적 8색 팔레트 (다크) - 눈에 잘 띄는 밝은 톤으로 변경 */
+  --c-1: #60a5fa; /* 파랑 */
+  --c-2: #f87171; /* 빨강 */
+  --c-3: #fde047; /* 노랑 */
+  --c-4: #4ade80; /* 초록 */
+  --c-5: #c084fc; /* 보라 */
+  --c-6: #fb923c; /* 주황 */
+  --c-7: #22d3ee; /* 청록 */
+  --c-8: #f472b6; /* 핑크 */
+  --text-on-sec: #0f172a;
 }
 
 *{box-sizing:border-box}
@@ -164,29 +170,6 @@ button.primary{
   background:rgba(37,99,235,.1);
   color:var(--accent2);
   font-weight:700
-}
-.summary{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  padding:14px
-}
-.stat{
-  background:var(--chip);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:12px
-}
-.stat .k{
-  font-size:11px;
-  color:var(--muted);
-  margin-bottom:7px
-}
-.stat .v{
-  font-size:17px;
-  font-weight:800;
-  letter-spacing:-.02em;
-  color:var(--text)
 }
 .tabs {
   display: flex;
@@ -417,6 +400,23 @@ html[data-theme="dark"] .item {
   flex-wrap:wrap;
   margin-top:4px
 }
+.pill-toggle {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--chip);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: none;
+}
+.pill-toggle.active {
+  background: var(--accent2);
+  color: #fff;
+  border-color: var(--accent2);
+}
 .warn{
   border-left:4px solid #f59e0b;
   background:rgba(245,158,11,.1);
@@ -434,7 +434,6 @@ html[data-theme="dark"] .item {
   padding-top:2px
 }
 @media (max-width:390px){
-  .summary{grid-template-columns:1fr}
   .item-main{grid-template-columns:auto 1fr}
   .arrow{display:none}
   .title h1{font-size:20px}
@@ -460,11 +459,6 @@ html[data-theme="dark"] .item {
   </div>
 
   <div class="card">
-    <div class="card-h"><h2>첫화면 요약</h2><span class="pill" id="modePill">화이트 테마</span></div>
-    <div class="summary" id="homeSummary"></div>
-  </div>
-
-  <div class="card">
     <div class="card-h"><h2>주도섹터 페이지</h2><span class="pill">선택 항목 상단 배치</span></div>
     <div class="tabs" id="mainTabs">
       <button class="tab active" data-type="테마">테마</button>
@@ -486,10 +480,16 @@ html[data-theme="dark"] .item {
 <div class="overlay" id="settingsOverlay" aria-hidden="true">
   <div class="sheet">
     <div class="sheet-head"><h3>환경설정</h3><button id="closeSettingBtn">닫기</button></div>
+    
     <div class="field">
-      <label>하위 분류 표시 개수 (1~10)</label>
-      <input type="number" id="filterCount" min="1" max="10" placeholder="기본 5개" />
+      <label>테마 추가 (6~10위)</label>
+      <div id="extraThemeList" class="btnrow"></div>
     </div>
+    <div class="field">
+      <label>업종 추가 (6~10위)</label>
+      <div id="extraSectorList" class="btnrow"></div>
+    </div>
+
     <div class="field"><label>계좌번호</label><input id="cano" placeholder="예: 44614025" /></div>
     <div class="field"><label>상품코드</label><input id="prdt" placeholder="예: 01" /></div>
     <div class="field"><label>App Key</label><input id="appKey" placeholder="API Key 입력" /></div>
@@ -553,7 +553,7 @@ let state={
   activeMainTab: '테마',
   activeSubFilter: '전체',
   activeSort: '기본순위',
-  filterCount: parseInt(localStorage.getItem('filterCount')) || 5, // 하위 분류 표시 개수
+  customFilters: JSON.parse(localStorage.getItem('customFilters')) || { '테마': [], '업종': [] },
   openIndex: null
 };
 
@@ -561,10 +561,8 @@ const el={
   themeBtn:document.getElementById('themeBtn'),
   refreshBtn:document.getElementById('refreshBtn'),
   settingBtn:document.getElementById('settingBtn'),
-  modePill:document.getElementById('modePill'),
   lastUpdated:document.getElementById('lastUpdated'),
   connectionStatus:document.getElementById('connectionStatus'),
-  homeSummary:document.getElementById('homeSummary'),
   mainTabs:document.querySelectorAll('.tab'),
   subFilters:document.getElementById('subFilters'),
   sortrow:document.getElementById('sortrow'),
@@ -576,7 +574,6 @@ const el={
   loadSettingBtn:document.getElementById('loadSettingBtn'),
   clearSettingBtn:document.getElementById('clearSettingBtn'),
   testSettingBtn:document.getElementById('testSettingBtn'),
-  filterCount:document.getElementById('filterCount'),
   cano:document.getElementById('cano'),
   prdt:document.getElementById('prdt'),
   appKey:document.getElementById('appKey'),
@@ -595,23 +592,13 @@ function getBgVar(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
   const idx = (Math.abs(hash) % 8) + 1;
-  return `color-mix(in srgb, var(--c-${idx}) 15%, var(--card))`;
+  return `color-mix(in srgb, var(--c-${idx}) var(--bg-mix, 15%), var(--card))`;
 }
 
 function themeApply(t){
   document.documentElement.setAttribute('data-theme',t);
   el.themeBtn.textContent=t==='light'?'🌙':'☀️';
-  el.modePill.textContent=THEMES[t];
   localStorage.setItem('theme',t);
-}
-
-function renderHome(d){
-  el.homeSummary.innerHTML=`
-    <div class="stat"><div class="k">핵심 섹터</div><div class="v">${d.market.core}</div></div>
-    <div class="stat"><div class="k">시장 온도</div><div class="v">${d.market.tone}</div></div>
-    <div class="stat"><div class="k">알림</div><div class="v">${d.market.alert}</div></div>
-    <div class="stat"><div class="k">갱신 주기</div><div class="v">${d.market.refresh}</div></div>
-  `;
 }
 
 // 1차 메인 탭(테마/업종) 클릭 이벤트 연결
@@ -628,9 +615,15 @@ el.mainTabs.forEach(tab => {
 
 function renderSubFilters() {
   el.subFilters.innerHTML = '';
-  // 현재 선택된 메인 탭의 카테고리 목록에서 filterCount 만큼만 가져옴
+  // 현재 선택된 메인 탭의 카테고리 목록 가져오기
   const catList = state.data.categories[state.activeMainTab] || [];
-  const displayCats = ['전체', ...catList.slice(0, state.filterCount)];
+  
+  // 고정 1~5위
+  const top5 = catList.slice(0, 5);
+  // 6위 이하 중 사용자가 선택한 추가 필터
+  const extras = catList.slice(5).filter(x => state.customFilters[state.activeMainTab].includes(x));
+  
+  const displayCats = ['전체', ...top5, ...extras];
 
   displayCats.forEach(x => {
     const b = document.createElement('button');
@@ -748,7 +741,6 @@ function renderSectorList(){
           <div class="row1">
             <div class="name">${sec.name}</div>
             <span class="badge">${sec.sector}</span>
-            ${state.activeSubFilter!=='전체'&&sec.sector===state.activeSubFilter?'<span class="badge" style="background:var(--accent2);color:#fff;border:none;">선택됨</span>':''}
           </div>
           <div class="row2">
             <span>거래대금 ${sec.volume}</span>
@@ -789,21 +781,54 @@ function renderTop(d){
   `).join('');
 }
 
+function renderSettingExtras() {
+  const renderGroup = (type, containerId) => {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    const list = state.data.categories[type] || [];
+    // 배열 기준 5번째부터(6위부터 끝까지) 가져오기
+    const rank6toEnd = list.slice(5); 
+
+    if (rank6toEnd.length === 0) {
+      container.innerHTML = '<span style="font-size:12px; color:var(--muted)">추가할 수 있는 항목이 없습니다.</span>';
+      return;
+    }
+
+    rank6toEnd.forEach((cat, index) => {
+      const btn = document.createElement('button');
+      const isActive = state.customFilters[type].includes(cat);
+      btn.className = 'pill-toggle' + (isActive ? ' active' : '');
+      // 순위 표시 (index는 0부터 시작하므로 + 6)
+      btn.textContent = `${index + 6}위: ${cat}`;
+      btn.onclick = () => {
+        if (state.customFilters[type].includes(cat)) {
+          state.customFilters[type] = state.customFilters[type].filter(x => x !== cat);
+          btn.classList.remove('active');
+        } else {
+          state.customFilters[type].push(cat);
+          btn.classList.add('active');
+        }
+      };
+      container.appendChild(btn);
+    });
+  };
+
+  renderGroup('테마', 'extraThemeList');
+  renderGroup('업종', 'extraSectorList');
+}
+
 function showSettings(){
   el.overlay.classList.add('show');
   el.overlay.setAttribute('aria-hidden','false');
   loadConfig();
+  renderSettingExtras(); // 설정 창 열릴 때 동적 6~10위 항목 생성
 }
 function hideSettings(){
   el.overlay.classList.remove('show');
   el.overlay.setAttribute('aria-hidden','true');
 }
 function saveConfig(){
-  const count = parseInt(el.filterCount.value);
-  state.filterCount = isNaN(count) || count < 1 ? 5 : Math.min(count, 10);
-  
   const data={
-    filterCount: state.filterCount,
     cano:el.cano.value.trim(),
     prdt:el.prdt.value.trim(),
     appKey:el.appKey.value.trim(),
@@ -811,13 +836,14 @@ function saveConfig(){
     envType:el.envType.value
   };
   localStorage.setItem('kis_config',JSON.stringify(data));
-  localStorage.setItem('filterCount', state.filterCount);
+  localStorage.setItem('customFilters', JSON.stringify(state.customFilters));
+  
   el.connectionStatus.textContent='설정 저장됨';
-  renderAll(); // 변경된 필터 개수 적용
+  renderAll(); // 추가된 필터 UI에 반영
 }
 function loadConfig(){
   const data=JSON.parse(localStorage.getItem('kis_config')||'{}');
-  el.filterCount.value = state.filterCount;
+  state.customFilters = JSON.parse(localStorage.getItem('customFilters')) || { '테마': [], '업종': [] };
   el.cano.value=data.cano||'';
   el.prdt.value=data.prdt||'';
   el.appKey.value=data.appKey||'';
@@ -826,9 +852,10 @@ function loadConfig(){
 }
 function clearConfig(){
   localStorage.removeItem('kis_config');
-  localStorage.removeItem('filterCount');
-  state.filterCount = 5;
+  localStorage.removeItem('customFilters');
+  state.customFilters = { '테마': [], '업종': [] };
   loadConfig();
+  renderSettingExtras();
   el.connectionStatus.textContent='설정 초기화';
   renderAll();
 }
@@ -862,7 +889,6 @@ async function fetchReal(){
 }
 
 function renderAll(){
-  renderHome(state.data);
   renderSubFilters();
   renderSorts(state.data.sorts);
   renderSectorList();
