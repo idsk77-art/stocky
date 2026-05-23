@@ -492,8 +492,8 @@ html[data-theme="dark"] .item {
 
     <div class="field"><label>계좌번호</label><input id="cano" placeholder="예: 44614025" /></div>
     <div class="field"><label>상품코드</label><input id="prdt" placeholder="예: 01" /></div>
-    <div class="field"><label>App Key</label><input id="appKey" placeholder="API Key 입력" /></div>
-    <div class="field"><label>App Secret</label><input id="appSecret" placeholder="API Secret 입력" /></div>
+    <div class="field"><label>App Key</label><input type="password" id="appKey" placeholder="API Key 입력" /></div>
+    <div class="field"><label>App Secret</label><input type="password" id="appSecret" placeholder="API Secret 입력" /></div>
     <div class="field"><label>환경</label><select id="envType"><option value="live">실계좌</option><option value="paper">모의투자</option></select></div>
     <div class="btnrow">
       <button id="saveSettingBtn" class="primary">저장</button>
@@ -798,8 +798,8 @@ function renderSettingExtras() {
       const btn = document.createElement('button');
       const isActive = state.customFilters[type].includes(cat);
       btn.className = 'pill-toggle' + (isActive ? ' active' : '');
-      // 순위 표시 (index는 0부터 시작하므로 + 6)
-      btn.textContent = `${index + 6}위: ${cat}`;
+      // 순위 표시 없이 카테고리 이름만 표시
+      btn.textContent = cat;
       btn.onclick = () => {
         if (state.customFilters[type].includes(cat)) {
           state.customFilters[type] = state.customFilters[type].filter(x => x !== cat);
