@@ -79,8 +79,8 @@
         <p>첫화면은 핵심만, 주도섹터는 깊게 본다. 30초 자동 갱신 + 즉시 갱신 지원.</p>
       </div>
       <div class="actions">
-        <button id="themeBtn">다크</button>
-        <button id="refreshBtn" class="primary">새로고침</button>
+        <button id="themeBtn" aria-label="테마 변경" title="테마 변경">🌙</button>
+        <button id="refreshBtn" class="primary" aria-label="새로고침" title="새로고침">⏳ 30</button>
         <button id="settingBtn" class="iconbtn" aria-label="환경설정" title="환경설정">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="3"></circle>
@@ -128,7 +128,7 @@ const SAMPLE={
     {name:'알테오젠',cat:'바이오',chg:'+4.55%',vol:'4,145억'}
   ]
 };
-let state={theme:localStorage.getItem('theme')||'light',timer:null,data:SAMPLE};
+let state={theme:localStorage.getItem('theme')||'light',timer:null,data:SAMPLE,countdown:30};
 const el={
   themeBtn:document.getElementById('themeBtn'),
   refreshBtn:document.getElementById('refreshBtn'),
@@ -155,7 +155,7 @@ const el={
 
 function themeApply(t){
   document.documentElement.setAttribute('data-theme',t);
-  el.themeBtn.textContent=t==='light'?'다크':'화이트';
+  el.themeBtn.textContent=t==='light'?'🌙':'☀️';
   el.modePill.textContent=THEMES[t];
   localStorage.setItem('theme',t);
 }
@@ -281,6 +281,7 @@ async function fetchReal(){
     state.data=SAMPLE;
     el.connectionStatus.textContent='샘플 데이터 표시';
   }
+  state.countdown=30;
   renderHome(state.data);
   renderFilters(state.data.filters);
   renderSectors(state.data);
@@ -290,7 +291,11 @@ async function fetchReal(){
 
 function poll(){
   clearInterval(state.timer);
-  state.timer=setInterval(fetchReal,REFRESH_MS);
+  state.timer=setInterval(()=>{
+    state.countdown=Math.max(0,state.countdown-1);
+    el.refreshBtn.textContent='⏳ '+state.countdown;
+    if(state.countdown<=0) fetchReal();
+  },1000);
 }
 
 el.themeBtn.onclick=()=>themeApply(state.theme=state.theme==='light'?'dark':'light');
