@@ -365,8 +365,8 @@ let state = {
   activeMainTab: '테마',
   activeSubFilter: '전체',
   activeSort: '거래대금', // 처음 정렬 무조건 거래대금
-  filterCount: 5,
-  customFilters: { '테마': [], '업종': [] },
+  filterCount: getSafeInt('filterCount', 5),
+  customFilters: JSON.parse(localStorage.getItem('customFilters') || 'null') || { '테마': [], '업종': [] },
   openIndex: null
 };
 
@@ -524,7 +524,7 @@ function getFilteredAndSortedSectors() {
   if (state.activeSubFilter !== '전체') {
     list = list.filter(item => item.sector === state.activeSubFilter);
   }
-  return state.activeSubFilter === '전체' ? list.slice(0, 20) : list; 
+  return list; 
 }
 
 function generateMockNews(keyword) {
@@ -610,7 +610,7 @@ function renderSettingExtras() {
     const container = document.getElementById(containerId);
     container.innerHTML = '';
     const list = state.data.categories ? state.data.categories[type] : DEFAULT_CATEGORIES[type];
-    const extraCandidates = list ? list.slice(state.filterCount, state.filterCount + 5) : []; 
+    const extraCandidates = list ? list.slice(state.filterCount) : []; 
 
     if (extraCandidates.length === 0) {
       container.innerHTML = '<span style="font-size:12px; color:var(--muted)">추가할 수 있는 항목이 없습니다.</span>';
@@ -713,6 +713,8 @@ async function saveConfigToCloud() {
   localStorage.setItem('thVolume2', state.thVolume2);
   localStorage.setItem('thMcap', state.thMcap);
   localStorage.setItem('thStrength', state.thStrength);
+  localStorage.setItem('filterCount', state.filterCount);
+  localStorage.setItem('customFilters', JSON.stringify(state.customFilters));
 
   const dataToSave = {
     filterCount: state.filterCount,
