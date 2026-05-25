@@ -131,7 +131,7 @@ button:active { transform: scale(0.96); }
 .filters::-webkit-scrollbar,.sortrow::-webkit-scrollbar{display:none}
 .filter,.sort{
   white-space:nowrap; padding:9px 13px; border-radius:999px;
-  border:1px solid transparent; font-size:12px; font-weight:800; color:var(--text); box-shadow:none
+  border:1px solid transparent; font-size:12px; font-weight:800; color:var(--text); box-shadow:none;
 }
 .sort{ background:var(--chip); border-color:var(--line); }
 .sort.active{ background:var(--accent); color:var(--text-on-accent); border-color:transparent }
@@ -228,7 +228,7 @@ html[data-theme="dark"] .item { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
         <span id="lastUpdated" style="font-size: 11px; font-weight: 500;">업데이트 대기중</span>
         <div>
           <span id="apiIndicator" class="status-indicator yellow"></span>
-          <span id="connectionStatus">연결 대기중</span>
+          <span id="connectionStatus">데이터 로딩중... (60초)</span>
         </div>
       </div>
     </div>
@@ -313,7 +313,7 @@ if (Object.keys(firebaseConfig).length > 0) {
   db = getFirestore(app);
 }
 
-// 아이콘 16px 크기로 축소
+// 아이콘 16px 크기로 축소된 버전
 const sunIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
 const moonIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
 
@@ -324,6 +324,25 @@ const DEFAULT_CATEGORIES = {
 
 const SORTS = ['거래대금','수익률','시총','변동성'];
 
+// 앱 첫 렌더링 시 빈 화면을 막기 위해 SAMPLE 데이터로 초기화해둡니다.
+const SAMPLE_DATA = {
+  categories: DEFAULT_CATEGORIES,
+  sectors:[
+    {type:'테마',name:'삼화콘덴서',sector:'MLCC',reason:'AI/전장용 수요 급증',chg:'+29.9%',volume:'5,362억',marketCap:'1.6조',roi:'+29.9%',stocks:[{name:'삼화콘덴서',price:'102,000',chg:'+29.9%'},{name:'아비코전자',price:'11,900',chg:'+8.1%'}]},
+    {type:'테마',name:'에코프로',sector:'2차전지',reason:'ESS·리사이클 기대',chg:'+8.5%',volume:'8.7조',marketCap:'38조',roi:'+12.5%',stocks:[{name:'에코프로',price:'121,000',chg:'+12.5%'},{name:'에코프로비엠',price:'238,000',chg:'+11.2%'}]},
+    {type:'테마',name:'레인보우로보틱스',sector:'로봇',reason:'자동화 투자 확대',chg:'+6.1%',volume:'1.3조',marketCap:'11조',roi:'+5.8%',stocks:[{name:'레인보우로보틱스',price:'251,000',chg:'+5.8%'},{name:'두산로보틱스',price:'64,200',chg:'+2.9%'}]},
+    {type:'테마',name:'알테오젠',sector:'바이오',reason:'플랫폼 기대',chg:'+6.8%',volume:'4.1조',marketCap:'24조',roi:'+4.1%',stocks:[{name:'알테오젠',price:'287,000',chg:'+4.5%'},{name:'리가켐바이오',price:'105,000',chg:'+5.2%'}]},
+    {type:'테마',name:'루닛',sector:'AI',reason:'의료 AI 공급 확대',chg:'+11.2%',volume:'2.1조',marketCap:'1.5조',roi:'+8.1%',stocks:[{name:'루닛',price:'52,000',chg:'+8.1%'},{name:'뷰노',price:'38,000',chg:'+5.5%'}]},
+    {type:'테마',name:'한화에어로스페이스',sector:'우주항공',reason:'수출 모멘텀',chg:'+3.4%',volume:'1.8조',marketCap:'10조',roi:'+2.1%',stocks:[{name:'한화에어로',price:'210,000',chg:'+2.1%'},{name:'LIG넥스원',price:'160,000',chg:'+1.5%'}]},
+    {type:'테마',name:'두산에너빌리티',sector:'원전',reason:'해외 수주 기대',chg:'+5.5%',volume:'3.2조',marketCap:'14조',roi:'+3.2%',stocks:[{name:'두산에너빌리티',price:'18,500',chg:'+3.2%'},{name:'한전기술',price:'75,000',chg:'+4.1%'}]},
+    
+    {type:'업종',name:'삼성전자',sector:'반도체',reason:'메모리 턴어라운드',chg:'+9.7%',volume:'12.5조',marketCap:'458조',roi:'+1.8%',stocks:[{name:'삼성전자',price:'72,000',chg:'+1.8%'},{name:'SK하이닉스',price:'168,000',chg:'+2.3%'}]},
+    {type:'업종',name:'SK하이닉스',sector:'반도체',reason:'HBM 독점적 지위',chg:'+9.1%',volume:'8.2조',marketCap:'122조',roi:'+2.6%',stocks:[{name:'SK하이닉스',price:'168,000',chg:'+2.6%'},{name:'한미반도체',price:'182,000',chg:'+6.4%'}]},
+    {type:'업종',name:'현대차',sector:'자동차',reason:'사상 최대 실적',chg:'+2.1%',volume:'3.1조',marketCap:'55조',roi:'+1.5%',stocks:[{name:'현대차',price:'245,000',chg:'+1.5%'},{name:'기아',price:'115,000',chg:'+1.8%'}]},
+    {type:'업종',name:'KB금융',sector:'금융',reason:'밸류업 및 배당 확대',chg:'+1.5%',volume:'1.1조',marketCap:'32조',roi:'+0.8%',stocks:[{name:'KB금융',price:'78,000',chg:'+0.8%'},{name:'신한지주',price:'45,000',chg:'+0.5%'}]}
+  ]
+};
+
 let state = {
   theme: localStorage.getItem('theme') || 'light',
   thTradeAmt: parseInt(localStorage.getItem('thTradeAmt')) || 2000,
@@ -332,7 +351,7 @@ let state = {
   thStrength: parseFloat(localStorage.getItem('thStrength')) || 100,
   programPlusOnly: localStorage.getItem('programPlusOnly') !== 'false',
   timer: null,
-  data: { sectors: [] }, 
+  data: SAMPLE_DATA, 
   countdown: 60,
   activeMainTab: '테마',
   activeSubFilter: '전체',
@@ -407,12 +426,28 @@ function renderSubFilters() {
     b.textContent = x;
     const active = state.activeSubFilter === x;
     
-    if (active && x !== '전체') {
-      b.style.background = getColorVar(x); b.style.color = 'var(--text-on-sec)'; b.style.borderColor = 'transparent';
-    } else if (active && x === '전체') {
-      b.style.background = 'var(--accent)'; b.style.color = 'var(--text-on-accent)'; b.style.borderColor = 'transparent';
+    // 버튼 클릭 전(비활성 상태)에도 테마 컬러가 보이도록 디자인 적용
+    if (x === '전체') {
+      if (active) {
+        b.style.background = 'var(--accent)';
+        b.style.color = 'var(--text-on-accent)';
+        b.style.borderColor = 'transparent';
+      } else {
+        b.style.background = 'var(--chip)';
+        b.style.color = 'var(--text)';
+        b.style.borderColor = 'transparent';
+      }
     } else {
-      b.style.background = 'var(--chip)'; b.style.color = 'var(--text)'; b.style.borderColor = 'transparent';
+      const colorStr = getColorVar(x);
+      if (active) {
+        b.style.background = colorStr;
+        b.style.color = '#000000'; // 선명한 배경에선 항상 검은 글씨로 가독성 확보
+        b.style.borderColor = colorStr;
+      } else {
+        b.style.background = `color-mix(in srgb, ${colorStr} 15%, var(--card))`;
+        b.style.color = 'var(--text)';
+        b.style.borderColor = `color-mix(in srgb, ${colorStr} 40%, transparent)`;
+      }
     }
     b.onclick = () => { state.activeSubFilter = x; state.openIndex = null; renderAll(); };
     el.subFilters.appendChild(b);
@@ -658,10 +693,19 @@ if(auth) initFirebaseAuth();
 async function saveConfigToCloud() {
   const count = parseInt(el.filterCount.value);
   state.filterCount = isNaN(count) || count < 1 ? 5 : count;
-  if(el.thTradeAmt) { state.thTradeAmt = parseFloat(el.thTradeAmt.value) || 2000; localStorage.setItem('thTradeAmt', state.thTradeAmt); }
-  if(el.thVolume2)  { state.thVolume2  = parseFloat(el.thVolume2.value)  || 2000000; localStorage.setItem('thVolume2', state.thVolume2); }
-  if(el.thMcap)     { state.thMcap     = parseFloat(el.thMcap.value)     || 1; localStorage.setItem('thMcap', state.thMcap); }
-  if(el.thStrength) { state.thStrength = parseFloat(el.thStrength.value) || 100; localStorage.setItem('thStrength', state.thStrength); }
+  
+  // 환경설정에서 입력 필드를 완전히 지운 경우(빈칸)를 대비해 기존 값을 유지하도록 로직 보완
+  const getSafeVal = (inputEl, curVal) => (inputEl && inputEl.value !== '') ? parseFloat(inputEl.value) : curVal;
+  
+  state.thTradeAmt = getSafeVal(el.thTradeAmt, state.thTradeAmt);
+  state.thVolume2  = getSafeVal(el.thVolume2, state.thVolume2);
+  state.thMcap     = getSafeVal(el.thMcap, state.thMcap);
+  state.thStrength = getSafeVal(el.thStrength, state.thStrength);
+
+  localStorage.setItem('thTradeAmt', state.thTradeAmt);
+  localStorage.setItem('thVolume2', state.thVolume2);
+  localStorage.setItem('thMcap', state.thMcap);
+  localStorage.setItem('thStrength', state.thStrength);
 
   const dataToSave = {
     filterCount: state.filterCount,
@@ -745,7 +789,7 @@ el.closeSettingBtn.onclick = hideSettings;
 el.overlay.addEventListener('click', e => { if(e.target===el.overlay) hideSettings() });
 el.clearSettingBtn.onclick = clearConfig;
 
-// 앱 시작 시 빈 화면을 막기 위해 렌더링 먼저 실행 후 fetch 호출
+// 앱 시작 시 빈 화면을 막기 위해 렌더링을 먼저 1회 강제 실행한 후, 데이터를 요청합니다.
 themeApply(state.theme);
 renderAll(); 
 fetchReal();
