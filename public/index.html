@@ -236,7 +236,6 @@ html[data-theme="dark"] .item { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
       </div>
       <div class="actions">
         <button id="themeBtn" aria-label="테마 변경" title="테마 변경">🌙</button>
-        <button id="refreshBtn" class="primary" aria-label="새로고침" title="새로고침">⏳ 30</button>
         <button id="settingBtn" class="iconbtn" aria-label="환경설정" title="환경설정">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.3l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 19.71 7l-.06.06A1.65 1.65 0 0 0 19.4 9c.38.31.77.71 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
         </button>
@@ -343,12 +342,12 @@ if (Object.keys(firebaseConfig).length > 0) {
   db = getFirestore(app);
 }
 
-const REFRESH_MS=30000;
+const REFRESH_MS=60000;
 const THEMES={light:'화이트 테마',dark:'블랙 테마'};
 
 // 모의용 샘플 데이터 (MLCC 테마 1위 반영)
 const SAMPLE={
-  market:{core:'반도체',tone:'강세',alert:'3건',refresh:'30초'},
+  market:{core:'반도체',tone:'강세',alert:'3건',refresh:'60초'},
   categories:{
     '테마': ['MLCC','2차전지','로봇','바이오','AI','우주항공','원전','신재생','보안','초전도체'],
     '업종': ['반도체','자동차','금융','제약','철강','통신','화학','조선','건설','IT소프트웨어']
@@ -391,7 +390,7 @@ let state={
   programPlusOnly: localStorage.getItem('programPlusOnly') !== 'false',
   timer: null,
   data: SAMPLE,
-  countdown: 30,
+  countdown: 60,
   activeMainTab: '테마',
   activeSubFilter: '전체',
   activeSort: '기본순위',
@@ -402,7 +401,6 @@ let state={
 
 const el={
   themeBtn:document.getElementById('themeBtn'),
-  refreshBtn:document.getElementById('refreshBtn'),
   settingBtn:document.getElementById('settingBtn'),
   lastUpdated:document.getElementById('lastUpdated'),
   connectionStatus:document.getElementById('connectionStatus'),
@@ -736,7 +734,7 @@ async function fetchReal(){
     el.apiIndicator.className = 'status-indicator red';
   }
   
-  state.countdown=30;
+  state.countdown=60;
   renderAll();
   el.lastUpdated.textContent='최종 갱신: '+new Date().toLocaleTimeString('ko-KR');
 }
@@ -757,21 +755,18 @@ function renderAll(){
   renderSorts(state.data.sorts);
   renderSectorList();
   renderTop(state.data);
-  el.refreshBtn.textContent='⏳ '+state.countdown;
 }
 
 function poll(){
   clearInterval(state.timer);
   state.timer=setInterval(()=>{
     state.countdown=Math.max(0,state.countdown-1);
-    el.refreshBtn.textContent='⏳ '+state.countdown;
     if(state.countdown<=0) fetchReal();
   },1000);
 }
 
 // 이벤트 연결
 el.themeBtn.onclick=()=>themeApply(state.theme=state.theme==='light'?'dark':'light');
-el.refreshBtn.onclick=fetchReal;
 el.settingBtn.onclick=showSettings;
 el.closeSettingBtn.onclick=hideSettings;
 el.overlay.addEventListener('click',e=>{if(e.target===el.overlay) hideSettings()});
