@@ -34,7 +34,8 @@ async function getAccessToken() {
     });
 
     if (!response.ok) {
-        throw new Error(`토큰 발급 실패: ${response.status}`);
+        const errText = await response.text(); // 👈 이 줄 추가 (상세 에러 메세지 읽기)
+        throw new Error(`토큰 발급 실패: ${response.status} - ${errText}`); // 👈 에러 메세지 같이 출력하도록 수정
     }
 
     const data = await response.json();
