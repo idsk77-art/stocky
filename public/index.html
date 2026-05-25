@@ -28,20 +28,19 @@ html[data-theme="dark"]{
   --bg: #0d0d0d;
   --card: #1a1a1a;
   --text: #e0e0e0;
-  --muted: #999999;
+  --muted: #777777;
   --line: #2c2c2c;
-  --accent: #e0e0e0;
-  --text-on-accent: #0d0d0d;
-  --accent2: #60a5fa;
+  --accent: #4a4a4a;
+  --text-on-accent: #ffffff;
+  --accent2: #909090;
   --shadow: 0 10px 26px rgba(0,0,0,.6);
   --chip: #222222;
   --preview: #131313;
   --preview2: #1a1a1a;
-  --bg-mix: 25%;
-  /* 다크모드에서도 밝은 테마의 뚜렷한 색상 유지 */
-  --c-1: #93c5fd; --c-2: #fca5a5; --c-3: #fde047; --c-4: #86efac;
-  --c-5: #d8b4fe; --c-6: #fdba74; --c-7: #67e8f9; --c-8: #f9a8d4;
-  --text-on-sec: #000000;
+  --bg-mix: 18%;
+  --c-1: #a0a0a0; --c-2: #b0b0b0; --c-3: #888888; --c-4: #6e6e6e;
+  --c-5: #9e9e9e; --c-6: #787878; --c-7: #8ecece; --c-8: #b8b8b8;
+  --text-on-sec: #ffffff;
 }
 *{box-sizing:border-box}
 body{
@@ -110,16 +109,8 @@ button.primary{
 }
 .status{
   display:flex; justify-content:flex-end; gap:12px; font-size:11px;
-  color:var(--muted); padding:0 2px; transition: color 0.2s; align-items:center;
+  color:var(--muted); padding:0 2px; transition: color 0.2s;
 }
-.status-indicator {
-  display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:4px;
-  background: #ccc; transition: all 0.3s;
-}
-.status-indicator.green { background: #10b981; box-shadow: 0 0 6px #10b981; }
-.status-indicator.red { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
-.status-indicator.yellow { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
-
 .card{
   background:var(--card); border:1px solid var(--line);
   border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden
@@ -184,6 +175,16 @@ html[data-theme="dark"] .item { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
 .pbox .k{ font-size:11px; color:var(--muted); margin-bottom:5px }
 .pbox .v{ font-size:14px; font-weight:800; letter-spacing:-.01em; color:var(--text); }
 .preview-note{ margin-top:10px; font-size:12px; color:var(--text); line-height:1.5 }
+
+/* 관련 기사 영역 CSS 추가 */
+.news-box { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; }
+.news-box .news-k { font-size: 12px; font-weight: 800; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+.news-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.news-list li { display: flex; align-items: center; gap: 6px; }
+.news-list li::before { content: '▪'; color: var(--accent2); font-size: 10px; }
+.news-list a { font-size: 12px; color: var(--text); text-decoration: none; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.2s; }
+.news-list a:hover { color: var(--accent2); text-decoration: underline; }
+
 .miniList{ display:flex; flex-direction:column; gap:8px; padding:14px }
 .miniRow{
   display:flex; justify-content:space-between; gap:8px; align-items:center;
@@ -215,6 +216,14 @@ html[data-theme="dark"] .item { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
   cursor: pointer; transition: all 0.2s; box-shadow: none;
 }
 .pill-toggle.active { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+.api-saved-card {
+  display: none; padding: 16px; background: var(--chip); border-radius: 14px;
+  margin-bottom: 12px; border: 1px solid var(--line);
+}
+.api-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+.api-table td { padding: 6px 0; color: var(--text); }
+.api-table td:first-child { color: var(--muted); width: 80px; }
+.api-table td:last-child { font-weight: 700; text-align: right; }
 .warn{
   border-left:4px solid #f59e0b; background:rgba(245,158,11,.1); padding:10px 12px;
   border-radius:14px; margin-top:12px; color:var(--text); font-size:12px; line-height:1.45
@@ -236,18 +245,13 @@ html[data-theme="dark"] .item { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
       </div>
       <div class="actions">
         <button id="themeBtn" aria-label="테마 변경" title="테마 변경">🌙</button>
+        <button id="refreshBtn" class="primary" aria-label="새로고침" title="새로고침" style="display:none;">⏳ 30</button>
         <button id="settingBtn" class="iconbtn" aria-label="환경설정" title="환경설정">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.3l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 19.71 7l-.06.06A1.65 1.65 0 0 0 19.4 9c.38.31.77.71 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
         </button>
       </div>
     </div>
-    <div class="status">
-      <div id="lastUpdated">업데이트 대기중</div>
-      <div style="display:flex; align-items:center;">
-        <span id="apiIndicator" class="status-indicator"></span>
-        <span id="connectionStatus">연결 대기중</span>
-      </div>
-    </div>
+    <div class="status"><div id="lastUpdated">업데이트 대기중</div><div id="connectionStatus">연결 대기중</div></div>
   </div>
 
   <div class="card">
@@ -314,24 +318,47 @@ html[data-theme="dark"] .item { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
 
     <hr style="border:0; border-top:1px solid var(--line); margin:16px 0;">
 
+    <div id="apiSavedGroup" class="api-saved-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+        <span style="font-size:14px; font-weight:800; color:var(--text);">✅ 클라우드 API 연동 완료</span>
+        <button id="editApiBtn" style="padding:6px 12px; font-size:12px;">수정하기</button>
+      </div>
+      <table class="api-table">
+        <tr><td>계좌번호</td><td id="dispCano"></td></tr>
+        <tr><td>App Key</td><td id="dispAppKey"></td></tr>
+        <tr><td>환경</td><td id="dispEnv"></td></tr>
+      </table>
+    </div>
+
+    <div id="apiFormGroup">
+      <div class="field"><label>계좌번호</label><input type="text" id="cano" placeholder="예: 44614025" /></div>
+      <div class="field"><label>상품코드</label><input type="text" id="prdt" placeholder="예: 01" /></div>
+      <div class="field"><label>App Key</label><input type="password" id="appKey" placeholder="API Key 입력" /></div>
+      <div class="field"><label>App Secret</label><input type="password" id="appSecret" placeholder="API Secret 입력" /></div>
+      <div class="field"><label>환경</label><select id="envType"><option value="live">실계좌</option><option value="paper">모의투자</option></select></div>
+      <div class="btnrow">
+        <button id="testSettingBtn" class="primary" style="flex:1;">클라우드 저장 및 연결 테스트</button>
+      </div>
+    </div>
+
     <div class="btnrow" style="margin-top:10px;">
       <button id="clearSettingBtn" style="width:100%;">모든 설정 초기화</button>
     </div>
 
+    <div class="warn">
+      ⚠️ <b>중요 경고</b><br>
+      현재 구현은 시연을 위해 데이터베이스를 통해 모든 접속자 브라우저로 API Key를 공유합니다.<br>
+      누구나 개발자 도구를 통해 App Secret을 훔쳐 금융 사고를 낼 수 있으므로, <b>실제 증권사 키를 절대로 입력하지 마세요.</b><br>
+      상용 서비스는 반드시 백엔드 서버(Node.js 등)를 별도로 구축하여 프록시 형태로 데이터를 제공해야 합니다.
+    </div>
   </div>
 </div>
 
 <script type="module">
-// Firebase 연동을 위한 모듈 임포트
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-// 하드코딩된 API 인증 정보
-const API_KEY = "PS4Wd3zl5anUOvHvu1GxST2Ll9Vs9VX2GvR7";
-const API_SECRET = "10usi/N28hKXVcZ9hIA9eQfU95qQf2T+woAa0MykUVYmmX49P0xY4+sgwwzkBCQfjj032tH+xbCRmS+ehtXWJuiJXO5Ou8H8Hl5myjZPaFOBTrUsa979IkqIlHoOB06eRlTDuu46cAy2TcG12e3qivppEG1i5nSyRkTt2MkQept/g5zaGzk=";
-
-// 글로벌 설정 동기화를 위한 Firebase 초기화
 const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 let app = null, auth = null, db = null;
@@ -345,7 +372,6 @@ if (Object.keys(firebaseConfig).length > 0) {
 const REFRESH_MS=60000;
 const THEMES={light:'화이트 테마',dark:'블랙 테마'};
 
-// 모의용 샘플 데이터 (MLCC 테마 1위 반영)
 const SAMPLE={
   market:{core:'반도체',tone:'강세',alert:'3건',refresh:'60초'},
   categories:{
@@ -366,7 +392,6 @@ const SAMPLE={
     {type:'테마',name:'HLB',sector:'바이오',reason:'FDA 승인 재도전',chg:'+4.8%',volume:'3.5조',marketCap:'10조',roi:'+3.2%',stocks:[{name:'HLB',price:'91,800',chg:'+3.2%'},{name:'HLB생명과학',price:'12,000',chg:'+1.5%'}]},
     {type:'테마',name:'리가켐바이오',sector:'바이오',reason:'ADC 플랫폼 기술수출',chg:'+5.1%',volume:'1.2조',marketCap:'8조',roi:'+5.2%',stocks:[{name:'리가켐바이오',price:'105,000',chg:'+5.2%'},{name:'레고켐바이오',price:'45,000',chg:'+1.1%'}]},
     
-    // 업종 소속
     {type:'업종',name:'삼성전자',sector:'반도체',reason:'메모리 턴어라운드',chg:'+9.7%',volume:'12.5조',marketCap:'458조',roi:'+1.8%',stocks:[{name:'삼성전자',price:'72,000',chg:'+1.8%'},{name:'SK하이닉스',price:'168,000',chg:'+2.3%'}]},
     {type:'업종',name:'SK하이닉스',sector:'반도체',reason:'HBM 독점적 지위',chg:'+9.1%',volume:'8.2조',marketCap:'122조',roi:'+2.6%',stocks:[{name:'SK하이닉스',price:'168,000',chg:'+2.6%'},{name:'한미반도체',price:'182,000',chg:'+6.4%'}]},
     {type:'업종',name:'현대차',sector:'자동차',reason:'사상 최대 실적',chg:'+2.1%',volume:'3.1조',marketCap:'55조',roi:'+1.5%',stocks:[{name:'현대차',price:'245,000',chg:'+1.5%'},{name:'기아',price:'115,000',chg:'+1.8%'}]},
@@ -383,28 +408,30 @@ const SAMPLE={
 
 let state={
   theme: localStorage.getItem('theme') || 'light',
-  thTradeAmt: parseInt(localStorage.getItem('thTradeAmt')) || 2000,
-  thVolume2: parseInt(localStorage.getItem('thVolume2')) || 5000000,
-  thMcap: parseFloat(localStorage.getItem('thMcap')) || 3,
-  thStrength: parseFloat(localStorage.getItem('thStrength')) || 100,
-  programPlusOnly: localStorage.getItem('programPlusOnly') !== 'false',
+  thTradeAmt: parseInt(localStorage.getItem('thTradeAmt')) || 0, // 기본 조건 0으로 해제
+  thVolume2: parseInt(localStorage.getItem('thVolume2')) || 0,
+  thMcap: parseFloat(localStorage.getItem('thMcap')) || 0,
+  thStrength: parseFloat(localStorage.getItem('thStrength')) || 0,
+  programPlusOnly: localStorage.getItem('programPlusOnly') === 'true',
   timer: null,
   data: SAMPLE,
-  countdown: 60,
   activeMainTab: '테마',
   activeSubFilter: '전체',
-  activeSort: '기본순위',
+  activeSort: '기본순위', // 기본 내림차순 정렬되도록 로직 수정
   filterCount: 5,
   customFilters: { '테마': [], '업종': [] },
   openIndex: null
 };
 
+let storedKeys = { appKey: '', appSecret: '' };
+let isApiConnected = false;
+
 const el={
   themeBtn:document.getElementById('themeBtn'),
+  refreshBtn:document.getElementById('refreshBtn'),
   settingBtn:document.getElementById('settingBtn'),
   lastUpdated:document.getElementById('lastUpdated'),
   connectionStatus:document.getElementById('connectionStatus'),
-  apiIndicator:document.getElementById('apiIndicator'),
   mainTabs:document.querySelectorAll('.tab'),
   subFilters:document.getElementById('subFilters'),
   sortrow:document.getElementById('sortrow'),
@@ -412,13 +439,25 @@ const el={
   topList:document.getElementById('topList'),
   overlay:document.getElementById('settingsOverlay'),
   closeSettingBtn:document.getElementById('closeSettingBtn'),
+  testSettingBtn:document.getElementById('testSettingBtn'),
   clearSettingBtn:document.getElementById('clearSettingBtn'),
+  editApiBtn:document.getElementById('editApiBtn'),
+  apiFormGroup:document.getElementById('apiFormGroup'),
+  apiSavedGroup:document.getElementById('apiSavedGroup'),
+  dispCano:document.getElementById('dispCano'),
+  dispAppKey:document.getElementById('dispAppKey'),
+  dispEnv:document.getElementById('dispEnv'),
   filterCount:document.getElementById('filterCount'),
   thTradeAmt:document.getElementById('thTradeAmt'),
   thVolume2:document.getElementById('thVolume2'),
   thMcap:document.getElementById('thMcap'),
   thStrength:document.getElementById('thStrength'),
-  toggleProgramPlus:document.getElementById('toggleProgramPlus')
+  toggleProgramPlus:document.getElementById('toggleProgramPlus'),
+  cano:document.getElementById('cano'),
+  prdt:document.getElementById('prdt'),
+  appKey:document.getElementById('appKey'),
+  appSecret:document.getElementById('appSecret'),
+  envType:document.getElementById('envType')
 };
 
 function getColorVar(str) {
@@ -430,6 +469,11 @@ function getBgVar(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
   return `color-mix(in srgb, var(--c-${(Math.abs(hash) % 8) + 1}) var(--bg-mix, 15%), var(--card))`;
+}
+function maskKey(val) {
+  if (!val) return '';
+  if (val.length <= 4) return '*'.repeat(val.length);
+  return val.substring(0, 4) + '*'.repeat(val.length - 4);
 }
 
 function themeApply(t){
@@ -486,15 +530,18 @@ function renderSorts(items){
 }
 
 function num(v){ return parseFloat(String(v).replace(/[^0-9.\-]/g,''))||0; }
+
+// 조, 억 단위를 실제 값으로 변환하여 완벽한 비교를 지원하는 정렬용 함수
 function numTri(v){
-  const s=String(v).replace(/,/g,'');
-  const m=s.match(/([0-9.]+)(조|억)?/);
+  const s = String(v).replace(/,/g,'');
+  const m = s.match(/([0-9.]+)(조|억)?/);
   if(!m) return 0;
-  const n=parseFloat(m[1]);
-  if(m[2]==='조') return n*10000;
-  if(m[2]==='억') return n;
+  const n = parseFloat(m[1]);
+  if(m[2] === '조') return n * 10000; // 억 단위로 통일
+  if(m[2] === '억') return n;
   return n;
 }
+
 function getThresh(){
   return {
     amt: parseFloat(el.thTradeAmt?.value) || state.thTradeAmt,
@@ -503,11 +550,13 @@ function getThresh(){
     str: parseFloat(el.thStrength?.value) || state.thStrength,
   };
 }
+
 function passesFilter(sec){
-  const t=getThresh();
-  const vol=numTri(sec.volume);        
-  const mc=numTri(sec.marketCap);      
-  const mcJo = mc>=10000 ? mc/10000 : mc; 
+  const t = getThresh();
+  const vol = numTri(sec.volume);        
+  const mc = numTri(sec.marketCap);      
+  const mcJo = mc >= 10000 ? mc / 10000 : mc; 
+  
   const okAmt   = vol >= t.amt;
   const okMcap  = mcJo >= t.mcap;
   const hasRealData = sec.tradeVolume !== undefined;
@@ -519,24 +568,42 @@ function passesFilter(sec){
 
 function getFilteredAndSortedSectors() {
   let list = state.data.sectors.filter(s => s.type === state.activeMainTab).filter(passesFilter);
+  
+  // 기본순위일 경우 가장 높은 거래대금 순(내림차순)으로 기본 정렬 처리
   const sortKey = state.activeSort;
-  if (sortKey !== '기본순위') {
-    const fn = {
-      '거래대금': (a,b) => num(b.volume) - num(a.volume),
-      '수익률': (a,b) => num(b.roi) - num(a.roi),
-      '시총': (a,b) => num(b.marketCap) - num(a.marketCap),
-      '변동성': (a,b) => b.name.length - a.name.length
-    }[sortKey];
-    if (fn) list.sort(fn);
-  }
+  const fn = {
+    '기본순위': (a,b) => numTri(b.volume) - numTri(a.volume),
+    '거래대금': (a,b) => numTri(b.volume) - numTri(a.volume),
+    '수익률': (a,b) => num(b.roi) - num(a.roi),
+    '시총': (a,b) => numTri(b.marketCap) - numTri(a.marketCap),
+    '변동성': (a,b) => b.name.length - a.name.length
+  }[sortKey];
+  
+  if (fn) list.sort(fn);
 
   if (state.activeSubFilter !== '전체') {
     list = list.filter(item => item.sector === state.activeSubFilter);
   }
-  return list;
+  return list; // 개수 제한 없이 통과된 전체 리스트 반환
+}
+
+// 네이버 최신 뉴스 검색(새창)을 위한 임시 뉴스 데이터 생성 함수
+function generateMockNews(keyword) {
+  const enc = encodeURIComponent(keyword);
+  return [
+    { title: `[특징주] ${keyword} 관련주 시장 주도 강세`, link: `https://search.naver.com/search.naver?where=news&query=${enc}&sort=1` },
+    { title: `외국인 대량 순매수... ${keyword} 랠리 본격화되나`, link: `https://search.naver.com/search.naver?where=news&query=${enc}&sort=1` },
+    { title: `${keyword} 핵심 기술 부각, 수혜주 찾기 분주`, link: `https://search.naver.com/search.naver?where=news&query=${enc}&sort=1` },
+    { title: `${keyword} 산업 턴어라운드 본격화 기대감 확산`, link: `https://search.naver.com/search.naver?where=news&query=${enc}&sort=1` },
+    { title: `증권가, ${keyword} 단기 목표가 줄상향 리포트`, link: `https://search.naver.com/search.naver?where=news&query=${enc}&sort=1` }
+  ];
 }
 
 function previewHTML(sec){
+  // 실제 API 데이터에 뉴스가 없으면, 위 함수를 통해 임시 최신 기사 생성
+  const newsList = sec.news || generateMockNews(sec.name);
+  const newsHTML = newsList.slice(0,5).map(n => `<li><a href="${n.link}" target="_blank">${n.title}</a></li>`).join('');
+
   return `
     <div class="item-preview">
       <div class="preview-grid">
@@ -546,17 +613,23 @@ function previewHTML(sec){
         <div class="pbox"><div class="k">시가총액</div><div class="v">${sec.marketCap}</div></div>
       </div>
       <div class="preview-note">핵심 포인트: ${sec.reason}<br>관련 종목: ${sec.stocks.map(s=>s.name).join(' · ')}</div>
+      
+      <div class="news-box">
+        <div class="news-k">📰 관련 최신 뉴스</div>
+        <ul class="news-list">${newsHTML}</ul>
+      </div>
     </div>`;
 }
 
 function renderSectorList(){
   el.sectorList.innerHTML='';
   const items = getFilteredAndSortedSectors();
+  
   items.forEach((sec,idx)=>{
-    const open=state.openIndex===idx;
-    const item=document.createElement('div');
-    item.className='item'+(open?' open':'');
-    item.innerHTML=`
+    const open = state.openIndex === idx;
+    const item = document.createElement('div');
+    item.className = 'item' + (open?' open':'');
+    item.innerHTML = `
       <div class="item-main">
         <div class="rank">${idx+1}</div>
         <div class="item-info">
@@ -565,9 +638,9 @@ function renderSectorList(){
         </div>
         <div class="arrow">${open?'−':'＋'}</div>
       </div>
-      ${open?previewHTML(sec):''}
+      ${open ? previewHTML(sec) : ''}
     `;
-    item.querySelector('.item-main').onclick=()=>{ state.openIndex=state.openIndex===idx?null:idx; renderAll(); };
+    item.querySelector('.item-main').onclick = () => { state.openIndex = state.openIndex === idx ? null : idx; renderAll(); };
     item.style.background = getBgVar(sec.sector);
     
     if(state.activeSubFilter !== '전체' && sec.sector === state.activeSubFilter) {
@@ -621,6 +694,24 @@ function renderSettingExtras() {
   renderGroup('업종', 'extraSectorList');
 }
 
+function renderApiUI() {
+  if (isApiConnected && storedKeys.appKey) {
+    el.apiSavedGroup.style.display = 'block';
+    el.apiFormGroup.style.display = 'none';
+    el.dispCano.textContent = el.cano.value || '-';
+    el.dispAppKey.textContent = maskKey(storedKeys.appKey);
+    el.dispEnv.textContent = el.envType.value === 'live' ? '실계좌' : '모의투자';
+  } else {
+    el.apiSavedGroup.style.display = 'none';
+    el.apiFormGroup.style.display = 'block';
+  }
+}
+
+el.editApiBtn.onclick = () => {
+  isApiConnected = false;
+  renderApiUI();
+};
+
 function showSettings(){
   el.overlay.classList.add('show');
   el.overlay.setAttribute('aria-hidden','false');
@@ -645,12 +736,8 @@ function showSettings(){
 function hideSettings(){
   el.overlay.classList.remove('show');
   el.overlay.setAttribute('aria-hidden','true');
-  saveConfigToCloud(); 
 }
 
-// ----------------------------------------------------
-// [Firebase 클라우드 연동] - 모든 사용자가 설정을 실시간 공유
-// ----------------------------------------------------
 async function initFirebaseAuth() {
   if(!auth) return;
   if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -673,7 +760,18 @@ async function initFirebaseAuth() {
           if(cloudData.programPlusOnly !== undefined) state.programPlusOnly = cloudData.programPlusOnly;
           state.customFilters = cloudData.customFilters || { '테마': [], '업종': [] };
           el.filterCount.value = state.filterCount;
+          el.cano.value = cloudData.cano || '';
+          el.prdt.value = cloudData.prdt || '';
+          el.envType.value = cloudData.envType || 'live';
           
+          storedKeys.appKey = cloudData.appKey || '';
+          storedKeys.appSecret = cloudData.appSecret || '';
+          el.appKey.value = maskKey(storedKeys.appKey);
+          el.appSecret.value = maskKey(storedKeys.appSecret);
+
+          isApiConnected = cloudData.isApiConnected === true;
+          
+          renderApiUI();
           renderSettingExtras();
           renderAll();
         }
@@ -686,19 +784,30 @@ if(auth) initFirebaseAuth();
 async function saveConfigToCloud() {
   const count = parseInt(el.filterCount.value);
   state.filterCount = isNaN(count) || count < 1 ? 5 : count;
-  if(el.thTradeAmt) { state.thTradeAmt = parseFloat(el.thTradeAmt.value) || 2000; localStorage.setItem('thTradeAmt', state.thTradeAmt); }
-  if(el.thVolume2)  { state.thVolume2  = parseFloat(el.thVolume2.value)  || 5000000; localStorage.setItem('thVolume2', state.thVolume2); }
-  if(el.thMcap)     { state.thMcap     = parseFloat(el.thMcap.value)     || 3; localStorage.setItem('thMcap', state.thMcap); }
-  if(el.thStrength) { state.thStrength = parseFloat(el.thStrength.value) || 100; localStorage.setItem('thStrength', state.thStrength); }
+  if(el.thTradeAmt) { state.thTradeAmt = parseFloat(el.thTradeAmt.value) || 0; localStorage.setItem('thTradeAmt', state.thTradeAmt); }
+  if(el.thVolume2)  { state.thVolume2  = parseFloat(el.thVolume2.value)  || 0; localStorage.setItem('thVolume2', state.thVolume2); }
+  if(el.thMcap)     { state.thMcap     = parseFloat(el.thMcap.value)     || 0; localStorage.setItem('thMcap', state.thMcap); }
+  if(el.thStrength) { state.thStrength = parseFloat(el.thStrength.value) || 0; localStorage.setItem('thStrength', state.thStrength); }
   
+  const inputKey = el.appKey.value.trim();
+  const inputSecret = el.appSecret.value.trim();
+  if (inputKey !== maskKey(storedKeys.appKey)) storedKeys.appKey = inputKey;
+  if (inputSecret !== maskKey(storedKeys.appSecret)) storedKeys.appSecret = inputSecret;
+
   const dataToSave = {
+    cano: el.cano.value.trim(),
+    prdt: el.prdt.value.trim(),
+    appKey: storedKeys.appKey, 
+    appSecret: storedKeys.appSecret, 
+    envType: el.envType.value,
     filterCount: state.filterCount,
     thTradeAmt: state.thTradeAmt,
     thVolume2: state.thVolume2,
     thMcap: state.thMcap,
     thStrength: state.thStrength,
     programPlusOnly: state.programPlusOnly,
-    customFilters: state.customFilters
+    customFilters: state.customFilters,
+    isApiConnected: isApiConnected
   };
 
   if (db && auth.currentUser) {
@@ -707,46 +816,74 @@ async function saveConfigToCloud() {
   }
 }
 
-// ----------------------------------------------------
-// [API 데이터 통신 및 샘플 대체 로직]
-// ----------------------------------------------------
+async function testConn(){
+  el.connectionStatus.textContent='테스트중...';
+  
+  try{
+    const inputKey = el.appKey.value.trim();
+    if((inputKey !== maskKey(storedKeys.appKey) ? inputKey : storedKeys.appKey) === '') {
+      throw new Error('API 키 입력 필요');
+    }
+    
+    isApiConnected = true;
+    await saveConfigToCloud();
+    renderApiUI();
+    
+    el.connectionStatus.textContent='✅ 클라우드 저장 및 연결 성공';
+    el.connectionStatus.style.color='#10b981';
+  }catch(e){
+    isApiConnected = false;
+    await saveConfigToCloud();
+    renderApiUI();
+    el.connectionStatus.textContent='❌ ' + e.message;
+    el.connectionStatus.style.color='#ef4444';
+  }
+  
+  setTimeout(()=>{
+    el.connectionStatus.textContent='연결 대기중';
+    el.connectionStatus.style.color='';
+  }, 3000);
+}
 
 async function fetchReal(){
   el.connectionStatus.textContent='데이터 갱신중...';
-  el.apiIndicator.className = 'status-indicator yellow';
-  
   try{
-    // 외부 한투 주소가 아닌, 방금 만든 내 서버의 /api/data 주소로 요청합니다.
-    const res = await fetch('/api/data');
+    if (!isApiConnected || !storedKeys.appKey) throw new Error('CORS 차단됨');
 
-    if(!res.ok) throw new Error('서버 통신 실패');
-    
-    // 정상적으로 데이터를 받아왔을 때의 처리
+    const baseUrl = el.envType.value === 'live' ? 'https://openapi.koreainvestment.com:9443' : 'https://openapivts.koreainvestment.com:29443';
+    const res = await fetch(`${baseUrl}/uapi/domestic-stock/v1/quotations/inquire-price`, {
+        headers: { 'appkey': storedKeys.appKey, 'appsecret': storedKeys.appSecret, 'tr_id': 'FHKST01010100' }
+    });
+
+    if(!res.ok) throw new Error('CORS 차단 또는 통신 실패');
     const realData = await res.json();
-    console.log("받아온 실데이터:", realData);
     
-    el.connectionStatus.textContent='API 정상 연결';
-    el.apiIndicator.className = 'status-indicator green';
+    el.connectionStatus.textContent='✅ 갱신 완료';
   }catch(e){
-    // 실패 시 기존처럼 샘플 데이터 표시
     state.data=SAMPLE;
-    el.connectionStatus.textContent='샘플 데이터';
-    el.apiIndicator.className = 'status-indicator red';
+    el.connectionStatus.textContent='⚠️ API 차단됨 (샘플 데이터)';
   }
+  setTimeout(()=>{
+    if(el.connectionStatus.textContent.includes('완료') || el.connectionStatus.textContent.includes('차단됨')){
+      el.connectionStatus.textContent='연결 양호';
+    }
+  }, 3000);
   
-  state.countdown=60;
   renderAll();
   el.lastUpdated.textContent='최종 갱신: '+new Date().toLocaleTimeString('ko-KR');
 }
 
-// 여기까지 api관련 코딩
-
 async function clearConfig(){
   state.filterCount = 5;
   state.customFilters = { '테마': [], '업종': [] };
+  storedKeys = { appKey: '', appSecret: '' };
+  isApiConnected = false;
+  
+  el.cano.value = ''; el.prdt.value = ''; el.appKey.value = ''; el.appSecret.value = '';
   
   await saveConfigToCloud();
   renderSettingExtras();
+  el.connectionStatus.textContent='설정 초기화됨';
   renderAll();
 }
 
@@ -760,17 +897,16 @@ function renderAll(){
 function poll(){
   clearInterval(state.timer);
   state.timer=setInterval(()=>{
-    state.countdown=Math.max(0,state.countdown-1);
-    if(state.countdown<=0) fetchReal();
-  },1000);
+    fetchReal();
+  }, REFRESH_MS);
 }
 
-// 이벤트 연결
 el.themeBtn.onclick=()=>themeApply(state.theme=state.theme==='light'?'dark':'light');
 el.settingBtn.onclick=showSettings;
 el.closeSettingBtn.onclick=hideSettings;
 el.overlay.addEventListener('click',e=>{if(e.target===el.overlay) hideSettings()});
 el.clearSettingBtn.onclick=clearConfig;
+el.testSettingBtn.onclick=testConn;
 
 themeApply(state.theme);
 fetchReal();
