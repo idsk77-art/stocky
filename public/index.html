@@ -524,7 +524,7 @@ function getFilteredAndSortedSectors() {
   if (state.activeSubFilter !== '전체') {
     list = list.filter(item => item.sector === state.activeSubFilter);
   }
-  return list; 
+  return state.activeSubFilter === '전체' ? list.slice(0, 20) : list; 
 }
 
 function generateMockNews(keyword) {
@@ -610,7 +610,7 @@ function renderSettingExtras() {
     const container = document.getElementById(containerId);
     container.innerHTML = '';
     const list = state.data.categories ? state.data.categories[type] : DEFAULT_CATEGORIES[type];
-    const extraCandidates = list ? list.slice(state.filterCount) : []; 
+    const extraCandidates = list ? list.slice(state.filterCount, state.filterCount + 5) : []; 
 
     if (extraCandidates.length === 0) {
       container.innerHTML = '<span style="font-size:12px; color:var(--muted)">추가할 수 있는 항목이 없습니다.</span>';
