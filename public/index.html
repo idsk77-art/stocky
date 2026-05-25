@@ -100,7 +100,7 @@ button{
 }
 button:active { transform: scale(0.96); }
 .iconbtn{
-  width:40px; height:40px; padding:0; display:grid; place-items:center; border-radius:50%; color:var(--text);
+  width:32px; height:32px; padding:0; display:grid; place-items:center; border-radius:50%; color:var(--text);
 }
 .status{
   display:flex; justify-content:flex-end; gap:12px; font-size:12px; font-weight:700;
@@ -219,7 +219,7 @@ html[data-theme="dark"] .item { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
       <div class="actions">
         <button id="themeBtn" class="iconbtn" aria-label="테마 변경" title="테마 변경"></button>
         <button id="settingBtn" class="iconbtn" aria-label="환경설정" title="환경설정">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.3l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 19.71 7l-.06.06A1.65 1.65 0 0 0 19.4 9c.38.31.77.71 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.3l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 19.71 7l-.06.06A1.65 1.65 0 0 0 19.4 9c.38.31.77.71 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
         </button>
       </div>
     </div>
@@ -313,9 +313,9 @@ if (Object.keys(firebaseConfig).length > 0) {
   db = getFirestore(app);
 }
 
-// 아이콘 라인 아트
-const sunIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
-const moonIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+// 아이콘 16px 크기로 축소
+const sunIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+const moonIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
 
 const DEFAULT_CATEGORIES = {
   '테마': ['MLCC','2차전지','로봇','바이오','AI','우주항공','원전','신재생','보안','초전도체'],
@@ -336,14 +336,14 @@ let state = {
   countdown: 60,
   activeMainTab: '테마',
   activeSubFilter: '전체',
-  activeSort: '거래대금', // 기본순위 삭제, 거래대금 기본 설정
+  activeSort: '거래대금',
   filterCount: 5,
   customFilters: { '테마': [], '업종': [] },
   openIndex: null
 };
 
 let currentStatusText = '연결 대기중';
-let failCount = 0; // 에러 카운터
+let failCount = 0; 
 
 const el = {
   themeBtn: document.getElementById('themeBtn'),
@@ -432,7 +432,6 @@ function renderSorts(items){
 
 function num(v){ return parseFloat(String(v).replace(/[^0-9.\-]/g,''))||0; }
 
-// 조/억 단위를 처리하여 완벽한 비교를 지원하는 함수
 function numTri(v){
   const s = String(v).replace(/,/g,'');
   const m = s.match(/([0-9.]+)(조|억)?/);
@@ -444,11 +443,15 @@ function numTri(v){
 }
 
 function getThresh(){
+  const getVal = (inputEl, stateVal) => {
+    if (inputEl && inputEl.value !== '') return parseFloat(inputEl.value);
+    return stateVal;
+  };
   return {
-    amt: parseFloat(el.thTradeAmt?.value) || state.thTradeAmt,
-    vol: parseFloat(el.thVolume2?.value) || state.thVolume2,
-    mcap: parseFloat(el.thMcap?.value) || state.thMcap,
-    str: parseFloat(el.thStrength?.value) || state.thStrength,
+    amt: getVal(el.thTradeAmt, state.thTradeAmt),
+    vol: getVal(el.thVolume2, state.thVolume2),
+    mcap: getVal(el.thMcap, state.thMcap),
+    str: getVal(el.thStrength, state.thStrength),
   };
 }
 
@@ -470,7 +473,6 @@ function passesFilter(sec){
 function getFilteredAndSortedSectors() {
   let list = (state.data.sectors || []).filter(s => s.type === state.activeMainTab).filter(passesFilter);
   
-  // 정렬 기준이 항상 내림차순(높은게 위로) 적용되도록 보장
   const sortKey = state.activeSort;
   const fn = {
     '거래대금': (a,b) => numTri(b.volume) - numTri(a.volume),
@@ -484,7 +486,7 @@ function getFilteredAndSortedSectors() {
   if (state.activeSubFilter !== '전체') {
     list = list.filter(item => item.sector === state.activeSubFilter);
   }
-  return list; // 개수 제한 없이 모두 반환
+  return list; 
 }
 
 function generateMockNews(keyword) {
@@ -526,7 +528,7 @@ function renderSectorList(){
   items.forEach((sec,idx)=>{
     const open = state.openIndex === idx;
     const item = document.createElement('div');
-    const colorStr = getColorVar(sec.sector); // 고유 테마 컬러
+    const colorStr = getColorVar(sec.sector); 
     
     item.className = 'item' + (open?' open':'');
     item.innerHTML = `
@@ -546,7 +548,6 @@ function renderSectorList(){
     item.querySelector('.item-main').onclick = () => { state.openIndex = state.openIndex === idx ? null : idx; renderAll(); };
     item.style.background = getBgVar(sec.sector);
     
-    // 뱃지 색상 테마와 통일
     const badge = item.querySelector('.badge');
     badge.style.background = `color-mix(in srgb, ${colorStr} 15%, transparent)`;
     badge.style.color = colorStr;
@@ -684,7 +685,7 @@ function updateStatusUI() {
 
 async function fetchReal(){
   state.countdown = 60; 
-  currentStatusText = '데이터 갱신중...';
+  currentStatusText = '데이터 로딩중...';
   el.apiIndicator.className = 'status-indicator yellow';
   updateStatusUI();
   
@@ -693,7 +694,6 @@ async function fetchReal(){
     if(!res.ok) throw new Error('서버 통신 실패');
     const realData = await res.json();
     
-    // 정상 통신 시 에러카운트 초기화 및 데이터 갱신
     failCount = 0;
     state.data = realData; 
     currentStatusText = '연결 양호';
@@ -745,7 +745,9 @@ el.closeSettingBtn.onclick = hideSettings;
 el.overlay.addEventListener('click', e => { if(e.target===el.overlay) hideSettings() });
 el.clearSettingBtn.onclick = clearConfig;
 
+// 앱 시작 시 빈 화면을 막기 위해 렌더링 먼저 실행 후 fetch 호출
 themeApply(state.theme);
+renderAll(); 
 fetchReal();
 poll();
 </script>
