@@ -91,52 +91,41 @@ app.get('/api/data', async (req, res) => {
         for (const item of TARGET_SECTORS) {
             try {
                 const kisData = await fetchStockPrice(item.code, token);
-                const output = kisData.output; // KIS API 핵심 데이터 객체
+                const output = kisData.output;
 
-                // 프론트엔드가 요구하는 JSON 포맷으로 완벽하게 조립
                 results.push({
                     type: item.type,
                     name: item.name,
                     sector: item.sector,
                     reason: item.reason,
-                    chg: formatChg(output.prdy_ctrt),          // 전일 대비율
-                    volume: formatAmt(output.acml_tr_pbmn),    // 누적 거래대금
-                    marketCap: formatMcap(output.hts_avls),    // 시가총액
+                    chg: formatChg(output.prdy_ctrt),
+                    volume: formatAmt(output.acml_tr_pbmn),
+                    marketCap: formatMcap(output.hts_avls),
                     roi: formatChg(output.prdy_ctrt),          
-                    tradeVolume: Number(output.acml_vol),      // 누적 거래량
-                    strength: Number(output.vlnd_cmp_vwcd) || 100, // 체결강도
+                    tradeVolume: Number(output.acml_vol),
+                    strength: Number(output.vlnd_cmp_vwcd) || 100,
                     stocks: [
-                        { 
-                            name: item.name, 
-                            price: Number(output.stck_prpr).toLocaleString(), // 콤마 포함 현재가
-                            chg: formatChg(output.prdy_ctrt) 
-                        },
-                        { 
-                            name: item.subName, 
-                            price: '-', // 보조 종목은 API 호출 절약을 위해 생략
-                            chg: '-' 
-                        }
+                        { name: item.name, price: Number(output.stck_prpr).toLocaleString(), chg: formatChg(output.prdy_ctrt) },
+                        { name: item.subName, price: '-', chg: '-' }
                     ]
                 });
                 
-                // API 호출 간 0.1초 딜레이 (초당 10회 제한 방지)
                 await new Promise(resolve => setTimeout(resolve, 100));
-
             } catch (err) {
                 console.error(`[${item.name}] 데이터 수집 에러:`, err.message);
-                // 에러난 종목은 스킵하고 진행
             }
         }
 
-        // 완성된 객체를 프론트엔드로 전달
-        res.json({ sectors: results });
+        // 🌟 수정된 부분: 한국 시간 기준으로 통신이 끝난 정확한 시간을 함께 보냅니다.
+        const serverTime = new Date().toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false });
+        
+        res.json({ 
+            sectors: results, 
+            timestamp: serverTime // 실제 갱신 시간 추가
+        });
 
     } catch (error) {
         console.error('전체 데이터 통신 실패:', error);
         res.status(500).json({ error: '서버 내부 오류로 데이터를 가져올 수 없습니다.' });
     }
-});
-
-app.listen(PORT, () => {
-    console.log(`🚀 서버가 포트 ${PORT}에서 정상 작동 중입니다.`);
 });
