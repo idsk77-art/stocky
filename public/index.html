@@ -21,22 +21,16 @@
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
     button,input{font:inherit}
-    button{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:10px 13px;font-weight:800;cursor:pointer}
+    button{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:10px 13px;font-weight:800;cursor:pointer;box-shadow:none;}
     button:active{transform:scale(.97)}
     .app{max-width:430px;margin:0 auto;min-height:100vh;padding:12px 12px 16px;display:flex;flex-direction:column;gap:12px}
     .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    
     .topbar{display:flex;flex-direction:column;gap:10px;padding-top:2px}
-    .topline{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-    .titlebox{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
-    .appname{display:none}
-    .mode-tabs{display:flex;gap:8px;overflow:auto;scrollbar-width:none}
-    .mode-tabs::-webkit-scrollbar{display:none}
-    .mode-tab{white-space:nowrap;padding:9px 13px;box-shadow:none;background:var(--chip)}
-    .mode-tab.active{background:var(--accent);color:var(--bg);border-color:transparent}
-    .mode-tab[data-mode="volume"].active{background:var(--cyan);color:#fff}
-    .mode-tab[data-mode="amount"].active{background:var(--violet);color:#fff}
-    .actions{display:flex;gap:8px;align-items:center}
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .titlebox h1{margin:0; font-size:20px; font-weight:900;}
     .iconbtn{width:34px;height:34px;padding:0;display:grid;place-items:center}
+    
     .status-card{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:12px 14px}
     .status-left{display:flex;flex-direction:column;gap:4px;min-width:0}
     .status-main{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:900}
@@ -44,21 +38,29 @@
     .status-pill.real{background:rgba(16,185,129,.12);color:var(--good);border-color:rgba(16,185,129,.3)}
     .status-pill.sample{background:rgba(239,68,68,.12);color:var(--bad);border-color:rgba(239,68,68,.35)}
     .status-time{font-size:12px;color:var(--muted)}
-    .status-msg{font-size:11px;color:var(--bad);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:bold}
+    
     .live-box{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:800}
     .status-indicator{width:10px;height:10px;border-radius:50%;display:inline-block;background:#ccc}
     .status-indicator.green{background:var(--good);box-shadow:0 0 6px var(--good)}
-    .status-indicator.yellow{background:var(--warn);box-shadow:0 0 6px var(--warn)}
     .status-indicator.red{background:var(--bad);box-shadow:0 0 6px var(--bad)}
+
     .panel-head{display:flex;gap:8px;padding:14px 14px 0}
     .leader-tabs{display:flex;gap:8px;width:100%}
     .leader-tab{flex:1;text-align:center;border-radius:12px;background:var(--chip);color:var(--muted);box-shadow:none}
     .leader-tab.active{background:var(--accent);color:var(--bg);border-color:transparent}
+    
     .filters,.sortrow{display:flex;gap:8px;overflow:auto;padding:12px 14px 0;scrollbar-width:none}
     .filters::-webkit-scrollbar,.sortrow::-webkit-scrollbar{display:none}
-    .filter,.sort{white-space:nowrap;padding:9px 13px;border-radius:999px;border:1px solid transparent;font-size:12px;font-weight:800;color:var(--text);background:var(--chip);box-shadow:none}
+    .filter,.sort{white-space:nowrap;padding:9px 13px;border-radius:999px;border:1px solid transparent;font-size:12px;font-weight:800;color:var(--text);background:var(--chip)}
     .sort{border-color:var(--line)}
     .sort.active{background:var(--accent);color:var(--bg);border-color:transparent}
+    
+    .theme-summary {padding: 12px 14px 0; display:none;}
+    .summary-card {background:var(--preview2); border:1px solid var(--line); border-radius:14px; padding:12px;}
+    .summary-title {font-size:14px; font-weight:900; margin-bottom:4px;}
+    .summary-desc {font-size:12px; color:var(--muted); margin-bottom:8px;}
+    .summary-stats {display:flex; gap:12px; font-size:12px; font-weight:800;}
+
     .list{display:flex;flex-direction:column;gap:10px;padding:12px 14px 14px}
     .item{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card)}
     .item-main{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:12px;cursor:pointer}
@@ -67,8 +69,9 @@
     .row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
     .name{font-size:15px;font-weight:900;letter-spacing:-.02em}
     .badge{font-size:11px;padding:4px 8px;border-radius:999px;font-weight:800;border:1px solid var(--line)}
-    .row2{margin-top:4px;display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px}
+    .row2{margin-top:4px;display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px; font-weight:600;}
     .arrow{width:34px;height:34px;border-radius:50%;background:color-mix(in srgb, var(--text) 5%, transparent);display:grid;place-items:center;font-weight:900;border:1px solid var(--line)}
+    
     .item-preview{display:none;border-top:1px solid var(--line);background:var(--preview);padding:12px}
     .item.open .item-preview{display:block}
     .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -76,14 +79,7 @@
     .pbox .k{font-size:11px;color:var(--muted);margin-bottom:5px}
     .pbox .v{font-size:14px;font-weight:900}
     .preview-note{margin-top:10px;font-size:12px;line-height:1.55}
-    .stock-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
-    .stock-row{display:flex;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--preview2)}
-    .stock-left{display:flex;flex-direction:column;gap:3px;min-width:0}
-    .stock-name{font-size:13px;font-weight:800}
-    .stock-meta{font-size:11px;color:var(--muted)}
-    .stock-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
-    .stock-price{font-size:13px;font-weight:800}
-    .stock-chg{font-size:11px;font-weight:800}
+    
     .empty{padding:28px 18px 30px;text-align:center;color:var(--muted);font-size:13px;font-weight:700}
     @media (max-width:390px){.item-main{grid-template-columns:auto 1fr}.arrow{display:none}}
   </style>
@@ -93,12 +89,7 @@
   <div class="topbar">
     <div class="topline">
       <div class="titlebox">
-        <h1 class="appname">주식 모니터</h1>
-        <div class="mode-tabs" id="modeTabs">
-          <button class="mode-tab active" data-mode="leader">주도섹터</button>
-          <button class="mode-tab" data-mode="volume">거래량</button>
-          <button class="mode-tab" data-mode="amount">거래대금</button>
-        </div>
+        <h1>주식 모니터</h1>
       </div>
       <div class="actions">
         <button id="themeBtn" class="iconbtn" aria-label="테마 변경"></button>
@@ -112,24 +103,26 @@
           <span id="sourceText">API 호출 대기</span>
         </div>
         <div id="updatedText" class="status-time">업데이트 대기중</div>
-        <div id="statusMessage" class="status-msg">데이터 상태를 확인 중입니다.</div>
       </div>
       <div class="live-box">
         <span id="apiIndicator" class="status-indicator yellow"></span>
-        <span id="countdownText">갱신 30초</span>
+        <span id="countdownText">갱신 60초</span>
       </div>
     </div>
   </div>
 
   <div class="card">
-    <div class="panel-head" id="leaderPanelHead">
+    <div class="panel-head">
       <div class="leader-tabs" id="leaderTabs">
         <button class="leader-tab active" data-type="테마">테마</button>
         <button class="leader-tab" data-type="업종">업종</button>
       </div>
     </div>
+    
     <div class="filters" id="subFilters"></div>
     <div class="sortrow" id="sortrow"></div>
+    <div class="theme-summary" id="themeSummary"></div>
+    
     <div class="list" id="listRoot"></div>
   </div>
 </div>
@@ -138,16 +131,15 @@
 const sunIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
 const moonIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 
-const LEADER_SORTS = ['거래량', '거래대금', '상승률'];
+const SORTS = ['거래량', '거래대금', '상승률'];
 
 const state = {
   theme: 'light',
-  mode: 'leader',
   activeLeaderType: '테마',
-  activeSubFilter: '전체',
-  activeSort: '거래량',
+  activeSubFilter: '전체', // 첫 화면은 전체
+  activeSort: '거래량',    // 첫 화면은 거래량 순
   openIndex: null,
-  countdown: 30,
+  countdown: 60,         // 60초 갱신
   timer: null,
   leader: { categories: { 테마: [], 업종: [] }, sectors: [], meta: {} },
   volume: { items: [], meta: {} },
@@ -156,16 +148,14 @@ const state = {
 
 const el = {
   themeBtn: document.getElementById('themeBtn'),
-  modeTabs: document.querySelectorAll('.mode-tab'),
   leaderTabs: document.querySelectorAll('.leader-tab'),
-  leaderPanelHead: document.getElementById('leaderPanelHead'),
   subFilters: document.getElementById('subFilters'),
   sortrow: document.getElementById('sortrow'),
+  themeSummary: document.getElementById('themeSummary'),
   listRoot: document.getElementById('listRoot'),
   sourcePill: document.getElementById('sourcePill'),
   sourceText: document.getElementById('sourceText'),
   updatedText: document.getElementById('updatedText'),
-  statusMessage: document.getElementById('statusMessage'),
   apiIndicator: document.getElementById('apiIndicator'),
   countdownText: document.getElementById('countdownText')
 };
@@ -176,30 +166,7 @@ function themeApply(t){
   state.theme = t;
 }
 
-function num(v){
-  return parseFloat(String(v).replace(/[^0-9.\-]/g,'')) || 0;
-}
-
-function numTri(v){
-  const s = String(v).replace(/,/g,'');
-  const m = s.match(/([0-9.]+)(조|억)?/);
-  if(!m) return 0;
-  const n = parseFloat(m[1]);
-  if(m[2] === '조') return n * 10000;
-  if(m[2] === '억') return n;
-  return n;
-}
-
-function formatTime(iso){
-  if(!iso) return '대기중';
-  const d = new Date(iso);
-  return d.toLocaleTimeString('ko-KR');
-}
-
-function formatPrice(v){
-  return `${Number(v || 0).toLocaleString()}원`;
-}
-
+function formatPrice(v){ return `${Number(v || 0).toLocaleString()}원`; }
 function formatVolume(v){
   const n = Number(v || 0);
   if (n >= 100000000) return `${(n/100000000).toFixed(1)}억주`;
@@ -207,7 +174,6 @@ function formatVolume(v){
   if (n >= 10000) return `${Math.round(n/10000).toLocaleString()}만주`;
   return `${n.toLocaleString()}주`;
 }
-
 function formatAmount(v){
   const n = Number(v || 0);
   if (n >= 1000000000000) return `${(n/1000000000000).toFixed(1)}조`;
@@ -222,58 +188,19 @@ function getColorVar(str) {
   return `var(--c-${(Math.abs(hash) % 8) + 1})`;
 }
 
-function getBgVar(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  return `color-mix(in srgb, var(--c-${(Math.abs(hash) % 8) + 1}) var(--bg-mix, 15%), var(--card))`;
-}
-
-function getCurrentDataset() {
-  if (state.mode === 'leader') return state.leader;
-  if (state.mode === 'volume') return state.volume;
-  return state.amount;
-}
-
 function renderStatus(){
-  const current = getCurrentDataset();
-  const source = current.meta?.source === 'real' ? 'real' : 'sample';
-  el.sourcePill.className = `status-pill ${source}`;
-  el.sourcePill.textContent = source === 'real' ? '실시간' : '에러';
-  el.sourceText.textContent = source === 'real' ? '실데이터 연동됨' : 'API 호출 실패';
-  el.updatedText.textContent = `${formatTime(current.meta?.updatedAt)} 기준`;
-  el.statusMessage.textContent = current.meta?.message || '정상 동작 중';
-  el.statusMessage.style.color = source === 'sample' ? 'var(--bad)' : 'var(--muted)';
-  el.apiIndicator.className = `status-indicator ${source === 'real' ? 'green' : 'red'}`;
+  const meta = state.leader.meta || {};
+  const isReal = meta.source === 'real';
+  el.sourcePill.className = `status-pill ${isReal ? 'real' : 'sample'}`;
+  el.sourcePill.textContent = isReal ? '실시간' : '에러';
+  el.sourceText.textContent = isReal ? '데이터 연동됨' : '호출 실패';
+  el.updatedText.textContent = meta.updatedAt ? `${new Date(meta.updatedAt).toLocaleTimeString('ko-KR')} 기준` : '대기중';
+  el.apiIndicator.className = `status-indicator ${isReal ? 'green' : 'red'}`;
   el.countdownText.textContent = `갱신 ${state.countdown}초`;
-}
-
-function getLeaderItems(){
-  let list = (state.leader.sectors || []).filter((x) => x.type === state.activeLeaderType);
-
-  const sorter = {
-    '거래량': (a,b) => Number(b.tradeVolume || 0) - Number(a.tradeVolume || 0),
-    '거래대금': (a,b) => numTri(b.volume) - numTri(a.volume),
-    '상승률': (a,b) => num(b.chg) - num(a.chg)
-  }[state.activeSort];
-
-  if (sorter) list.sort(sorter);
-  if (state.activeSubFilter !== '전체') list = list.filter((x) => x.sector === state.activeSubFilter);
-  return list;
 }
 
 function renderSubFilters(){
   el.subFilters.innerHTML = '';
-  if (state.mode !== 'leader') {
-    el.subFilters.style.display = 'none';
-    el.sortrow.style.display = 'none';
-    el.leaderPanelHead.style.display = 'none';
-    return;
-  }
-
-  el.subFilters.style.display = 'flex';
-  el.sortrow.style.display = 'flex';
-  el.leaderPanelHead.style.display = 'flex';
-
   const categoryList = state.leader.categories?.[state.activeLeaderType] || [];
   const display = ['전체', ...categoryList];
 
@@ -305,9 +232,7 @@ function renderSubFilters(){
 
 function renderSorts(){
   el.sortrow.innerHTML = '';
-  if (state.mode !== 'leader') return;
-
-  LEADER_SORTS.forEach((x) => {
+  SORTS.forEach((x) => {
     const b = document.createElement('button');
     b.className = 'sort' + (state.activeSort === x ? ' active' : '');
     b.textContent = x;
@@ -320,80 +245,59 @@ function renderSorts(){
   });
 }
 
-function renderLeaderList(){
-  const items = getLeaderItems();
-  el.listRoot.innerHTML = '';
-  if (!items.length) {
-    el.listRoot.innerHTML = '<div class="empty">조건에 맞는 데이터가 없습니다.</div>';
+function renderThemeSummary(sector) {
+  if (!sector) {
+    el.themeSummary.style.display = 'none';
     return;
   }
-
-  items.forEach((sec, idx) => {
-    const open = state.openIndex === idx;
-    const item = document.createElement('div');
-    const color = getColorVar(sec.sector);
-    item.className = 'item' + (open ? ' open' : '');
-    item.style.background = getBgVar(sec.sector);
-
-    item.innerHTML = `
-      <div class="item-main">
-        <div class="rank">${idx + 1}</div>
-        <div class="item-info">
-          <div class="row1">
-            <div class="name">${sec.name}</div>
-            <span class="badge">${sec.sector}</span>
-          </div>
-          <div class="row2">
-            <span>합산 거래대금 ${sec.volume}</span>
-            <span>합산 거래량 ${formatVolume(sec.tradeVolume)}</span>
-            <span>평균 등락률 ${sec.chg}</span>
-          </div>
-        </div>
-        <div class="arrow">${open ? '−' : '＋'}</div>
+  el.themeSummary.style.display = 'block';
+  el.themeSummary.innerHTML = `
+    <div class="summary-card">
+      <div class="summary-title">${sector.name}</div>
+      <div class="summary-desc">${sector.reason}</div>
+      <div class="summary-stats">
+        <span>평균 등락률: <span style="color:${parseFloat(sector.chg) > 0 ? 'var(--good)' : 'inherit'}">${sector.chg}</span></span>
+        <span>합산 거래대금: ${sector.volume}</span>
       </div>
-      <div class="item-preview">
-        <div class="preview-grid">
-          <div class="pbox"><div class="k">분류명</div><div class="v">${sec.name}</div></div>
-          <div class="pbox"><div class="k">시가총액 합</div><div class="v">${sec.marketCap}</div></div>
-        </div>
-        <div class="preview-note">${sec.reason}</div>
-        <div class="stock-list">
-          ${(sec.stocks || []).map((s, sidx) => `
-            <div class="stock-row">
-              <div class="stock-left">
-                <div class="stock-name">${sidx + 1}. ${s.name}</div>
-                <div class="stock-meta">${s.code} · 거래량 ${s.volume}주 · 거래대금 ${s.amount}</div>
-              </div>
-              <div class="stock-right">
-                <div class="stock-price">${s.price}원</div>
-                <div class="stock-chg">${s.chg}</div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-
-    const badge = item.querySelector('.badge');
-    badge.style.background = `color-mix(in srgb, ${color} 15%, transparent)`;
-    badge.style.color = color;
-    badge.style.borderColor = `color-mix(in srgb, ${color} 40%, transparent)`;
-
-    item.querySelector('.item-main').onclick = () => {
-      state.openIndex = state.openIndex === idx ? null : idx;
-      renderAll();
-    };
-
-    el.listRoot.appendChild(item);
-  });
+    </div>
+  `;
 }
 
-function renderRankList(kind){
-  const dataset = kind === 'volume' ? state.volume : state.amount;
-  const items = dataset.items || [];
-  const accent = kind === 'volume' ? 'var(--cyan)' : 'var(--violet)';
-  el.listRoot.innerHTML = '';
+function renderStockList(){
+  let items = [];
+  let accent = 'var(--accent)';
+  let badgeName = state.activeLeaderType;
+  
+  if (state.activeSubFilter === '전체') {
+    // "전체" 필터: 글로벌 거래량/거래대금 API 데이터 활용
+    el.themeSummary.style.display = 'none';
+    if (state.activeSort === '거래대금') items = [...(state.amount.items || [])];
+    else items = [...(state.volume.items || [])];
+    badgeName = '국내주식';
+  } else {
+    // 특정 테마/업종 선택 시
+    const sector = state.leader.sectors.find(s => s.name === state.activeSubFilter && s.type === state.activeLeaderType);
+    if (sector) {
+      items = [...(sector.stocks || [])];
+      accent = getColorVar(sector.name);
+      badgeName = sector.name;
+      renderThemeSummary(sector);
+    } else {
+      el.themeSummary.style.display = 'none';
+    }
+  }
 
+  // 화면 정렬 기준에 맞춰 로컬 소팅
+  items.sort((a,b) => {
+    if (state.activeSort === '거래량') return b.volume - a.volume;
+    if (state.activeSort === '거래대금') return b.amount - a.amount;
+    if (state.activeSort === '상승률') return b.changeRate - a.changeRate;
+    return 0;
+  });
+
+  items = items.slice(0, 10); // 최대 10개 표시
+
+  el.listRoot.innerHTML = '';
   if (!items.length) {
     el.listRoot.innerHTML = '<div class="empty">데이터가 없습니다.</div>';
     return;
@@ -410,12 +314,12 @@ function renderRankList(kind){
         <div class="item-info">
           <div class="row1">
             <div class="name">${row.name}</div>
-            <span class="badge" style="background:color-mix(in srgb, ${accent} 12%, transparent); color:${accent}; border-color:color-mix(in srgb, ${accent} 35%, transparent);">${row.market}</span>
+            <span class="badge" style="background:color-mix(in srgb, ${accent} 12%, transparent); color:${accent}; border-color:color-mix(in srgb, ${accent} 35%, transparent);">${badgeName}</span>
           </div>
           <div class="row2">
             <span>거래량 ${formatVolume(row.volume)}</span>
             <span>거래대금 ${formatAmount(row.amount)}</span>
-            <span>등락률 ${row.changeRate > 0 ? '+' : ''}${row.changeRate}%</span>
+            <span style="color:${row.changeRate > 0 ? 'var(--good)' : 'inherit'}">등락률 ${row.changeRate > 0 ? '+' : ''}${row.changeRate}%</span>
           </div>
         </div>
         <div class="arrow">${open ? '−' : '＋'}</div>
@@ -444,13 +348,10 @@ function renderAll(){
   renderStatus();
   renderSubFilters();
   renderSorts();
-
-  el.modeTabs.forEach((btn) => btn.classList.toggle('active', btn.dataset.mode === state.mode));
+  
   el.leaderTabs.forEach((btn) => btn.classList.toggle('active', btn.dataset.type === state.activeLeaderType));
-
-  if (state.mode === 'leader') renderLeaderList();
-  if (state.mode === 'volume') renderRankList('volume');
-  if (state.mode === 'amount') renderRankList('amount');
+  
+  renderStockList();
 }
 
 async function safeJson(url) {
@@ -463,7 +364,7 @@ async function safeJson(url) {
 }
 
 async function fetchAllData(){
-  state.countdown = 30;
+  state.countdown = 60; // 60초 갱신 적용
   el.apiIndicator.className = 'status-indicator yellow';
   el.countdownText.textContent = `갱신 ${state.countdown}초`;
 
@@ -489,18 +390,11 @@ function startPolling(){
   }, 1000);
 }
 
-el.modeTabs.forEach((btn) => {
-  btn.onclick = () => {
-    state.mode = btn.dataset.mode;
-    state.openIndex = null;
-    renderAll();
-  };
-});
-
 el.leaderTabs.forEach((btn) => {
   btn.onclick = () => {
     state.activeLeaderType = btn.dataset.type;
     state.activeSubFilter = '전체';
+    state.activeSort = '거래량';
     state.openIndex = null;
     renderAll();
   };
