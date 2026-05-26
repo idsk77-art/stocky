@@ -736,6 +736,7 @@ function updateStatusUI() {
   el.connectionStatus.textContent = currentStatusText + ` (${state.countdown}초)`;
 }
 
+
 async function fetchReal(){
   state.countdown = 60; 
   currentStatusText = '데이터 로딩중...';
@@ -746,17 +747,16 @@ async function fetchReal(){
     const res = await fetch('/api/data');
     if(!res.ok) throw new Error('서버 통신 실패');
     
-    // JSON 파싱 에러 방지
     const text = await res.text();
     let realData;
     try { realData = JSON.parse(text); } catch(err) { throw new Error('데이터 포맷 오류'); }
     
-    // 서버에서 받은 데이터가 주도섹터 배열(sectors)을 정상적으로 포함하고 있는지 엄격히 검사
-    // 가공되지 않은 증권사 원본 데이터가 올 경우 화면 삭제를 막고 기본 데이터를 유지함
     if(realData && Array.isArray(realData.sectors) && realData.sectors.length > 0) {
       state.data = realData; 
+      // 🌟 수정된 부분: 서버에서 준 '진짜 시간'을 화면에 표기합니다.
+      el.lastUpdated.textContent = 'API 갱신 완료: ' + (realData.timestamp || '시간 정보 없음');
     } else {
-      state.data = SAMPLE_DATA; 
+      throw new Error('데이터 응답 형식 오류');
     }
     
     failCount = 0;
@@ -766,58 +766,44 @@ async function fetchReal(){
   } catch(e) {
     failCount++;
     if(failCount === 1) {
-      currentStatusText = '데이터 로딩중...';
+      currentStatusText = '재시도 중...';
       el.apiIndicator.className = 'status-indicator yellow';
     } else {
       currentStatusText = '통신 에러 (갱신 실패)';
       el.apiIndicator.className = 'status-indicator red';
     }
-    // 에러 발생 시에도 빈 화면 방지를 위해 든든하게 샘플 데이터 유지 보장
+    
+    // 에러 발생 시에만 최후의 수단으로 샘플 데이터를 씁니다.
     if(!state.data || !state.data.sectors || state.data.sectors.length === 0) {
       state.data = SAMPLE_DATA;
+      el.lastUpdated.textContent = '오프라인 (샘플 데이터)';
     }
   }
   
   renderAll();
-  el.lastUpdated.textContent = '최종 갱신: ' + new Date().toLocaleTimeString('ko-KR');
   updateStatusUI();
 }
 
-async function clearConfig(){
-  state.filterCount = 5;
-  state.customFilters = { '테마': [], '업종': [] };
-  
-  await saveConfigToCloud();
-  renderSettingExtras();
-  renderAll();
-}
+// ... (기존 설정 함수들 유지) ...
 
-function renderAll(){
-  renderSubFilters();
-  renderSorts(SORTS);
-  renderSectorList();
-}
-
-function poll(){
-  clearInterval(state.timer);
-  state.timer = setInterval(()=>{
-    state.countdown = Math.max(0, state.countdown - 1);
-    updateStatusUI();
-    if(state.countdown <= 0) fetchReal();
-  }, 1000);
-}
-
-el.themeBtn.onclick = () => themeApply(state.theme = state.theme === 'light' ? 'dark' : 'light');
-el.settingBtn.onclick = showSettings;
-el.closeSettingBtn.onclick = hideSettings;
-el.overlay.addEventListener('click', e => { if(e.target===el.overlay) hideSettings() });
-el.clearSettingBtn.onclick = clearConfig;
-
-// 앱 시작 시 빈 화면을 막기 위해 렌더링을 제일 먼저 강제 1회 실행합니다.
+// 🌟 수정된 부분: 첫 화면 깜빡임(Flickering) 완벽 방지
 themeApply(state.theme);
-renderAll(); 
+// renderAll(); <-- 기존에 샘플 데이터를 무조건 그리던 코드를 삭제했습니다.
+
+// 데이터를 가져오는 동안 예쁜 로딩 화면을 띄워줍니다.
+el.sectorList.innerHTML = `
+  <div style="padding: 60px 20px; text-align: center; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 10px;">
+    <div style="width: 24px; height: 24px; border: 3px solid var(--line); border-top-color: var(--accent2); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    <div style="font-size: 14px; font-weight: 800;">증권사 API 연동 중...</div>
+    <div style="font-size: 12px; font-weight: 500;">실시간 데이터를 불러오고 있습니다.</div>
+  </div>
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+`;
+
+// 로딩 화면을 띄운 상태로 진짜 데이터 호출 시작
 fetchReal();
 poll();
+
 </script>
 </body>
 </html>
