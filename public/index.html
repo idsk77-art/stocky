@@ -158,7 +158,8 @@ html[data-theme="dark"] .item { box-shadow: 0 4px 14px rgba(0,0,0,.2); }
 
   <div class="card">
     <div class="tabs" id="mainTabs">
-      <button class="tab active" data-type="테마">테마</button>
+      <button class="tab active" data-type="전체">전체보기</button>
+      <button class="tab" data-type="테마">테마</button>
       <button class="tab" data-type="업종">업종</button>
     </div>
     <div class="filters" id="subFilters"></div>
@@ -251,7 +252,7 @@ let state = {
   isLoading: true,
   errorMsg: null,
   countdown: 60,
-  activeMainTab: '테마',
+  activeMainTab: '전체', // 기본 탭을 '전체보기'로 변경
   activeSubFilter: '전체',
   activeSort: '거래대금',
   filterCount: getSafeInt('filterCount', 5),
@@ -301,26 +302,34 @@ function themeApply(t){
   localStorage.setItem('theme',t);
 }
 
-// 메뉴 클릭 시 필터를 초기화하여 상위 종목들이 정상적으로 노출되게 함
+// 🌟 네비게이션(주도섹터, 거래량, 거래대금) 클릭 이벤트
 document.querySelectorAll('.nav-mode').forEach(navEl => {
   navEl.addEventListener('click', (e) => {
     document.querySelectorAll('.nav-mode').forEach(n => n.classList.remove('active'));
     e.target.classList.add('active');
     state.appMode = e.target.getAttribute('data-mode');
     
-    // 탭을 전환할 때 꼬이지 않도록 세부 필터를 '전체'로 무조건 초기화
+    // 모드를 바꿀 때는 무조건 "분류 구분 없이 (전체보기)"로 초기화
+    state.activeMainTab = '전체';
     state.activeSubFilter = '전체'; 
     state.openIndex = null;
+    
+    // 탭 UI(버튼) 상태 동기화
+    el.mainTabs.forEach(t => {
+      t.classList.toggle('active', t.getAttribute('data-type') === '전체');
+    });
+
     renderAll();
   });
 });
 
+// 🌟 전체/테마/업종 탭 클릭 이벤트
 el.mainTabs.forEach(tab => {
   tab.onclick = (e) => {
     el.mainTabs.forEach(t => t.classList.remove('active'));
     e.target.classList.add('active');
     state.activeMainTab = e.target.getAttribute('data-type');
-    state.activeSubFilter = '전체';
+    state.activeSubFilter = '전체'; // 다른 대분류 클릭 시 세부분류는 항상 '전체'로 초기화
     state.openIndex = null;
     renderAll();
   };
@@ -328,6 +337,15 @@ el.mainTabs.forEach(tab => {
 
 function renderSubFilters() {
   el.subFilters.innerHTML = '';
+  
+  // 🌟 전체보기 상태일 때는 공간 절약을 위해 하위 필터 영역 숨김
+  if (state.activeMainTab === '전체') {
+    el.subFilters.style.display = 'none';
+    return;
+  }
+  
+  el.subFilters.style.display = 'flex'; // 테마나 업종을 눌렀을 때만 나타남
+  
   const catList = state.data.categories ? state.data.categories[state.activeMainTab] : DEFAULT_CATEGORIES[state.activeMainTab];
   const topList = catList.slice(0, state.filterCount);
   const extras = catList.slice(state.filterCount).filter(x => state.customFilters[state.activeMainTab].includes(x));
@@ -394,17 +412,23 @@ function passesFilter(sec){
   return okAmt && okMcap && okVol && okStr && okProg;
 }
 
-// 🌟 핵심 분리 로직: 모드에 따라 완전히 다르게 동작합니다.
+// 🌟 필터링 핵심 로직
 function getFilteredAndSortedSectors() {
   let list = [...(state.data.sectors || [])];
 
-  if (state.appMode === '주도섹터') {
-    // 1. 주도섹터 모드: 테마/업종 필터 + 세부 필터 + 환경설정(passesFilter) 모두 적용
+  // 1. 대분류 적용 (전체보기가 아닐 때만 테마/업종 필터링)
+  if (state.activeMainTab !== '전체') {
     list = list.filter(s => s.type === state.activeMainTab);
+    
+    // 2. 세부 분류 적용 (테마나 업종이 선택된 상태에서만 동작)
     if (state.activeSubFilter !== '전체') {
       list = list.filter(item => item.sector === state.activeSubFilter);
     }
-    list = list.filter(passesFilter); // 환경설정 조건 적용
+  }
+
+  if (state.appMode === '주도섹터') {
+    // 주도섹터 모드: 환경설정 필터(passesFilter) 적용
+    list = list.filter(passesFilter);
 
     const fn = {
       '거래대금': (a,b) => numTri(b.volume) - numTri(a.volume),
@@ -417,21 +441,12 @@ function getFilteredAndSortedSectors() {
     list.sort(fn);
 
   } else {
-    // 2. 거래량 / 거래대금 모드: 테마/업종 분류만 적용, 환경설정은 '완전 무시'
-    list = list.filter(s => s.type === state.activeMainTab);
-    if (state.activeSubFilter !== '전체') {
-      list = list.filter(item => item.sector === state.activeSubFilter);
-    }
-    // passesFilter 적용 안 함 (조건 무시)
-
-    // 해당 모드에 맞춰 강제 정렬
+    // 거래량 / 거래대금 모드: 환경설정 무시하고 강제 정렬 후 무조건 10개 자르기
     if (state.appMode === '거래량') {
       list.sort((a,b) => (b.tradeVolume || 0) - (a.tradeVolume || 0));
     } else if (state.appMode === '거래대금') {
       list.sort((a,b) => numTri(b.volume) - numTri(a.volume));
     }
-
-    // 조건 무시 후 무조건 상위 10개만 자르기
     list = list.slice(0, 10);
   }
 
@@ -494,7 +509,7 @@ function renderSectorList(){
     if (state.appMode === '주도섹터') {
       el.sectorList.innerHTML = `<div style="padding: 40px; text-align:center; color:var(--muted); font-size:13px; font-weight:600;">조건에 맞는 주도섹터가 없습니다.<br>환경설정에서 필터 기준을 완화해보세요.</div>`;
     } else {
-      el.sectorList.innerHTML = `<div style="padding: 40px; text-align:center; color:var(--muted); font-size:13px; font-weight:600;">서버에서 불러온 종목 데이터가 없습니다.</div>`;
+      el.sectorList.innerHTML = `<div style="padding: 40px; text-align:center; color:var(--muted); font-size:13px; font-weight:600;">해당 카테고리에 조건에 맞는 종목이 없습니다.</div>`;
     }
     return;
   }
