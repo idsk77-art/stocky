@@ -14,7 +14,7 @@ const KIS_BASE_URL = process.env.KIS_BASE_URL || 'https://openapi.koreainvestmen
 // ── Access Token 관리 ─────────────────────────────────────────
 let cachedToken = null;
 let tokenExpireAt = 0;
-let tokenFetchPromise = null; // 동시 요청 시 중복 발급 방지용
+let tokenFetchPromise = null;
 
 function nowIso() { return new Date().toISOString(); }
 function toNum(v) {
@@ -22,12 +22,11 @@ function toNum(v) {
   return Number(String(v).replace(/[^0-9.-]/g, '')) || 0;
 }
 
-// 토큰 발급 (동시 호출 방지 처리)
 async function getAccessToken() {
   const now = Date.now();
   if (cachedToken && now < tokenExpireAt) return cachedToken;
   
-  if (tokenFetchPromise) return tokenFetchPromise; // 이미 발급 중이면 기다림
+  if (tokenFetchPromise) return tokenFetchPromise;
 
   tokenFetchPromise = (async () => {
     try {
@@ -45,7 +44,6 @@ async function getAccessToken() {
       let json = {};
       try { json = JSON.parse(text); } catch (e) { throw new Error(`토큰 파싱 실패: ${text}`); }
 
-      // 1분 제한 에러 처리
       if (!res.ok || !json.access_token) {
         if (json.error_code === 'EGW00133' && cachedToken) {
           console.log('토큰 1분 제한 걸림, 기존 캐시 반환');
@@ -55,11 +53,11 @@ async function getAccessToken() {
       }
 
       cachedToken = json.access_token;
-      tokenExpireAt = now + 1000 * 60 * 60 * 20; // 20시간 후 만료
+      tokenExpireAt = now + 1000 * 60 * 60 * 20;
       console.log('✅ Access Token 신규 발급 완료');
       return cachedToken;
     } finally {
-      tokenFetchPromise = null; // 완료되면 프로미스 초기화
+      tokenFetchPromise = null;
     }
   })();
 
@@ -96,7 +94,9 @@ async function kisGet(pathname, params, trId) {
   return json;
 }
 
-function normalizeRankItem(row, market) {
+function normalizeRankItem(row) {
+  // 응답 데이터 포맷에 맞춰 유연하게 파싱
+  const market = row.stck_shrn_iscd ? (row.stck_shrn_iscd.startsWith('0') ? 'KOSPI' : 'KOSDAQ') : '국내주식';
   return {
     market,
     code: row.stck_shrn_iscd || row.mksc_shrn_iscd || row.iscd || row.stck_iscd || '',
@@ -111,9 +111,10 @@ function normalizeRankItem(row, market) {
   };
 }
 
-// ── KOSPI/KOSDAQ 거래량/대금 호출 병합 ─────────────────────────
+// ── 거래량 순위 단일 호출 (J 시장구분 하나만 사용) ──────────────────
 async function fetchMergedVolumeRank() {
   const commonParams = {
+    FID_COND_MRKT_DIV_CODE: 'J', // J 하나로 전체 조회 시도 (에러 원인 방지)
     FID_COND_SCR_DIV_CODE: '20171',
     FID_INPUT_ISCD: '0000',
     FID_DIV_CLS_CODE: '0',
@@ -127,17 +128,17 @@ async function fetchMergedVolumeRank() {
     FID_RANK_SORT_CLS_CODE: '0'
   };
 
-  const [kospi, kosdaq] = await Promise.all([
-    kisGet('/uapi/domestic-stock/v1/quotations/volume-rank', { ...commonParams, FID_COND_MRKT_DIV_CODE: 'J' }, 'FHPST01720000'),
-    kisGet('/uapi/domestic-stock/v1/quotations/volume-rank', { ...commonParams, FID_COND_MRKT_DIV_CODE: 'Q' }, 'FHPST01720000')
-  ]);
+  const response = await kisGet(
+    '/uapi/domestic-stock/v1/quotations/volume-rank',
+    commonParams,
+    'FHPST01720000'
+  );
 
-  const merged = [
-    ...((kospi.output || []).map((x) => normalizeRankItem(x, 'KOSPI'))),
-    ...((kosdaq.output || []).map((x) => normalizeRankItem(x, 'KOSDAQ')))
-  ].filter((x) => x.name && (x.volume > 0 || x.amount > 0));
+  const items = (response.output || [])
+    .map(x => normalizeRankItem(x))
+    .filter(x => x.name && (x.volume > 0 || x.amount > 0));
 
-  return { updatedAt: nowIso(), items: merged };
+  return { updatedAt: nowIso(), items };
 }
 
 // 샘플 데이터
@@ -179,7 +180,6 @@ app.get('/api/market/amount-top', async (req, res) => {
 
 app.listen(PORT, async () => {
   console.log(`server listening on ${PORT}`);
-  // 서버 켜지자마자 토큰을 미리 발급받아 캐시해둠 (1분 제한 에러 원천 차단)
   try {
     await getAccessToken();
   } catch (err) {
