@@ -6,31 +6,29 @@
   <title>주도섹터</title>
   <style>
     :root{
-      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
-      --accent:#111827; --good:#10b981; --warn:#f59e0b; --bad:#ef4444;
-      --shadow:0 8px 24px rgba(15,23,42,.06); --radius:20px;
-      --chip:#f1f5f9; --preview:#f8fafc; --preview2:#ffffff;
-      --c-1:#93c5fd; --c-2:#fca5a5; --c-3:#fde047; --c-4:#86efac;
-      --c-5:#d8b4fe; --c-6:#fdba74; --c-7:#67e8f9; --c-8:#f9a8d4;
+      --bg:#f8fafc;--card:#ffffff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;
+      --accent:#111827;--good:#10b981;--warn:#f59e0b;--bad:#ef4444;
+      --shadow:0 8px 24px rgba(15,23,42,.06);--radius:20px;
+      --chip:#f1f5f9;--preview:#f8fafc;--preview2:#ffffff;
+      --c-1:#93c5fd;--c-2:#fca5a5;--c-3:#fde047;--c-4:#86efac;
+      --c-5:#d8b4fe;--c-6:#fdba74;--c-7:#67e8f9;--c-8:#f9a8d4;
     }
     html[data-theme="dark"]{
-      --bg:#0d0d0d; --card:#1a1a1a; --text:#e5e7eb; --muted:#9ca3af; --line:#2c2c2c;
-      --accent:#e5e7eb; --chip:#222222; --preview:#131313; --preview2:#242424;
+      --bg:#0d0d0d;--card:#1a1a1a;--text:#e5e7eb;--muted:#9ca3af;--line:#2c2c2c;
+      --accent:#e5e7eb;--chip:#222222;--preview:#131313;--preview2:#242424;
       --shadow:0 10px 26px rgba(0,0,0,.55);
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;background:var(--bg);color:var(--text);transition:background .2s,color .2s}
     button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:10px 13px;font-weight:800;cursor:pointer;box-shadow:none}
     button:active{transform:scale(.97)}
-
     .app{max-width:430px;margin:0 auto;min-height:100vh;padding:12px 12px 16px;display:flex;flex-direction:column;gap:12px}
     .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-
     .topbar{display:flex;flex-direction:column;gap:10px;padding-top:2px}
     .topline{display:flex;align-items:center;justify-content:space-between;gap:10px}
     .titlebox h1{margin:0;font-size:20px;font-weight:900}
+    .actions{display:flex;gap:8px;align-items:center}
     .iconbtn{width:34px;height:34px;padding:0;display:grid;place-items:center}
-
     .status-card{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:12px 14px}
     .status-left{display:flex;flex-direction:column;gap:4px;min-width:0}
     .status-main{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:900}
@@ -45,17 +43,10 @@
     .status-indicator.yellow{background:var(--warn);box-shadow:0 0 6px var(--warn)}
     .status-indicator.red{background:var(--bad);box-shadow:0 0 6px var(--bad)}
 
-    /* 가로 스크롤 - 얇은 스크롤바로 존재 암시 */
-    .filters,.sortrow{
-      display:flex;gap:8px;overflow-x:auto;padding:14px 14px 10px;
-      scrollbar-width:thin;
-      scrollbar-color:color-mix(in srgb,var(--muted) 35%,transparent) transparent;
-      -webkit-overflow-scrolling:touch;
-    }
+    .filters,.sortrow{display:flex;gap:8px;overflow-x:auto;padding:14px 14px 10px;scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--muted) 35%,transparent) transparent;-webkit-overflow-scrolling:touch}
     .filters::-webkit-scrollbar,.sortrow::-webkit-scrollbar{height:3px}
     .filters::-webkit-scrollbar-track,.sortrow::-webkit-scrollbar-track{background:transparent}
     .filters::-webkit-scrollbar-thumb,.sortrow::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--muted) 35%,transparent);border-radius:4px}
-
     .filter,.sort{white-space:nowrap;padding:9px 13px;border-radius:999px;border:1px solid transparent;font-size:12px;font-weight:800;color:var(--text);background:var(--chip)}
     .sort{border-color:var(--line)}
     .sort.active{background:var(--accent);color:var(--bg);border-color:transparent}
@@ -67,16 +58,12 @@
     .summary-stats{display:flex;gap:12px;font-size:12px;font-weight:800;flex-wrap:wrap}
 
     .list{display:flex;flex-direction:column;gap:10px;padding:12px 14px 14px}
-
-    /* 스켈레톤 */
-    .skeleton-item{border:1px solid var(--line);border-radius:18px;padding:14px 12px;display:flex;align-items:center;gap:10px}
+    @keyframes shimmer{0%,100%{opacity:1}50%{opacity:.4}}
+    .skeleton-item{border:1px solid var(--line);border-radius:18px;padding:14px 12px;display:flex;align-items:center;gap:10px;animation:shimmer 1.4s ease-in-out infinite}
     .sk-rank{width:32px;height:32px;border-radius:10px;background:var(--chip);flex-shrink:0}
     .sk-body{flex:1;display:flex;flex-direction:column;gap:8px}
     .sk-line{height:12px;border-radius:6px;background:var(--chip)}
-    .sk-line.wide{width:55%}
-    .sk-line.narrow{width:35%}
-    @keyframes shimmer{0%,100%{opacity:1}50%{opacity:.4}}
-    .skeleton-item{animation:shimmer 1.4s ease-in-out infinite}
+    .sk-line.wide{width:55%}.sk-line.narrow{width:35%}
 
     .item{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card)}
     .item-main{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:12px;cursor:pointer}
@@ -87,15 +74,52 @@
     .badge{font-size:11px;padding:4px 8px;border-radius:999px;font-weight:800;border:1px solid var(--line)}
     .row2{margin-top:4px;display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px;font-weight:600}
     .arrow{width:34px;height:34px;border-radius:50%;background:color-mix(in srgb,var(--text) 5%,transparent);display:grid;place-items:center;font-weight:900;border:1px solid var(--line);flex-shrink:0}
-
     .item-preview{display:none;border-top:1px solid var(--line);background:var(--preview);padding:12px}
     .item.open .item-preview{display:block}
     .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .pbox{background:var(--preview2);border:1px solid var(--line);border-radius:14px;padding:10px}
     .pbox .k{font-size:11px;color:var(--muted);margin-bottom:5px}
     .pbox .v{font-size:14px;font-weight:900}
-
     .empty{padding:28px 18px 30px;text-align:center;color:var(--muted);font-size:13px;font-weight:700}
+
+    /* 필터 배지 (조건 충족 표시) */
+    .filter-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;padding:3px 7px;border-radius:999px;background:rgba(239,68,68,.15);color:var(--bad);border:1px solid rgba(239,68,68,.3);margin-left:2px}
+    .filter-badge.pass{background:rgba(16,185,129,.12);color:var(--good);border-color:rgba(16,185,129,.3)}
+
+    /* 환경설정 오버레이 */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
+    .overlay.show{display:flex}
+    .sheet{width:min(430px,100%);background:var(--card);border-radius:24px 24px 0 0;border:1px solid var(--line);box-shadow:0 -16px 48px rgba(0,0,0,.4);padding:16px 16px 32px;max-height:90vh;overflow-y:auto}
+    .sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 16px}
+    .sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .sheet-head h3{margin:0;font-size:16px;font-weight:900}
+    .sheet-head button{background:none;border:none;color:var(--muted);font-size:20px;padding:0;width:28px;height:28px;display:grid;place-items:center;border-radius:8px}
+    .field{margin-bottom:14px}
+    .field label{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:800;margin-bottom:8px}
+    .field label span{color:var(--muted);font-size:11px;font-weight:600}
+    .field-row{display:flex;align-items:center;gap:10px}
+    .toggle-wrap{position:relative;width:44px;height:24px;flex-shrink:0}
+    .toggle-wrap input{opacity:0;width:0;height:0;position:absolute}
+    .toggle-slider{position:absolute;inset:0;border-radius:12px;background:var(--line);transition:.2s;cursor:pointer}
+    .toggle-slider:before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;left:3px;top:3px;transition:.2s}
+    .toggle-wrap input:checked+.toggle-slider{background:var(--good)}
+    .toggle-wrap input:checked+.toggle-slider:before{transform:translateX(20px)}
+    .field input[type=number]{flex:1;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);color:var(--text);font-size:14px;font-weight:700;outline:none}
+    .field input[type=number]:focus{border-color:var(--accent)}
+    .field-unit{font-size:12px;color:var(--muted);font-weight:700;white-space:nowrap}
+    .prog-toggle{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--chip);cursor:pointer;transition:all .15s}
+    .prog-toggle.active{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.5)}
+    .prog-dot{width:10px;height:10px;border-radius:50%;background:var(--bad);flex-shrink:0}
+    .prog-label{font-size:13px;font-weight:800;flex:1}
+    .prog-check{width:20px;height:20px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;transition:all .15s}
+    .prog-toggle.active .prog-check{background:var(--bad);border-color:var(--bad);color:#fff}
+    .sheet-divider{border:none;border-top:1px solid var(--line);margin:16px 0}
+    .btn-row{display:flex;gap:8px}
+    .btn-apply{flex:1;padding:13px;border-radius:14px;font-size:14px;font-weight:900;background:var(--accent);color:var(--bg);border:none;cursor:pointer}
+    .btn-reset{padding:13px 18px;border-radius:14px;font-size:14px;font-weight:900;background:var(--chip);color:var(--text);border:1px solid var(--line);cursor:pointer}
+
+    /* 필터 활성 표시 인디케이터 */
+    .filter-active-dot{width:7px;height:7px;border-radius:50%;background:var(--bad);display:inline-block;margin-left:3px;vertical-align:middle}
 
     @media(max-width:390px){.item-main{grid-template-columns:auto 1fr}.arrow{display:none}}
   </style>
@@ -106,6 +130,9 @@
     <div class="topline">
       <div class="titlebox"><h1>주도섹터</h1></div>
       <div class="actions">
+        <button id="settingBtn" class="iconbtn" aria-label="환경설정">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
         <button id="themeBtn" class="iconbtn" aria-label="테마 변경"></button>
       </div>
     </div>
@@ -125,18 +152,10 @@
   </div>
 
   <div class="card">
-    <div class="filters" id="subFilters">
-      <button class="filter" style="background:var(--accent);color:var(--bg);border-color:transparent">전체</button>
-    </div>
-    <div class="sortrow" id="sortrow">
-      <button class="sort active">거래대금</button>
-      <button class="sort">거래량</button>
-      <button class="sort">상승률</button>
-      <button class="sort">시가총액</button>
-    </div>
+    <div class="filters" id="subFilters"></div>
+    <div class="sortrow" id="sortrow"></div>
     <div class="theme-summary" id="themeSummary"></div>
     <div class="list" id="listRoot">
-      <!-- 초기 스켈레톤 5개 -->
       <div class="skeleton-item"><div class="sk-rank"></div><div class="sk-body"><div class="sk-line wide"></div><div class="sk-line narrow"></div></div></div>
       <div class="skeleton-item"><div class="sk-rank"></div><div class="sk-body"><div class="sk-line wide"></div><div class="sk-line narrow"></div></div></div>
       <div class="skeleton-item"><div class="sk-rank"></div><div class="sk-body"><div class="sk-line wide"></div><div class="sk-line narrow"></div></div></div>
@@ -146,20 +165,98 @@
   </div>
 </div>
 
+<!-- 환경설정 오버레이 -->
+<div class="overlay" id="settingOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-head">
+      <h3>환경설정 <small style="font-size:12px;color:var(--muted);font-weight:600">필터 조건</small></h3>
+      <button id="closeSettingBtn">✕</button>
+    </div>
+
+    <!-- 거래대금 -->
+    <div class="field">
+      <label>거래대금 <span>기본값: 2,000억</span></label>
+      <div class="field-row">
+        <label class="toggle-wrap"><input type="checkbox" id="togAmount" checked><span class="toggle-slider"></span></label>
+        <input type="number" id="fAmount" value="2000" min="0" step="100">
+        <span class="field-unit">억 이상</span>
+      </div>
+    </div>
+
+    <!-- 거래량 -->
+    <div class="field">
+      <label>거래량 <span>기본값: 500만주</span></label>
+      <div class="field-row">
+        <label class="toggle-wrap"><input type="checkbox" id="togVolume" checked><span class="toggle-slider"></span></label>
+        <input type="number" id="fVolume" value="500" min="0" step="50">
+        <span class="field-unit">만주 이상</span>
+      </div>
+    </div>
+
+    <!-- 시가총액 -->
+    <div class="field">
+      <label>시가총액 <span>기본값: 1조</span></label>
+      <div class="field-row">
+        <label class="toggle-wrap"><input type="checkbox" id="togMcap" checked><span class="toggle-slider"></span></label>
+        <input type="number" id="fMcap" value="1" min="0" step="0.5">
+        <span class="field-unit">조 이상</span>
+      </div>
+    </div>
+
+    <!-- 체결강도 -->
+    <div class="field">
+      <label>체결강도 <span>기본값: 100% 이상</span></label>
+      <div class="field-row">
+        <label class="toggle-wrap"><input type="checkbox" id="togStrength" checked><span class="toggle-slider"></span></label>
+        <input type="number" id="fStrength" value="100" min="0" step="10">
+        <span class="field-unit">% 이상</span>
+      </div>
+    </div>
+
+    <hr class="sheet-divider">
+
+    <!-- 수급: 프로그램 플러스 -->
+    <div class="field">
+      <label>수급 조건</label>
+      <div class="prog-toggle active" id="progToggle">
+        <div class="prog-dot"></div>
+        <span class="prog-label">프로그램 매수 우위 <small style="color:var(--muted)">(프로그램 플러스)</small></span>
+        <div class="prog-check" id="progCheck">✓</div>
+      </div>
+    </div>
+
+    <hr class="sheet-divider">
+    <div class="btn-row">
+      <button class="btn-reset" id="btnReset">초기화</button>
+      <button class="btn-apply" id="btnApply">적용</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const sunIcon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
 const moonIcon='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-
 const SORTS=['거래대금','거래량','상승률','시가총액'];
+
+/* 기본 필터 조건 */
+const DEFAULT_FILTER={
+  amountOn:true, amount:2000,        // 억
+  volumeOn:true, volume:500,         // 만주
+  mcapOn:true,   mcap:1,             // 조
+  strengthOn:true, strength:100,     // %
+  programPlus:true
+};
 
 const state={
   theme:'dark',
   activeSubFilter:'전체',
-  activeSort:'거래대금',   // ← 기본값 거래대금
+  activeSort:'거래대금',
   openIndex:null,
   countdown:60,
   timer:null,
-  dataReady:false,         // ← hasLoaded 대신 dataReady로 단순화
+  dataReady:false,
+  filter:{...DEFAULT_FILTER},
   leader:{categories:[],sectors:[],meta:{}},
   volume:{items:[],meta:{}},
   amount:{items:[],meta:{}}
@@ -167,6 +264,7 @@ const state={
 
 const el={
   themeBtn:document.getElementById('themeBtn'),
+  settingBtn:document.getElementById('settingBtn'),
   subFilters:document.getElementById('subFilters'),
   sortrow:document.getElementById('sortrow'),
   themeSummary:document.getElementById('themeSummary'),
@@ -175,11 +273,25 @@ const el={
   sourceText:document.getElementById('sourceText'),
   updatedText:document.getElementById('updatedText'),
   apiIndicator:document.getElementById('apiIndicator'),
-  countdownText:document.getElementById('countdownText')
+  countdownText:document.getElementById('countdownText'),
+  overlay:document.getElementById('settingOverlay'),
+  closeSettingBtn:document.getElementById('closeSettingBtn'),
+  btnApply:document.getElementById('btnApply'),
+  btnReset:document.getElementById('btnReset'),
+  togAmount:document.getElementById('togAmount'),
+  togVolume:document.getElementById('togVolume'),
+  togMcap:document.getElementById('togMcap'),
+  togStrength:document.getElementById('togStrength'),
+  fAmount:document.getElementById('fAmount'),
+  fVolume:document.getElementById('fVolume'),
+  fMcap:document.getElementById('fMcap'),
+  fStrength:document.getElementById('fStrength'),
+  progToggle:document.getElementById('progToggle'),
+  progCheck:document.getElementById('progCheck')
 };
 
 /* ── 유틸 ── */
-function formatPrice(v){return `${Number(v||0).toLocaleString()}원`;}
+function formatPrice(v){const n=Number(String(v||0).replace(/,/g,''));return `${n.toLocaleString()}원`;}
 function formatVolume(v){
   const n=Number(v||0);
   if(n>=100000000)return `${(n/100000000).toFixed(1)}억주`;
@@ -199,15 +311,33 @@ function getColor(str){
   return `var(--c-${(Math.abs(h)%8)+1})`;
 }
 
+/* ── 필터 통과 여부 ── */
+function passesFilter(item){
+  const f=state.filter;
+  // 거래대금: item.amount (원 단위) → 억 변환
+  if(f.amountOn && (Number(item.amount||0)/100000000) < f.amount) return false;
+  // 거래량: item.volume (주) → 만주 변환
+  if(f.volumeOn && (Number(item.volume||0)/10000) < f.volume) return false;
+  // 시가총액: item.marketCapEok (억) → 조 변환
+  if(f.mcapOn && (Number(item.marketCapEok||0)/10000) < f.mcap) return false;
+  // 체결강도: item.strength (%) — 없으면 통과
+  if(f.strengthOn && item.strength !== undefined && Number(item.strength||0) < f.strength) return false;
+  // 프로그램 플러스: item.programPlus (boolean) — 없으면 통과
+  if(f.programPlus && item.programPlus === false) return false;
+  return true;
+}
+
+function isFilterActive(){
+  const f=state.filter;
+  return f.amountOn||f.volumeOn||f.mcapOn||f.strengthOn||f.programPlus;
+}
+
 /* ── 상태 표시 ── */
 function renderStatus(){
   const meta=state.leader.meta||{};
   const isReal=meta.source==='real';
-  const isLoading=!state.dataReady;
-
-  if(isLoading){
-    el.sourcePill.className='status-pill waiting';
-    el.sourcePill.textContent='로딩중';
+  if(!state.dataReady){
+    el.sourcePill.className='status-pill waiting';el.sourcePill.textContent='로딩중';
     el.sourceText.textContent='데이터를 불러오는 중...';
     el.updatedText.textContent='잠시만 기다려주세요';
     el.apiIndicator.className='status-indicator yellow';
@@ -225,24 +355,22 @@ function renderStatus(){
 function renderSubFilters(){
   el.subFilters.innerHTML='';
   const list=['전체',...(state.leader.categories||[])];
-
   list.forEach(x=>{
     const b=document.createElement('button');
     b.className='filter';
-    b.textContent=x;
     const active=state.activeSubFilter===x;
-
     if(x==='전체'){
       b.style.background=active?'var(--accent)':'var(--chip)';
       b.style.color=active?'var(--bg)':'var(--text)';
       b.style.borderColor=active?'transparent':'var(--line)';
+      b.innerHTML=x+(isFilterActive()?'<span class="filter-active-dot"></span>':'');
     } else {
       const c=getColor(x);
-      b.style.background=active?c:`color-mix(in srgb,${c} 18%,var(--chip))`;
+      b.style.background=active?c:`color-mix(in srgb,${c} 20%,var(--chip))`;
       b.style.color=active?'#111':'var(--text)';
-      b.style.borderColor=active?c:`color-mix(in srgb,${c} 40%,transparent)`;
+      b.style.borderColor=active?c:`color-mix(in srgb,${c} 45%,transparent)`;
+      b.textContent=x;
     }
-
     b.onclick=()=>{state.activeSubFilter=x;state.openIndex=null;renderAll();};
     el.subFilters.appendChild(b);
   });
@@ -264,70 +392,71 @@ function renderSorts(){
 function renderThemeSummary(sector){
   if(!sector){el.themeSummary.style.display='none';return;}
   el.themeSummary.style.display='block';
-  el.themeSummary.innerHTML=`
-    <div class="summary-card">
-      <div class="summary-title">${sector.name}</div>
-      <div class="summary-desc">${sector.reason}</div>
-      <div class="summary-stats">
-        <span>평균 등락률: <span style="color:${parseFloat(sector.chg)>0?'var(--good)':'inherit'}">${sector.chg}</span></span>
-        <span>합산 거래대금: ${sector.volume}</span>
-      </div>
-    </div>`;
+  el.themeSummary.innerHTML=`<div class="summary-card"><div class="summary-title">${sector.name}</div><div class="summary-desc">${sector.reason}</div><div class="summary-stats"><span>평균 등락률: <span style="color:${parseFloat(sector.chg)>0?'var(--good)':'inherit'}">${sector.chg}</span></span><span>합산 거래대금: ${sector.volume}</span></div></div>`;
 }
 
-/* ── 종목 리스트 렌더링 ── */
+/* ── 종목 렌더링 ── */
 function renderStockList(){
-  // 데이터 아직 없으면 스켈레톤 유지
-  if(!state.dataReady){return;}
+  if(!state.dataReady)return;
 
   let items=[];
-  let accent='var(--accent)';
-  let badgeName='국내주식';
+  let colorMap={};      // code → color (테마 분류 색상)
+  let badgeMap={};      // code → 테마명
+  let isAllView=false;
 
   if(state.activeSubFilter==='전체'){
     el.themeSummary.style.display='none';
+    isAllView=true;
 
-    // ① amount.items + volume.items 합쳐서 중복 코드 제거
+    // 전체: amount + volume 풀 합치기
     const pool=[...(state.amount.items||[]),...(state.volume.items||[])];
     const map=new Map();
     pool.forEach(it=>{if(it.code&&!map.has(it.code))map.set(it.code,it);});
     items=Array.from(map.values());
 
-    // ② pool이 없으면 leader sectors 안의 stocks 전부 합침 (폴백)
+    // 폴백: sectors 안 stocks
     if(!items.length){
-      const allStocks=[];
-      (state.leader.sectors||[]).forEach(s=>(s.stocks||[]).forEach(sk=>allStocks.push(sk)));
-      const fallbackMap=new Map();
-      allStocks.forEach(it=>{if(it.code&&!fallbackMap.has(it.code))fallbackMap.set(it.code,it);});
-      items=Array.from(fallbackMap.values());
+      const all=[];
+      (state.leader.sectors||[]).forEach(s=>(s.stocks||[]).forEach(sk=>all.push(sk)));
+      const fm=new Map();all.forEach(it=>{if(it.code&&!fm.has(it.code))fm.set(it.code,it);});
+      items=Array.from(fm.values());
     }
 
+    // 각 종목의 테마 색상 매핑 (전체 뷰에서 테마 컬러 표시)
+    (state.leader.sectors||[]).forEach(s=>{
+      (s.stocks||[]).forEach(sk=>{
+        if(sk.code && !colorMap[sk.code]){
+          colorMap[sk.code]=getColor(s.name);
+          badgeMap[sk.code]=s.name;
+        }
+      });
+    });
   } else {
     const sector=(state.leader.sectors||[]).find(s=>s.name===state.activeSubFilter);
     if(sector){
       items=[...(sector.stocks||[])];
-      accent=getColor(sector.name);
-      badgeName=sector.name;
       renderThemeSummary(sector);
+      items.forEach(sk=>{colorMap[sk.code]=getColor(sector.name);badgeMap[sk.code]=sector.name;});
     } else {
       el.themeSummary.style.display='none';
     }
   }
 
+  // 필터 적용 (개수 제한 없음)
+  items=items.filter(it=>passesFilter(it));
+
   // 정렬
   items.sort((a,b)=>{
-    if(state.activeSort==='거래량') return (b.volume||0)-(a.volume||0);
-    if(state.activeSort==='거래대금') return (b.amount||0)-(a.amount||0);
-    if(state.activeSort==='상승률') return (b.changeRate||0)-(a.changeRate||0);
-    if(state.activeSort==='시가총액') return (b.marketCapEok||0)-(a.marketCapEok||0);
+    if(state.activeSort==='거래량')return(b.volume||0)-(a.volume||0);
+    if(state.activeSort==='거래대금')return(b.amount||0)-(a.amount||0);
+    if(state.activeSort==='상승률')return(b.changeRate||0)-(a.changeRate||0);
+    if(state.activeSort==='시가총액')return(b.marketCapEok||0)-(a.marketCapEok||0);
     return 0;
   });
 
-  items=items.slice(0,10);
-
   el.listRoot.innerHTML='';
   if(!items.length){
-    el.listRoot.innerHTML='<div class="empty">데이터가 없습니다.<br><small style="font-weight:500">서버 로그를 확인해주세요.</small></div>';
+    el.listRoot.innerHTML=`<div class="empty">조건에 맞는 종목이 없습니다.<br><small style="font-weight:500;font-size:11px">환경설정에서 필터 조건을 조정해주세요</small></div>`;
     return;
   }
 
@@ -340,10 +469,11 @@ function renderStockList(){
     const cv=Number(row.changeValue||0);
     const chgColor=cr>0?'var(--good)':cr<0?'var(--bad)':'var(--muted)';
     const chgSign=cr>0?'+':'';
+    const priceNum=Number(String(row.price||'0').replace(/,/g,''))||0;
 
-    // price 값 정규화 (숫자 또는 이미 포맷된 문자열 모두 처리)
-    const priceRaw=String(row.price||'0').replace(/,/g,'');
-    const priceNum=Number(priceRaw)||0;
+    // 전체뷰: 테마 색상, 테마뷰: 해당 테마 색상
+    const accent=colorMap[row.code]||'var(--accent)';
+    const badgeName=badgeMap[row.code]||(isAllView?'국내주식':state.activeSubFilter);
 
     item.innerHTML=`
       <div class="item-main">
@@ -363,30 +493,12 @@ function renderStockList(){
       </div>
       <div class="item-preview">
         <div class="preview-grid">
-          <div class="pbox">
-            <div class="k">현재가</div>
-            <div class="v">${formatPrice(priceNum)}</div>
-          </div>
-          <div class="pbox">
-            <div class="k">전일대비</div>
-            <div class="v" style="color:${chgColor}">${chgSign}${cv.toLocaleString()}원<br><small>${chgSign}${cr}%</small></div>
-          </div>
-          <div class="pbox">
-            <div class="k">거래량</div>
-            <div class="v">${formatVolume(row.volume)}</div>
-          </div>
-          <div class="pbox">
-            <div class="k">거래대금</div>
-            <div class="v">${formatAmount(row.amount)}</div>
-          </div>
-          <div class="pbox">
-            <div class="k">시가총액</div>
-            <div class="v">${row.marketCap||'정보없음'}</div>
-          </div>
-          <div class="pbox">
-            <div class="k">종목코드</div>
-            <div class="v">${row.code||'-'}</div>
-          </div>
+          <div class="pbox"><div class="k">현재가</div><div class="v">${formatPrice(priceNum)}</div></div>
+          <div class="pbox"><div class="k">전일대비</div><div class="v" style="color:${chgColor}">${chgSign}${cv.toLocaleString()}원<br><small>${chgSign}${cr}%</small></div></div>
+          <div class="pbox"><div class="k">거래량</div><div class="v">${formatVolume(row.volume)}</div></div>
+          <div class="pbox"><div class="k">거래대금</div><div class="v">${formatAmount(row.amount)}</div></div>
+          <div class="pbox"><div class="k">시가총액</div><div class="v">${row.marketCap||'정보없음'}</div></div>
+          <div class="pbox"><div class="k">종목코드</div><div class="v">${row.code||'-'}</div></div>
         </div>
       </div>`;
 
@@ -406,42 +518,72 @@ function renderAll(){
   renderStockList();
 }
 
+/* ── 환경설정 시트 ── */
+let progActive=true;
+el.progToggle.onclick=()=>{
+  progActive=!progActive;
+  el.progToggle.classList.toggle('active',progActive);
+  el.progCheck.textContent=progActive?'✓':'';
+};
+
+el.settingBtn.onclick=()=>{
+  // 현재 state.filter 값을 UI에 반영
+  const f=state.filter;
+  el.togAmount.checked=f.amountOn; el.fAmount.value=f.amount;
+  el.togVolume.checked=f.volumeOn; el.fVolume.value=f.volume;
+  el.togMcap.checked=f.mcapOn;   el.fMcap.value=f.mcap;
+  el.togStrength.checked=f.strengthOn; el.fStrength.value=f.strength;
+  progActive=f.programPlus;
+  el.progToggle.classList.toggle('active',progActive);
+  el.progCheck.textContent=progActive?'✓':'';
+  el.overlay.classList.add('show');
+};
+
+el.closeSettingBtn.onclick=()=>el.overlay.classList.remove('show');
+el.overlay.onclick=(e)=>{if(e.target===el.overlay)el.overlay.classList.remove('show');};
+
+el.btnApply.onclick=()=>{
+  state.filter={
+    amountOn:el.togAmount.checked, amount:Number(el.fAmount.value)||0,
+    volumeOn:el.togVolume.checked, volume:Number(el.fVolume.value)||0,
+    mcapOn:el.togMcap.checked,     mcap:Number(el.fMcap.value)||0,
+    strengthOn:el.togStrength.checked, strength:Number(el.fStrength.value)||0,
+    programPlus:progActive
+  };
+  state.openIndex=null;
+  el.overlay.classList.remove('show');
+  renderAll();
+};
+
+el.btnReset.onclick=()=>{
+  state.filter={...DEFAULT_FILTER};
+  el.togAmount.checked=DEFAULT_FILTER.amountOn; el.fAmount.value=DEFAULT_FILTER.amount;
+  el.togVolume.checked=DEFAULT_FILTER.volumeOn; el.fVolume.value=DEFAULT_FILTER.volume;
+  el.togMcap.checked=DEFAULT_FILTER.mcapOn;   el.fMcap.value=DEFAULT_FILTER.mcap;
+  el.togStrength.checked=DEFAULT_FILTER.strengthOn; el.fStrength.value=DEFAULT_FILTER.strength;
+  progActive=DEFAULT_FILTER.programPlus;
+  el.progToggle.classList.toggle('active',progActive);
+  el.progCheck.textContent=progActive?'✓':'';
+};
+
 /* ── API 호출 ── */
 async function safeJson(url){
-  try{const r=await fetch(url,{cache:'no-store'});return await r.json();}
-  catch(e){return null;}
+  try{const r=await fetch(url,{cache:'no-store'});return await r.json();}catch(e){return null;}
 }
 
 async function fetchAllData(){
   state.countdown=60;
   el.apiIndicator.className='status-indicator yellow';
   el.countdownText.textContent='갱신 60초';
-
   try{
-    // 먼저 거래대금/거래량 랭킹을 빠르게 가져와서 화면 즉시 표시
-    const [volume,amount]=await Promise.all([
-      safeJson('/api/market/volume-top'),
-      safeJson('/api/market/amount-top')
-    ]);
-
+    const [volume,amount]=await Promise.all([safeJson('/api/market/volume-top'),safeJson('/api/market/amount-top')]);
     if(volume)state.volume=volume;
     if(amount)state.amount=amount;
-
-    // dataReady를 true로 바꿔서 스켈레톤 → 실제 데이터로 전환
     state.dataReady=true;
     renderAll();
-
-    // 이후 테마 데이터(느림) 별도 로드 → 완료되면 다시 렌더
     const leader=await safeJson('/api/data');
-    if(leader && leader.categories && leader.categories.length>0){
-      state.leader=leader;
-      renderAll();
-    }
-
-  }catch(e){
-    state.dataReady=true;
-    renderAll();
-  }
+    if(leader&&leader.categories&&leader.categories.length>0){state.leader=leader;renderAll();}
+  }catch(e){state.dataReady=true;renderAll();}
 }
 
 /* ── 폴링 ── */
@@ -461,11 +603,8 @@ el.themeBtn.onclick=()=>{
   el.themeBtn.innerHTML=t==='light'?moonIcon:sunIcon;
   state.theme=t;
 };
-
-// 다크 모드로 시작
 document.documentElement.setAttribute('data-theme','dark');
 el.themeBtn.innerHTML=sunIcon;
-
 fetchAllData();
 startPolling();
 </script>
