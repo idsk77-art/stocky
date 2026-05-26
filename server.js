@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+// 디렉토리 내의 정적 파일(index.html 등)을 제공합니다.
 app.use(express.static(__dirname));
 
 const KIS_BASE_URL = process.env.KIS_BASE_URL || 'https://openapi.koreainvestment.com:9443';
@@ -543,10 +544,11 @@ async function buildRankPayload(kind) {
   return cacheSet(dataCache, key, payload, 1000 * 25);
 }
 
+// 명시적으로 index.html을 서빙하도록 설정
 app.get('/', (req, res) => {
-  const filePath = path.join(__dirname, 'index2.html');
+  const filePath = path.join(__dirname, 'index.html');
   if (fs.existsSync(filePath)) return res.sendFile(filePath);
-  res.status(404).send('index2.html not found');
+  res.status(404).send('index.html not found');
 });
 
 app.get('/api/data', async (req, res) => {
