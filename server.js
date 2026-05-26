@@ -111,16 +111,21 @@ function normalizeRankItem(row) {
   };
 }
 
-// ── 거래량 순위 단일 호출 (J 시장구분 하나만 사용) ──────────────────
+// ── 거래량 순위 단일 호출 (J 시장구분 하나만 사용, ETF/ETN/스팩 제외) ──
 async function fetchMergedVolumeRank() {
   const commonParams = {
-    FID_COND_MRKT_DIV_CODE: 'J', // J 하나로 전체 조회 시도 (에러 원인 방지)
+    FID_COND_MRKT_DIV_CODE: 'J', 
     FID_COND_SCR_DIV_CODE: '20171',
     FID_INPUT_ISCD: '0000',
     FID_DIV_CLS_CODE: '0',
     FID_BLNG_CLS_CODE: '0',
-    FID_TRGT_CLS_CODE: '111111111',
-    FID_TRGT_EXLS_CLS_CODE: '000000',
+    FID_TRGT_CLS_CODE: '111111111', 
+    // 투자주의/경고, 관리, 정리매매, 불성실, 우선주, 거래정지, ETF, 스팩, ETN 등을 제외 (1: 제외)
+    // 000000 -> 제외 안함 이었음.
+    // 투자위험/경고/주의, 관리, 정리매매, 불성실, 우선주, 거래정지, ETF, 스팩, ETN, 선박/투자회사 등등 상세 제외
+    // 한국투자증권 API 스펙에 따라 우선주(5번째), ETF(7번째), 스팩(8번째), ETN(9번째) 제외
+    // 0:포함, 1:제외. '000010111' 
+    FID_TRGT_EXLS_CLS_CODE: '000010111', // 우선주, ETF, 스팩, ETN 제외
     FID_INPUT_PRICE_1: '',
     FID_INPUT_PRICE_2: '',
     FID_VOL_CNT: '',
@@ -134,9 +139,18 @@ async function fetchMergedVolumeRank() {
     'FHPST01720000'
   );
 
-  const items = (response.output || [])
+  let items = (response.output || [])
     .map(x => normalizeRankItem(x))
     .filter(x => x.name && (x.volume > 0 || x.amount > 0));
+    
+  // 안전장치: 혹시라도 파라미터 제외가 제대로 안 먹힐 경우를 대비해 이름으로 한번 더 필터링
+  items = items.filter(x => {
+    const n = x.name;
+    return !n.includes('KODEX') && !n.includes('TIGER') && !n.includes('KINDEX') && 
+           !n.includes('KBSTAR') && !n.includes('ARIRANG') && !n.includes('KOSEF') && 
+           !n.includes('HANARO') && !n.includes('ACE') && !n.includes('스팩') &&
+           !n.includes('선물인버스') && !n.includes('레버리지');
+  });
 
   return { updatedAt: nowIso(), items };
 }
