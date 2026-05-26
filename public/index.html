@@ -43,11 +43,27 @@
     .status-indicator.green{background:var(--good);box-shadow:0 0 6px var(--good)}
     .status-indicator.red{background:var(--bad);box-shadow:0 0 6px var(--bad)}
 
-    .filters,.sortrow{display:flex;gap:8px;overflow:auto;padding:14px 14px 0;scrollbar-width:none}
-    .filters::-webkit-scrollbar,.sortrow::-webkit-scrollbar{display:none}
-    .filter,.sort{white-space:nowrap;padding:9px 13px;border-radius:999px;border:1px solid transparent;font-size:12px;font-weight:800;color:var(--text);background:var(--chip)}
-    .sort{border-color:var(--line)}
-    .sort.active{background:var(--accent);color:var(--bg);border-color:transparent}
+    /* 가로 스크롤바 디자인 (스크롤 가능함을 암시) */
+    .filters, .sortrow {
+      display:flex; gap:8px; overflow-x:auto; padding:14px 14px 10px 14px;
+      scrollbar-width: thin;
+      scrollbar-color: color-mix(in srgb, var(--muted) 40%, transparent) transparent;
+      -webkit-overflow-scrolling: touch;
+    }
+    .filters::-webkit-scrollbar, .sortrow::-webkit-scrollbar {
+      height: 4px;
+    }
+    .filters::-webkit-scrollbar-track, .sortrow::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .filters::-webkit-scrollbar-thumb, .sortrow::-webkit-scrollbar-thumb {
+      background: color-mix(in srgb, var(--muted) 40%, transparent);
+      border-radius: 4px;
+    }
+    
+    .filter, .sort {white-space:nowrap;padding:9px 13px;border-radius:999px;border:1px solid transparent;font-size:12px;font-weight:800;color:var(--text);background:var(--chip)}
+    .sort {border-color:var(--line)}
+    .sort.active {background:var(--accent);color:var(--bg);border-color:transparent}
     
     .theme-summary {padding: 12px 14px 0; display:none;}
     .summary-card {background:var(--preview2); border:1px solid var(--line); border-radius:14px; padding:12px;}
@@ -83,7 +99,7 @@
   <div class="topbar">
     <div class="topline">
       <div class="titlebox">
-        <h1>주식 모니터 (테마별)</h1>
+        <h1>주식 모니터</h1>
       </div>
       <div class="actions">
         <button id="themeBtn" class="iconbtn" aria-label="테마 변경"></button>
@@ -106,7 +122,6 @@
   </div>
 
   <div class="card">
-    <!-- 업종 탭 삭제. 바로 필터 노출 -->
     <div class="filters" id="subFilters"></div>
     <div class="sortrow" id="sortrow"></div>
     <div class="theme-summary" id="themeSummary"></div>
@@ -124,7 +139,7 @@ const SORTS = ['거래량', '거래대금', '상승률'];
 const state = {
   theme: 'light',
   activeSubFilter: '전체', // 첫 화면은 테마 구분 없이 전체
-  activeSort: '거래량',    // 첫 화면 기본 정렬: 거래량 순
+  activeSort: '거래대금',  // 첫 화면 기본 정렬: 거래대금 순
   openIndex: null,
   countdown: 60,         // 60초마다 갱신
   timer: null,
@@ -280,7 +295,7 @@ function renderStockList(){
     return 0;
   });
 
-  items = items.slice(0, 10); // 최대 10개 표시
+  items = items.slice(0, 10); // 상위 10개만 표시
 
   el.listRoot.innerHTML = '';
   if (!items.length) {
