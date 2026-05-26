@@ -10,14 +10,13 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-
-// 정적 파일(index.html 등) 서빙
 app.use(express.static(path.join(__dirname, 'public')));
 
 const KIS_BASE_URL = process.env.KIS_BASE_URL || 'https://openapi.koreainvestment.com:9443';
 const NAVER_FINANCE_BASE = 'https://finance.naver.com';
 const NAVER_STOCK_BASE = 'https://stock.naver.com';
-const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36';
+const UA =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36';
 
 let cachedToken = null;
 let tokenExpireAt = 0;
@@ -27,7 +26,6 @@ const htmlCache = new Map();
 const dataCache = new Map();
 const quoteCache = new Map();
 
-// 제외할 종목 (ETF, ETN, 스팩 등)
 const EXCLUDE_PATTERNS = [
   /KODEX/i, /TIGER/i, /KOSEF/i, /KINDEX/i, /KBSTAR/i, /ARIRANG/i, /HANARO/i,
   /ACE/i, /SOL/i, /TIMEFOLIO/i, /TREX/i, /ETF/i, /ETN/i, /스팩/,
@@ -105,9 +103,24 @@ function cacheSet(map, key, data, ttlMs) {
   return data;
 }
 
+function absoluteUrl(base, href) {
+  if (!href) return '';
+  if (/^https?:\/\//i.test(href)) return href;
+  return new URL(href, base).toString();
+}
+
+function extractCode(text = '') {
+  const m1 = text.match(/code=(\d{6})/);
+  if (m1) return m1[1];
+  const m2 = text.match(/\/stock\/(\d{6})/);
+  if (m2) return m2[1];
+  return '';
+}
+
 async function mapLimit(items, limit, worker) {
   const results = new Array(items.length);
   let index = 0;
+
   async function runner() {
     while (index < items.length) {
       const current = index++;
@@ -118,11 +131,14 @@ async function mapLimit(items, limit, worker) {
       }
     }
   }
-  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, () => runner()));
+
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, () => runner())
+  );
+
   return results;
 }
 
-// 한국투자증권 토큰 발급
 async function getAccessToken() {
   const now = Date.now();
   if (cachedToken && now < tokenExpireAt) return cachedToken;
@@ -142,17 +158,24 @@ async function getAccessToken() {
 
       const text = await res.text();
       let json = {};
-      try { json = JSON.parse(text); } catch (e) { throw new Error(`토큰 파싱 실패: ${text}`); }
+      try {
+        json = JSON.parse(text);
+      } catch (e) {
+        throw new Error(`토큰 파싱 실패: ${text}`);
+      }
 
-      if (!res.ok || !json.access_token) throw new Error(`토큰 발급 실패(${res.status}): ${text}`);
+      if (!res.ok || !json.access_token) {
+        throw new Error(`토큰 발급 실패(${res.status}): ${text}`);
+      }
 
       cachedToken = json.access_token;
-      tokenExpireAt = now + 1000 * 60 * 60 * 20; // 20시간
+      tokenExpireAt = now + 1000 * 60 * 60 * 20;
       return cachedToken;
     } finally {
       tokenFetchPromise = null;
     }
   })();
+
   return tokenFetchPromise;
 }
 
@@ -174,14 +197,22 @@ async function kisGet(pathname, params, trId) {
   const text = await res.text();
 
   let json = {};
-  try { json = JSON.parse(text); } catch (e) { throw new Error(`KIS JSON 파싱 실패: ${text}`); }
-  if (!res.ok) throw new Error(`KIS HTTP ${res.status}: ${text}`);
-  if (json.rt_cd && json.rt_cd !== '0') throw new Error(`KIS rt_cd ${json.rt_cd}: ${json.msg1 || text}`);
+  try {
+    json = JSON.parse(text);
+  } catch (e) {
+    throw new Error(`KIS JSON 파싱 실패: ${text}`);
+  }
+
+  if (!res.ok) {
+    throw new Error(`KIS HTTP ${res.status}: ${text}`);
+  }
+  if (json.rt_cd && json.rt_cd !== '0') {
+    throw new Error(`KIS rt_cd ${json.rt_cd}: ${json.msg1 || text}`);
+  }
 
   return json;
 }
 
-// 한국투자증권 실시간 현재가/거래량 조회
 async function fetchKisQuote(code, fallbackName = '') {
   const cached = cacheGet(quoteCache, code);
   if (cached) return cached;
@@ -211,16 +242,20 @@ async function fetchKisQuote(code, fallbackName = '') {
   return cacheSet(quoteCache, code, item, 1000 * 30);
 }
 
-// HTML Fetch (EUC-KR 디코딩)
 async function fetchHtml(url, referer = NAVER_FINANCE_BASE) {
   const cached = cacheGet(htmlCache, url);
   if (cached) return cached;
 
   const res = await fetch(url, {
-    headers: { 'user-agent': UA, 'referer': referer }
+    headers: {
+      'user-agent': UA,
+      'referer': referer
+    }
   });
 
-  if (!res.ok) throw new Error(`HTML fetch 실패(${res.status}): ${url}`);
+  if (!res.ok) {
+    throw new Error(`HTML fetch 실패(${res.status}): ${url}`);
+  }
 
   const ab = await res.arrayBuffer();
   const buffer = Buffer.from(ab);
@@ -241,81 +276,128 @@ async function fetchHtml(url, referer = NAVER_FINANCE_BASE) {
   return cacheSet(htmlCache, url, html, 1000 * 30);
 }
 
-// 1. 네이버 금융 테마/업종 리스트 파싱
+function parseThemeIndustryLinks(html, kind) {
+  const $ = cheerio.load(html);
+  const items = [];
+
+  $('a[href]').each((_, a) => {
+    const href = $(a).attr('href') || '';
+    const name = normalizeText($(a).text());
+
+    if (!name) return;
+
+    const isTheme =
+      /theme_detail\.naver/i.test(href) ||
+      /sise_group_detail\.naver\?type=theme/i.test(href);
+
+    const isUpjong =
+      /sise_group_detail\.naver\?type=upjong/i.test(href);
+
+    if (kind === '테마' && !isTheme) return;
+    if (kind === '업종' && !isUpjong) return;
+
+    items.push({
+      type: kind,
+      name,
+      href: absoluteUrl(NAVER_FINANCE_BASE, href)
+    });
+  });
+
+  return uniqueBy(items, (x) => x.href).slice(0, 15);
+}
+
 async function fetchThemeIndustryList(kind) {
-  const key = `rankList:${kind}`;
+  const key = `rank:${kind}`;
   const cached = cacheGet(dataCache, key);
   if (cached) return cached;
 
-  const url = kind === '테마' 
-    ? `${NAVER_FINANCE_BASE}/sise/theme.naver` 
-    : `${NAVER_FINANCE_BASE}/sise/sise_group.naver?type=upjong`;
+  const url =
+    kind === '테마'
+      ? `${NAVER_FINANCE_BASE}/sise/theme.naver`
+      : `${NAVER_FINANCE_BASE}/sise/sise_group.naver?type=upjong`;
 
-  const html = await fetchHtml(url);
-  const $ = cheerio.load(html);
-  const rows = [];
+  const html = await fetchHtml(url, NAVER_FINANCE_BASE);
+  const items = parseThemeIndustryLinks(html, kind);
 
-  $('table.type_1 tr').each((_, tr) => {
-    const $a = $(tr).find('td.col_type1 a');
-    if ($a.length > 0) {
-      const href = $a.attr('href') || '';
-      const name = normalizeText($a.text());
-      if (name && href) {
-        rows.push({
-          type: kind,
-          name,
-          href: `${NAVER_FINANCE_BASE}${href}`
-        });
-      }
-    }
-  });
-
-  // 상위 15개만 가져옴
-  const result = rows.slice(0, 15);
-  return cacheSet(dataCache, key, result, 1000 * 60 * 5); // 5분 캐시
+  return cacheSet(dataCache, key, items, 1000 * 60 * 5);
 }
 
-// 2. 특정 테마/업종의 구성 종목코드 파싱
-async function fetchMembersFromDetail(url) {
-  const html = await fetchHtml(url);
+function parseMembersFromDetailHtml(html) {
   const $ = cheerio.load(html);
-  const members = [];
+  const items = [];
 
-  $('table.type_5 tbody tr').each((_, tr) => {
-    const $a = $(tr).find('td.name div.name_area a');
-    if ($a.length > 0) {
-      const href = $a.attr('href') || '';
-      const m = href.match(/code=(\d{6})/);
-      const name = normalizeText($a.text());
-      if (m && isRealDomesticStockName(name)) {
-        members.push({ code: m[1], name });
-      }
-    }
+  const selectors = [
+    'table.type_5 a[href*="item/main.naver?code="]',
+    'table.type_1 a[href*="item/main.naver?code="]',
+    'a[href*="item/main.naver?code="]'
+  ];
+
+  selectors.forEach((selector) => {
+    $(selector).each((_, a) => {
+      const href = $(a).attr('href') || '';
+      const code = extractCode(href);
+      const name = normalizeText($(a).text());
+      if (!isValidCode(code)) return;
+      if (!isRealDomesticStockName(name)) return;
+      items.push({ code, name });
+    });
   });
 
-  return uniqueBy(members, (x) => x.code).slice(0, 15); // 최대 15종목 조회
+  if (items.length >= 3) {
+    return uniqueBy(items, (x) => x.code).slice(0, 30);
+  }
+
+  const rawCodes = [];
+  const re = /code=(\d{6})/g;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    rawCodes.push(m[1]);
+  }
+
+  rawCodes.forEach((code) => {
+    if (isValidCode(code)) items.push({ code, name: '' });
+  });
+
+  return uniqueBy(items, (x) => x.code).slice(0, 30);
 }
 
-// 3. 테마/업종의 한 섹터 단위 데이터 빌드
+async function fetchMembersFromDetail(detailUrl) {
+  const key = `members:${detailUrl}`;
+  const cached = cacheGet(dataCache, key);
+  if (cached) return cached;
+
+  const html = await fetchHtml(detailUrl, NAVER_FINANCE_BASE);
+  const members = parseMembersFromDetailHtml(html);
+
+  return cacheSet(dataCache, key, members, 1000 * 60 * 5);
+}
+
 async function buildLeaderItem(rankItem) {
   const members = await fetchMembersFromDetail(rankItem.href);
   if (!members.length) return null;
 
-  // 한투 API에서 실시간 정보 가져오기
-  const quotes = await mapLimit(members, 5, async (member) => {
+  const quotes = await mapLimit(members.slice(0, 20), 5, async (member) => {
+    await sleep(20);
     try {
-      return await fetchKisQuote(member.code, member.name);
+      const q = await fetchKisQuote(member.code, member.name);
+      if (!isRealDomesticStockName(q.name)) return null;
+      return q;
     } catch (e) {
       return null;
     }
   });
 
-  let realQuotes = quotes.filter(Boolean);
+  const realQuotes = quotes
+    .filter(Boolean)
+    .sort((a, b) =>
+      (b.volume || 0) - (a.volume || 0) ||
+      (b.amount || 0) - (a.amount || 0) ||
+      (b.changeRate || 0) - (a.changeRate || 0)
+    );
+
   if (!realQuotes.length) return null;
 
-  // ★ 요구사항 반영: 해당 분류에 속한 종목들을 '거래량(volume)' 순으로 내림차순 정렬
-  realQuotes.sort((a, b) => (b.volume || 0) - (a.volume || 0));
-
+  const topStocks = realQuotes.slice(0, 10);
   const totalAmount = realQuotes.reduce((sum, x) => sum + (x.amount || 0), 0);
   const totalVolume = realQuotes.reduce((sum, x) => sum + (x.volume || 0), 0);
   const totalMcap = realQuotes.reduce((sum, x) => sum + (x.marketCapEok || 0), 0);
@@ -325,64 +407,60 @@ async function buildLeaderItem(rankItem) {
     type: rankItem.type,
     name: rankItem.name,
     sector: rankItem.name,
-    reason: `네이버 ${rankItem.type} 구성종목 기준 · 거래량(Volume) 순 상위 정렬`,
+    reason: `네이버 ${rankItem.type} 분류 종목 → 한국투자증권 시세 연동 · 구성종목은 거래량 순`,
     chg: formatSignedPct(avgRate),
     volume: formatAmountLabel(totalAmount),
     marketCap: formatMarketCapLabel(totalMcap),
     tradeVolume: totalVolume,
     strength: Math.max(100, Math.round(100 + avgRate * 5)),
-    programNet: 1,
-    // ★ 상위 10개까지만 노출
-    stocks: realQuotes.slice(0, 10).map((x) => ({
+    stocks: topStocks.map((x) => ({
       name: x.name,
       code: x.code,
       price: Number(x.price || 0).toLocaleString(),
       chg: formatSignedPct(x.changeRate),
-      volText: `거래량: ${Number(x.volume || 0).toLocaleString()}` // UI에서 보기 쉽도록 추가
+      volume: Number(x.volume || 0).toLocaleString(),
+      amount: formatAmountLabel(x.amount || 0)
     }))
   };
 }
 
-// 4. 주도섹터(테마/업종) 전체 페이로드 구성
 async function buildLeaderPayload() {
   const cached = cacheGet(dataCache, 'leaderPayload');
   if (cached) return cached;
 
-  const [themes, industries] = await Promise.all([
+  const [themes, upjongs] = await Promise.all([
     fetchThemeIndustryList('테마'),
     fetchThemeIndustryList('업종')
   ]);
 
-  const allItems = [...themes, ...industries];
+  const merged = [...themes, ...upjongs];
 
-  const sectors = await mapLimit(allItems, 4, async (item) => {
-    await sleep(50);
+  const sectors = await mapLimit(merged, 4, async (item) => {
+    await sleep(30);
     return buildLeaderItem(item);
   });
 
   const payload = {
     categories: {
       테마: themes.map((x) => x.name),
-      업종: industries.map((x) => x.name)
+      업종: upjongs.map((x) => x.name)
     },
     sectors: sectors.filter(Boolean),
     meta: {
       source: 'real',
       updatedAt: nowIso(),
-      message: '네이버 테마/업종 연동 + 한투 실시간 (거래량 정렬)'
+      message: '네이버 테마/업종 분류 + 한국투자증권 종목 데이터'
     }
   };
 
-  return cacheSet(dataCache, 'leaderPayload', payload, 1000 * 30);
+  return cacheSet(dataCache, 'leaderPayload', payload, 1000 * 45);
 }
 
-// 거래량, 거래대금 상위 10선 페이로드 구성
-async function buildRankPayload(kind) {
-  const key = `marketRank:${kind}`;
+async function fetchGlobalRankSeeds(kind) {
+  const key = `seed:${kind}`;
   const cached = cacheGet(dataCache, key);
   if (cached) return cached;
 
-  // 한투 API 자체 거래량/거래대금 랭킹 엔드포인트 사용
   const data = await kisGet(
     '/uapi/domestic-stock/v1/quotations/volume-rank',
     {
@@ -402,40 +480,66 @@ async function buildRankPayload(kind) {
     'FHPST01720000'
   );
 
-  const rawItems = (data.output || [])
+  const items = (data.output || [])
     .map((row) => ({
       code: row.stck_shrn_iscd || row.mksc_shrn_iscd || '',
       name: row.hts_kor_isnm || row.prdt_name || ''
     }))
     .filter((x) => isValidCode(x.code) && isRealDomesticStockName(x.name))
-    .slice(0, 15);
+    .slice(0, 20);
 
-  const quotes = await mapLimit(rawItems, 5, async (item) => {
-    try { return await fetchKisQuote(item.code, item.name); } catch (e) { return null; }
+  return cacheSet(dataCache, key, items, 1000 * 20);
+}
+
+async function buildRankPayload(kind) {
+  const key = `market:${kind}`;
+  const cached = cacheGet(dataCache, key);
+  if (cached) return cached;
+
+  const seeds = await fetchGlobalRankSeeds(kind);
+
+  const quotes = await mapLimit(seeds, 5, async (item) => {
+    await sleep(20);
+    try {
+      return await fetchKisQuote(item.code, item.name);
+    } catch (e) {
+      return null;
+    }
   });
 
   const items = quotes
     .filter(Boolean)
+    .filter((x) => isRealDomesticStockName(x.name))
     .sort((a, b) => {
       if (kind === 'volume') return (b.volume || 0) - (a.volume || 0);
       return (b.amount || 0) - (a.amount || 0);
     })
-    .slice(0, 10);
+    .slice(0, 10)
+    .map((x) => ({
+      market: '국내주식',
+      code: x.code,
+      name: x.name,
+      price: x.price,
+      changeRate: x.changeRate,
+      changeValue: x.changeValue,
+      volume: x.volume,
+      amount: x.amount
+    }));
 
   const payload = {
     items,
     meta: {
       source: 'real',
       updatedAt: nowIso(),
-      message: kind === 'volume' ? '한투 실시간 거래량 랭킹 (전체)' : '한투 실시간 거래대금 랭킹 (전체)'
+      message:
+        kind === 'volume'
+          ? '한국투자증권 전체 거래량 상위 10'
+          : '한국투자증권 전체 거래대금 상위 10'
     }
   };
 
   return cacheSet(dataCache, key, payload, 1000 * 20);
 }
-
-
-// --- 라우트 설정 ---
 
 app.get('/', (req, res) => {
   const filePath = path.join(__dirname, 'public', 'index.html');
@@ -449,7 +553,15 @@ app.get('/api/data', async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error('leader error:', error.message);
-    res.json({ categories: { 테마: [], 업종: [] }, sectors: [], meta: { source: 'sample', updatedAt: nowIso(), message: `에러: ${error.message}` }});
+    res.json({
+      categories: { 테마: [], 업종: [] },
+      sectors: [],
+      meta: {
+        source: 'sample',
+        updatedAt: nowIso(),
+        message: `API 에러: ${error.message}`
+      }
+    });
   }
 });
 
@@ -458,8 +570,15 @@ app.get('/api/market/volume-top', async (req, res) => {
     const data = await buildRankPayload('volume');
     res.json(data);
   } catch (error) {
-    console.error('volume error:', error.message);
-    res.json({ items: [], meta: { source: 'sample', updatedAt: nowIso(), message: `에러: ${error.message}` }});
+    console.error('volume-top error:', error.message);
+    res.json({
+      items: [],
+      meta: {
+        source: 'sample',
+        updatedAt: nowIso(),
+        message: `API 에러: ${error.message}`
+      }
+    });
   }
 });
 
@@ -468,8 +587,15 @@ app.get('/api/market/amount-top', async (req, res) => {
     const data = await buildRankPayload('amount');
     res.json(data);
   } catch (error) {
-    console.error('amount error:', error.message);
-    res.json({ items: [], meta: { source: 'sample', updatedAt: nowIso(), message: `에러: ${error.message}` }});
+    console.error('amount-top error:', error.message);
+    res.json({
+      items: [],
+      meta: {
+        source: 'sample',
+        updatedAt: nowIso(),
+        message: `API 에러: ${error.message}`
+      }
+    });
   }
 });
 
