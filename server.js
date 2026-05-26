@@ -10,8 +10,9 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-// 디렉토리 내의 정적 파일(index.html 등)을 제공합니다.
-app.use(express.static(__dirname));
+
+// ★ 수정된 부분: public 폴더를 정적 파일 제공 경로로 지정
+app.use(express.static(path.join(__dirname, 'public')));
 
 const KIS_BASE_URL = process.env.KIS_BASE_URL || 'https://openapi.koreainvestment.com:9443';
 const NAVER_STOCK_BASE = 'https://stock.naver.com';
@@ -544,11 +545,11 @@ async function buildRankPayload(kind) {
   return cacheSet(dataCache, key, payload, 1000 * 25);
 }
 
-// 명시적으로 index.html을 서빙하도록 설정
+// ★ 수정된 부분: 기본 루트 요청 시 public/index.html을 제공합니다.
 app.get('/', (req, res) => {
-  const filePath = path.join(__dirname, 'index.html');
+  const filePath = path.join(__dirname, 'public', 'index.html');
   if (fs.existsSync(filePath)) return res.sendFile(filePath);
-  res.status(404).send('index.html not found');
+  res.status(404).send('public/index.html not found');
 });
 
 app.get('/api/data', async (req, res) => {
