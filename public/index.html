@@ -240,4 +240,234 @@ function renderSubFilters(){
       const c=getColor(x);
       b.style.background=active?c:`color-mix(in srgb,${c} 18%,var(--chip))`;
       b.style.color=active?'#111':'var(--text)';
-      b.style.borderColor=ac
+      b.style.borderColor=active?c:`color-mix(in srgb,${c} 40%,transparent)`;
+    }
+
+    b.onclick=()=>{state.activeSubFilter=x;state.openIndex=null;renderAll();};
+    el.subFilters.appendChild(b);
+  });
+}
+
+/* ── 정렬 버튼 ── */
+function renderSorts(){
+  el.sortrow.innerHTML='';
+  SORTS.forEach(x=>{
+    const b=document.createElement('button');
+    b.className='sort'+(state.activeSort===x?' active':'');
+    b.textContent=x;
+    b.onclick=()=>{state.activeSort=x;state.openIndex=null;renderAll();};
+    el.sortrow.appendChild(b);
+  });
+}
+
+/* ── 테마 요약 카드 ── */
+function renderThemeSummary(sector){
+  if(!sector){el.themeSummary.style.display='none';return;}
+  el.themeSummary.style.display='block';
+  el.themeSummary.innerHTML=`
+    <div class="summary-card">
+      <div class="summary-title">${sector.name}</div>
+      <div class="summary-desc">${sector.reason}</div>
+      <div class="summary-stats">
+        <span>평균 등락률: <span style="color:${parseFloat(sector.chg)>0?'var(--good)':'inherit'}">${sector.chg}</span></span>
+        <span>합산 거래대금: ${sector.volume}</span>
+      </div>
+    </div>`;
+}
+
+/* ── 종목 리스트 렌더링 ── */
+function renderStockList(){
+  // 데이터 아직 없으면 스켈레톤 유지
+  if(!state.dataReady){return;}
+
+  let items=[];
+  let accent='var(--accent)';
+  let badgeName='국내주식';
+
+  if(state.activeSubFilter==='전체'){
+    el.themeSummary.style.display='none';
+
+    // ① amount.items + volume.items 합쳐서 중복 코드 제거
+    const pool=[...(state.amount.items||[]),...(state.volume.items||[])];
+    const map=new Map();
+    pool.forEach(it=>{if(it.code&&!map.has(it.code))map.set(it.code,it);});
+    items=Array.from(map.values());
+
+    // ② pool이 없으면 leader sectors 안의 stocks 전부 합침 (폴백)
+    if(!items.length){
+      const allStocks=[];
+      (state.leader.sectors||[]).forEach(s=>(s.stocks||[]).forEach(sk=>allStocks.push(sk)));
+      const fallbackMap=new Map();
+      allStocks.forEach(it=>{if(it.code&&!fallbackMap.has(it.code))fallbackMap.set(it.code,it);});
+      items=Array.from(fallbackMap.values());
+    }
+
+  } else {
+    const sector=(state.leader.sectors||[]).find(s=>s.name===state.activeSubFilter);
+    if(sector){
+      items=[...(sector.stocks||[])];
+      accent=getColor(sector.name);
+      badgeName=sector.name;
+      renderThemeSummary(sector);
+    } else {
+      el.themeSummary.style.display='none';
+    }
+  }
+
+  // 정렬
+  items.sort((a,b)=>{
+    if(state.activeSort==='거래량') return (b.volume||0)-(a.volume||0);
+    if(state.activeSort==='거래대금') return (b.amount||0)-(a.amount||0);
+    if(state.activeSort==='상승률') return (b.changeRate||0)-(a.changeRate||0);
+    if(state.activeSort==='시가총액') return (b.marketCapEok||0)-(a.marketCapEok||0);
+    return 0;
+  });
+
+  items=items.slice(0,10);
+
+  el.listRoot.innerHTML='';
+  if(!items.length){
+    el.listRoot.innerHTML='<div class="empty">데이터가 없습니다.<br><small style="font-weight:500">서버 로그를 확인해주세요.</small></div>';
+    return;
+  }
+
+  items.forEach((row,idx)=>{
+    const open=state.openIndex===idx;
+    const item=document.createElement('div');
+    item.className='item'+(open?' open':'');
+
+    const cr=Number(row.changeRate||0);
+    const cv=Number(row.changeValue||0);
+    const chgColor=cr>0?'var(--good)':cr<0?'var(--bad)':'var(--muted)';
+    const chgSign=cr>0?'+':'';
+
+    // price 값 정규화 (숫자 또는 이미 포맷된 문자열 모두 처리)
+    const priceRaw=String(row.price||'0').replace(/,/g,'');
+    const priceNum=Number(priceRaw)||0;
+
+    item.innerHTML=`
+      <div class="item-main">
+        <div class="rank" style="background:color-mix(in srgb,${accent} 18%,transparent);color:${accent}">${idx+1}</div>
+        <div class="item-info">
+          <div class="row1">
+            <div class="name">${row.name||'-'}</div>
+            <span class="badge" style="background:color-mix(in srgb,${accent} 12%,transparent);color:${accent};border-color:color-mix(in srgb,${accent} 35%,transparent)">${badgeName}</span>
+          </div>
+          <div class="row2">
+            <span>거래대금 ${formatAmount(row.amount)}</span>
+            <span>거래량 ${formatVolume(row.volume)}</span>
+            <span style="color:${chgColor}">${chgSign}${cr}%</span>
+          </div>
+        </div>
+        <div class="arrow">${open?'−':'＋'}</div>
+      </div>
+      <div class="item-preview">
+        <div class="preview-grid">
+          <div class="pbox">
+            <div class="k">현재가</div>
+            <div class="v">${formatPrice(priceNum)}</div>
+          </div>
+          <div class="pbox">
+            <div class="k">전일대비</div>
+            <div class="v" style="color:${chgColor}">${chgSign}${cv.toLocaleString()}원<br><small>${chgSign}${cr}%</small></div>
+          </div>
+          <div class="pbox">
+            <div class="k">거래량</div>
+            <div class="v">${formatVolume(row.volume)}</div>
+          </div>
+          <div class="pbox">
+            <div class="k">거래대금</div>
+            <div class="v">${formatAmount(row.amount)}</div>
+          </div>
+          <div class="pbox">
+            <div class="k">시가총액</div>
+            <div class="v">${row.marketCap||'정보없음'}</div>
+          </div>
+          <div class="pbox">
+            <div class="k">종목코드</div>
+            <div class="v">${row.code||'-'}</div>
+          </div>
+        </div>
+      </div>`;
+
+    item.querySelector('.item-main').onclick=()=>{
+      state.openIndex=state.openIndex===idx?null:idx;
+      renderAll();
+    };
+    el.listRoot.appendChild(item);
+  });
+}
+
+/* ── 전체 렌더 ── */
+function renderAll(){
+  renderStatus();
+  renderSubFilters();
+  renderSorts();
+  renderStockList();
+}
+
+/* ── API 호출 ── */
+async function safeJson(url){
+  try{const r=await fetch(url,{cache:'no-store'});return await r.json();}
+  catch(e){return null;}
+}
+
+async function fetchAllData(){
+  state.countdown=60;
+  el.apiIndicator.className='status-indicator yellow';
+  el.countdownText.textContent='갱신 60초';
+
+  try{
+    // 먼저 거래대금/거래량 랭킹을 빠르게 가져와서 화면 즉시 표시
+    const [volume,amount]=await Promise.all([
+      safeJson('/api/market/volume-top'),
+      safeJson('/api/market/amount-top')
+    ]);
+
+    if(volume)state.volume=volume;
+    if(amount)state.amount=amount;
+
+    // dataReady를 true로 바꿔서 스켈레톤 → 실제 데이터로 전환
+    state.dataReady=true;
+    renderAll();
+
+    // 이후 테마 데이터(느림) 별도 로드 → 완료되면 다시 렌더
+    const leader=await safeJson('/api/data');
+    if(leader && leader.categories && leader.categories.length>0){
+      state.leader=leader;
+      renderAll();
+    }
+
+  }catch(e){
+    state.dataReady=true;
+    renderAll();
+  }
+}
+
+/* ── 폴링 ── */
+function startPolling(){
+  clearInterval(state.timer);
+  state.timer=setInterval(()=>{
+    state.countdown=Math.max(0,state.countdown-1);
+    el.countdownText.textContent=`갱신 ${state.countdown}초`;
+    if(state.countdown===0)fetchAllData();
+  },1000);
+}
+
+/* ── 초기화 ── */
+el.themeBtn.onclick=()=>{
+  const t=state.theme==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  el.themeBtn.innerHTML=t==='light'?moonIcon:sunIcon;
+  state.theme=t;
+};
+
+// 다크 모드로 시작
+document.documentElement.setAttribute('data-theme','dark');
+el.themeBtn.innerHTML=sunIcon;
+
+fetchAllData();
+startPolling();
+</script>
+</body>
+</html>
