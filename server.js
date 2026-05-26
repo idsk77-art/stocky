@@ -6,19 +6,29 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const BASE_URL = 'https://openapi.koreainvestment.com:9443';
+const KIS_BASE_URL =
+  process.env.KIS_BASE_URL || 'https://openapi.koreainvestment.com:9443';
 
-// ── Access Token 캐싱 (만료 전까지 재사용) ──────────────────
 let cachedToken = null;
-let tokenExpiry = 0;
+let tokenExpireAt = 0;
+
+function nowIso() {
+  return new Date().toISOString();
+}
+
+function toNum(v) {
+  if (v === null || v === undefined || v === '') return 0;
+  return Number(String(v).replace(/[^0-9.-]/g, '')) || 0;
+}
 
 async function getAccessToken() {
   const now = Date.now();
-  if (cachedToken && now < tokenExpiry) return cachedToken;
+  if (cachedToken && now < tokenExpireAt) return cachedToken;
 
-  const res = await fetch(`${BASE_URL}/oauth2/tokenP`, {
+  const res = await fetch(`${KIS_BASE_URL}/oauth2/tokenP`, {
     method: 'POST',
     headers: { 'content-type': 'application/json; charset=utf-8' },
     body: JSON.stringify({
@@ -28,134 +38,322 @@ async function getAccessToken() {
     })
   });
 
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`토큰 발급 실패 ${res.status}: ${txt}`);
+  const text = await res.text();
+  let json = {};
+  try {
+    json = JSON.parse(text);
+  } catch (e) {
+    throw new Error(`토큰 응답 파싱 실패: ${text}`);
   }
 
-  const data = await res.json();
-  cachedToken = data.access_token;
-  // 만료 22시간 후로 설정 (실제 만료 24시간, 여유 2시간)
-  tokenExpiry = now + 22 * 60 * 60 * 1000;
-  console.log('✅ Access Token 발급 성공');
+  if (!res.ok || !json.access_token) {
+    throw new Error(`토큰 발급 실패(${res.status}): ${text}`);
+  }
+
+  cachedToken = json.access_token;
+  tokenExpireAt = now + 1000 * 60 * 60 * 20;
   return cachedToken;
 }
 
-// ── 공통 헤더 생성 ────────────────────────────────────────────
-function makeHeaders(token, trId) {
+function kisHeaders(token, trId) {
   return {
     'content-type': 'application/json; charset=utf-8',
-    'authorization': `Bearer ${token}`,
-    'appkey': process.env.APP_KEY,
-    'appsecret': process.env.APP_SECRET,
-    'tr_id': trId,
-    'custtype': 'P'
+    authorization: `Bearer ${token}`,
+    appkey: process.env.APP_KEY,
+    appsecret: process.env.APP_SECRET,
+    tr_id: trId,
+    custtype: 'P'
   };
 }
 
-// ── 거래량 순위 (코스피+코스닥 전체, 상위 30개 병합 → 상위 10) ──
-app.get('/api/volume-rank', async (req, res) => {
+async function kisGet(pathname, params, trId) {
+  const token = await getAccessToken();
+  const url = `${KIS_BASE_URL}${pathname}?${new URLSearchParams(params).toString()}`;
+
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: kisHeaders(token, trId)
+  });
+
+  const text = await res.text();
+  let json = {};
   try {
-    const token = await getAccessToken();
-
-    const makeParams = (mktDiv) => new URLSearchParams({
-      FID_COND_MRKT_DIV_CODE: mktDiv,
-      FID_COND_SCR_DIV_CODE: '20171',
-      FID_INPUT_ISCD: '0000',
-      FID_DIV_CLS_CODE: '0',
-      FID_BLNG_CLS_CODE: '0',
-      FID_TRGT_CLS_CODE: '111111111',
-      FID_TRGT_EXLS_CLS_CODE: '000000',
-      FID_INPUT_PRICE_1: '',
-      FID_INPUT_PRICE_2: '',
-      FID_VOL_CNT: '',
-      FID_INPUT_DATE_1: ''
-    }).toString();
-
-    const headers = makeHeaders(token, 'FHPST01720000');
-
-    const [r1, r2] = await Promise.all([
-      fetch(`${BASE_URL}/uapi/domestic-stock/v1/quotations/volume-rank?${makeParams('J')}`, { headers }),
-      fetch(`${BASE_URL}/uapi/domestic-stock/v1/quotations/volume-rank?${makeParams('Q')}`, { headers })
-    ]);
-
-    const d1 = r1.ok ? await r1.json() : { output: [] };
-    const d2 = r2.ok ? await r2.json() : { output: [] };
-
-    const merged = [...(d1.output || []), ...(d2.output || [])];
-    merged.sort((a, b) => parseInt(b.acml_vol || 0) - parseInt(a.acml_vol || 0));
-
-    res.json({ output: merged.slice(0, 10) });
-  } catch (err) {
-    console.error('거래량 순위 오류:', err.message);
-    res.json({ output: [] });
+    json = JSON.parse(text);
+  } catch (e) {
+    throw new Error(`KIS 응답 파싱 실패: ${text}`);
   }
-});
 
-// ── 거래대금 순위 (코스피+코스닥 전체, 상위 30개 병합 → 상위 10) ─
-app.get('/api/amount-rank', async (req, res) => {
-  try {
-    const token = await getAccessToken();
-
-    const makeParams = (mktDiv) => new URLSearchParams({
-      FID_COND_MRKT_DIV_CODE: mktDiv,
-      FID_COND_SCR_DIV_CODE: '20171',
-      FID_INPUT_ISCD: '0000',
-      FID_DIV_CLS_CODE: '0',
-      FID_BLNG_CLS_CODE: '0',
-      FID_TRGT_CLS_CODE: '111111111',
-      FID_TRGT_EXLS_CLS_CODE: '000000',
-      FID_INPUT_PRICE_1: '',
-      FID_INPUT_PRICE_2: '',
-      FID_VOL_CNT: '',
-      FID_INPUT_DATE_1: ''
-    }).toString();
-
-    const headers = makeHeaders(token, 'FHPST01720000');
-
-    const [r1, r2] = await Promise.all([
-      fetch(`${BASE_URL}/uapi/domestic-stock/v1/quotations/volume-rank?${makeParams('J')}`, { headers }),
-      fetch(`${BASE_URL}/uapi/domestic-stock/v1/quotations/volume-rank?${makeParams('Q')}`, { headers })
-    ]);
-
-    const d1 = r1.ok ? await r1.json() : { output: [] };
-    const d2 = r2.ok ? await r2.json() : { output: [] };
-
-    const merged = [...(d1.output || []), ...(d2.output || [])];
-    // 거래대금(acml_tr_pbmn) 기준 정렬
-    merged.sort((a, b) => parseInt(b.acml_tr_pbmn || 0) - parseInt(a.acml_tr_pbmn || 0));
-
-    res.json({ output: merged.slice(0, 10) });
-  } catch (err) {
-    console.error('거래대금 순위 오류:', err.message);
-    res.json({ output: [] });
+  if (!res.ok) {
+    throw new Error(`KIS HTTP ${res.status}: ${text}`);
   }
-});
 
-// ── 기존 주도섹터 데이터 (에러 시 빈 배열 반환으로 수정) ────────
-app.get('/api/data', async (req, res) => {
-  try {
-    const token = await getAccessToken();
-    const apiUrl = `${BASE_URL}/uapi/domestic-stock/v1/quotations/inquire-price?FID_COND_MRKT_DIV_CODE=J&FID_INPUT_ISCD=005930`;
+  if (json.rt_cd && json.rt_cd !== '0') {
+    throw new Error(`KIS rt_cd ${json.rt_cd}: ${json.msg1 || text}`);
+  }
 
-    const response = await fetch(apiUrl, {
-      headers: makeHeaders(token, 'FHKST01010100')
-    });
+  return json;
+}
 
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error(`한투 API 에러 ${response.status}:`, errText);
-      return res.json({ sectors: [] });
+function normalizeRankItem(row, market) {
+  return {
+    market,
+    code:
+      row.stck_shrn_iscd ||
+      row.mksc_shrn_iscd ||
+      row.iscd ||
+      row.stck_iscd ||
+      '',
+    name:
+      row.hts_kor_isnm ||
+      row.stck_shrn_iscd_name ||
+      row.iscd_name ||
+      row.prdt_name ||
+      '종목명없음',
+    price: toNum(row.stck_prpr),
+    changeRate: Number(row.prdy_ctrt || 0),
+    changeValue: toNum(row.prdy_vrss),
+    changeSign: row.prdy_vrss_sign || '3',
+    volume: toNum(row.acml_vol),
+    amount: toNum(row.acml_tr_pbmn),
+    raw: row
+  };
+}
+
+async function fetchMergedVolumeRank() {
+  const commonParams = {
+    FID_COND_SCR_DIV_CODE: '20171',
+    FID_INPUT_ISCD: '0000',
+    FID_DIV_CLS_CODE: '0',
+    FID_BLNG_CLS_CODE: '0',
+    FID_TRGT_CLS_CODE: '111111111',
+    FID_TRGT_EXLS_CLS_CODE: '000000',
+    FID_INPUT_PRICE_1: '',
+    FID_INPUT_PRICE_2: '',
+    FID_VOL_CNT: '',
+    FID_INPUT_DATE_1: ''
+  };
+
+  const [kospi, kosdaq] = await Promise.all([
+    kisGet(
+      '/uapi/domestic-stock/v1/quotations/volume-rank',
+      { ...commonParams, FID_COND_MRKT_DIV_CODE: 'J' },
+      'FHPST01720000'
+    ),
+    kisGet(
+      '/uapi/domestic-stock/v1/quotations/volume-rank',
+      { ...commonParams, FID_COND_MRKT_DIV_CODE: 'Q' },
+      'FHPST01720000'
+    )
+  ]);
+
+  const merged = [
+    ...((kospi.output || []).map((x) => normalizeRankItem(x, 'KOSPI'))),
+    ...((kosdaq.output || []).map((x) => normalizeRankItem(x, 'KOSDAQ')))
+  ].filter((x) => x.name && (x.volume > 0 || x.amount > 0));
+
+  return {
+    updatedAt: nowIso(),
+    items: merged
+  };
+}
+
+const SAMPLE_LEADER_DATA = {
+  categories: {
+    테마: ['MLCC', '2차전지', '로봇', '바이오', 'AI', '우주항공', '원전', '신재생', '보안', '초전도체'],
+    업종: ['반도체', '자동차', '금융', '제약', '철강', '통신', '화학', '조선', '건설', 'IT소프트웨어']
+  },
+  sectors: [
+    {
+      type: '테마',
+      name: '삼화콘덴서',
+      sector: 'MLCC',
+      reason: 'AI/전장용 수요 급증',
+      chg: '+29.9%',
+      volume: '5,362억',
+      marketCap: '1.6조',
+      roi: '+29.9%',
+      tradeVolume: 5362000,
+      strength: 150,
+      programNet: 120000,
+      stocks: [
+        { name: '삼화콘덴서', price: '102,000', chg: '+29.9%' },
+        { name: '아비코전자', price: '11,900', chg: '+8.1%' }
+      ]
+    },
+    {
+      type: '테마',
+      name: '에코프로',
+      sector: '2차전지',
+      reason: 'ESS·리사이클 기대',
+      chg: '+8.5%',
+      volume: '8.7조',
+      marketCap: '38조',
+      roi: '+12.5%',
+      tradeVolume: 12000000,
+      strength: 120,
+      programNet: 320000,
+      stocks: [
+        { name: '에코프로', price: '121,000', chg: '+12.5%' },
+        { name: '에코프로비엠', price: '238,000', chg: '+11.2%' }
+      ]
+    },
+    {
+      type: '테마',
+      name: '레인보우로보틱스',
+      sector: '로봇',
+      reason: '자동화 투자 확대',
+      chg: '+6.1%',
+      volume: '1.3조',
+      marketCap: '11조',
+      roi: '+5.8%',
+      tradeVolume: 4500000,
+      strength: 110,
+      programNet: 56000,
+      stocks: [
+        { name: '레인보우로보틱스', price: '251,000', chg: '+5.8%' },
+        { name: '두산로보틱스', price: '64,200', chg: '+2.9%' }
+      ]
+    },
+    {
+      type: '업종',
+      name: '삼성전자',
+      sector: '반도체',
+      reason: '메모리 턴어라운드',
+      chg: '+9.7%',
+      volume: '12.5조',
+      marketCap: '458조',
+      roi: '+1.8%',
+      tradeVolume: 15000000,
+      strength: 125,
+      programNet: 920000,
+      stocks: [
+        { name: '삼성전자', price: '72,000', chg: '+1.8%' },
+        { name: 'SK하이닉스', price: '168,000', chg: '+2.3%' }
+      ]
+    },
+    {
+      type: '업종',
+      name: 'SK하이닉스',
+      sector: '반도체',
+      reason: 'HBM 독점적 지위',
+      chg: '+9.1%',
+      volume: '8.2조',
+      marketCap: '122조',
+      roi: '+2.6%',
+      tradeVolume: 8000000,
+      strength: 130,
+      programNet: 650000,
+      stocks: [
+        { name: 'SK하이닉스', price: '168,000', chg: '+2.6%' },
+        { name: '한미반도체', price: '182,000', chg: '+6.4%' }
+      ]
+    },
+    {
+      type: '업종',
+      name: '현대차',
+      sector: '자동차',
+      reason: '사상 최대 실적',
+      chg: '+2.1%',
+      volume: '3.1조',
+      marketCap: '55조',
+      roi: '+1.5%',
+      tradeVolume: 3500000,
+      strength: 110,
+      programNet: 120000,
+      stocks: [
+        { name: '현대차', price: '245,000', chg: '+1.5%' },
+        { name: '기아', price: '115,000', chg: '+1.8%' }
+      ]
     }
+  ]
+};
 
-    const data = await response.json();
-    res.json(data);
+const SAMPLE_VOLUME_ITEMS = [
+  { market: 'KOSPI', code: '005930', name: '삼성전자', price: 72000, changeRate: 1.69, changeValue: 1200, changeSign: '2', volume: 85230000, amount: 6138000000 },
+  { market: 'KOSDAQ', code: '247540', name: '에코프로비엠', price: 238000, changeRate: 2.15, changeValue: 5000, changeSign: '2', volume: 31200000, amount: 7425600000 },
+  { market: 'KOSPI', code: '000660', name: 'SK하이닉스', price: 168000, changeRate: 2.44, changeValue: 4000, changeSign: '2', volume: 22100000, amount: 3712800000 }
+];
+
+const SAMPLE_AMOUNT_ITEMS = [
+  { market: 'KOSPI', code: '005490', name: 'POSCO홀딩스', price: 380000, changeRate: 2.15, changeValue: 8000, changeSign: '2', volume: 42100000, amount: 15998000000 },
+  { market: 'KOSDAQ', code: '247540', name: '에코프로비엠', price: 238000, changeRate: 2.15, changeValue: 5000, changeSign: '2', volume: 31200000, amount: 7425600000 },
+  { market: 'KOSPI', code: '373220', name: 'LG에너지솔루션', price: 398000, changeRate: 1.79, changeValue: 7000, changeSign: '2', volume: 17500000, amount: 6965000000 }
+];
+
+app.get('/api/data', async (req, res) => {
+  res.json({
+    ...SAMPLE_LEADER_DATA,
+    meta: {
+      source: 'sample',
+      updatedAt: nowIso(),
+      message: '주도섹터는 현재 서버 샘플 규칙 데이터입니다.'
+    }
+  });
+});
+
+app.get('/api/market/volume-top', async (req, res) => {
+  try {
+    const merged = await fetchMergedVolumeRank();
+    const items = [...merged.items]
+      .sort((a, b) => b.volume - a.volume)
+      .slice(0, 10);
+
+    res.json({
+      items,
+      meta: {
+        source: 'real',
+        updatedAt: merged.updatedAt,
+        message: '한국투자증권 거래량 실데이터'
+      }
+    });
   } catch (error) {
-    console.error('데이터 통신 실패:', error.message);
-    res.json({ sectors: [] });
+    console.error('volume-top error:', error.message);
+    res.json({
+      items: SAMPLE_VOLUME_ITEMS,
+      meta: {
+        source: 'sample',
+        updatedAt: nowIso(),
+        message: `샘플 데이터로 대체: ${error.message}`
+      }
+    });
   }
+});
+
+app.get('/api/market/amount-top', async (req, res) => {
+  try {
+    const merged = await fetchMergedVolumeRank();
+    const items = [...merged.items]
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 10);
+
+    res.json({
+      items,
+      meta: {
+        source: 'real',
+        updatedAt: merged.updatedAt,
+        message: '한국투자증권 거래대금 실데이터'
+      }
+    });
+  } catch (error) {
+    console.error('amount-top error:', error.message);
+    res.json({
+      items: SAMPLE_AMOUNT_ITEMS,
+      meta: {
+        source: 'sample',
+        updatedAt: nowIso(),
+        message: `샘플 데이터로 대체: ${error.message}`
+      }
+    });
+  }
+});
+
+app.get('/api/health', async (req, res) => {
+  res.json({
+    ok: true,
+    updatedAt: nowIso()
+  });
 });
 
 app.listen(PORT, () => {
-  console.log(`서버가 포트 ${PORT}에서 정상 작동 중입니다.`);
+  console.log(`server listening on ${PORT}`);
 });
