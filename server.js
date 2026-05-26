@@ -13,20 +13,31 @@ app.get('/api/data', async (req, res) => {
   try {
     const baseUrl = 'https://openapi.koreainvestment.com:9443';
     const apiUrl = `${baseUrl}/uapi/domestic-stock/v1/quotations/inquire-price?FID_COND_MRKT_DIV_CODE=J&FID_INPUT_ISCD=005930`;
+
     const response = await fetch(apiUrl, {
       headers: {
         'content-type': 'application/json; charset=utf-8',
-        'appkey': process.env.APP_KEY,
+        'appkey':    process.env.APP_KEY,
         'appsecret': process.env.APP_SECRET,
-        'tr_id': 'FHKST01010100'
+        'tr_id':     'FHKST01010100'
       }
     });
-    if (!response.ok) throw new Error(`한투 API 에러: ${response.status}`);
+
+    // ✅ 500 등 에러 발생 시 상세 로그 출력 후 빈 sectors 반환
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error(`한투 API 에러 ${response.status}:`, errText);
+      // 앱이 멈추지 않도록 빈 데이터 반환 (프론트에서 샘플로 폴백)
+      return res.json({ sectors: [] });
+    }
+
     const data = await response.json();
     res.json(data);
+
   } catch (error) {
     console.error('데이터 통신 실패:', error);
-    res.status(500).json({ error: '데이터 통신 실패' });
+    // ✅ 예외 발생 시도 500 대신 빈 데이터 반환
+    res.json({ sectors: [] });
   }
 });
 
