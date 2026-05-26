@@ -1,102 +1,92 @@
 <!doctype html>
 <html lang="ko" data-theme="light">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
-<title>주식 모니터</title>
-<style>
-:root{
-  --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
-  --accent:#111827; --accent2:#2563eb; --good:#10b981; --warn:#f59e0b; --bad:#ef4444;
-  --cyan:#0ea5e9; --violet:#8b5cf6; --shadow:0 8px 24px rgba(15,23,42,.06); --radius:20px;
-  --chip:#f1f5f9; --preview:#f8fafc; --preview2:#ffffff; --bg-mix:15%;
-  --c-1:#93c5fd; --c-2:#fca5a5; --c-3:#fde047; --c-4:#86efac; --c-5:#d8b4fe; --c-6:#fdba74; --c-7:#67e8f9; --c-8:#f9a8d4;
-  --filter-active-text:#000000;
-}
-html[data-theme="dark"]{
-  --bg:#0d0d0d; --card:#1a1a1a; --text:#e5e7eb; --muted:#9ca3af; --line:#2c2c2c;
-  --accent:#e5e7eb; --accent2:#60a5fa; --chip:#222222; --preview:#131313; --preview2:#1a1a1a;
-  --shadow:0 10px 26px rgba(0,0,0,.55); --bg-mix:25%; --filter-active-text:#ffffff;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
-button,input{font:inherit}
-button{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:10px 13px;font-weight:800;cursor:pointer}
-button:active{transform:scale(.97)}
-.app{max-width:430px;margin:0 auto;min-height:100vh;padding:12px 12px 16px;display:flex;flex-direction:column;gap:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
-.topbar{display:flex;flex-direction:column;gap:10px;padding-top:2px}
-.topline{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.titlebox{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
-.appname{display:none}
-.mode-tabs{display:flex;gap:8px;overflow:auto;scrollbar-width:none}
-.mode-tabs::-webkit-scrollbar{display:none}
-.mode-tab{white-space:nowrap;padding:9px 13px;box-shadow:none;background:var(--chip)}
-.mode-tab.active{background:var(--accent);color:var(--bg);border-color:transparent}
-.mode-tab[data-mode="volume"].active{background:var(--cyan);color:#fff}
-.mode-tab[data-mode="amount"].active{background:var(--violet);color:#fff}
-.actions{display:flex;gap:8px;align-items:center}
-.iconbtn{width:34px;height:34px;padding:0;display:grid;place-items:center}
-.status-card{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:12px 14px}
-.status-left{display:flex;flex-direction:column;gap:4px;min-width:0}
-.status-main{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:900}
-.status-pill{padding:4px 8px;border-radius:999px;font-size:11px;font-weight:900;border:1px solid transparent}
-.status-pill.real{background:rgba(16,185,129,.12);color:var(--good);border-color:rgba(16,185,129,.3)}
-.status-pill.sample{background:rgba(239,68,68,.12);color:var(--bad);border-color:rgba(239,68,68,.35)}
-.status-time{font-size:12px;color:var(--muted)}
-.status-msg{font-size:11px;color:var(--bad);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:bold}
-.live-box{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:800}
-.status-indicator{width:10px;height:10px;border-radius:50%;display:inline-block;background:#ccc}
-.status-indicator.green{background:var(--good);box-shadow:0 0 6px var(--good)}
-.status-indicator.yellow{background:var(--warn);box-shadow:0 0 6px var(--warn)}
-.status-indicator.red{background:var(--bad);box-shadow:0 0 6px var(--bad)}
-.panel-head{display:flex;gap:8px;padding:14px 14px 0}
-.leader-tabs{display:flex;gap:8px;width:100%}
-.leader-tab{flex:1;text-align:center;border-radius:12px;background:var(--chip);color:var(--muted);box-shadow:none}
-.leader-tab.active{background:var(--accent);color:var(--bg);border-color:transparent}
-.filters,.sortrow{display:flex;gap:8px;overflow:auto;padding:12px 14px 0;scrollbar-width:none}
-.filters::-webkit-scrollbar,.sortrow::-webkit-scrollbar{display:none}
-.filter,.sort{white-space:nowrap;padding:9px 13px;border-radius:999px;border:1px solid transparent;font-size:12px;font-weight:800;color:var(--text);background:var(--chip);box-shadow:none}
-.sort{border-color:var(--line)}
-.sort.active{background:var(--accent);color:var(--bg);border-color:transparent}
-.list{display:flex;flex-direction:column;gap:10px;padding:12px 14px 14px}
-.item{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card)}
-.item-main{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:12px;cursor:pointer}
-.rank{width:32px;height:32px;border-radius:10px;background:color-mix(in srgb, var(--text) 10%, transparent);display:grid;place-items:center;font-size:12px;font-weight:900}
-.item-info{min-width:0}
-.row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.name{font-size:15px;font-weight:900;letter-spacing:-.02em}
-.badge{font-size:11px;padding:4px 8px;border-radius:999px;font-weight:800;border:1px solid var(--line)}
-.row2{margin-top:4px;display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px}
-.arrow{width:34px;height:34px;border-radius:50%;background:color-mix(in srgb, var(--text) 5%, transparent);display:grid;place-items:center;font-weight:900;border:1px solid var(--line)}
-.item-preview{display:none;border-top:1px solid var(--line);background:var(--preview);padding:12px}
-.item.open .item-preview{display:block}
-.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.pbox{background:var(--preview2);border:1px solid var(--line);border-radius:14px;padding:10px}
-.pbox .k{font-size:11px;color:var(--muted);margin-bottom:5px}
-.pbox .v{font-size:14px;font-weight:900}
-.preview-note{margin-top:10px;font-size:12px;line-height:1.55}
-.stock-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
-.stock-row{display:flex;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--preview2)}
-.stock-left{display:flex;flex-direction:column;gap:3px;min-width:0}
-.stock-name{font-size:13px;font-weight:800}
-.stock-meta{font-size:11px;color:var(--muted)}
-.stock-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
-.stock-price{font-size:13px;font-weight:800}
-.stock-chg{font-size:11px;font-weight:800}
-.empty{padding:28px 18px 30px;text-align:center;color:var(--muted);font-size:13px;font-weight:700}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:40}
-.overlay.show{display:flex}
-.sheet{width:min(430px,100%);background:var(--card);border-radius:24px 24px 0 0;border:1px solid var(--line);box-shadow:0 -16px 32px rgba(0,0,0,.3);padding:14px;max-height:85vh;overflow:auto}
-.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
-.sheet-head h3{margin:0;font-size:16px}
-.field{margin-bottom:12px}
-.field label{display:block;font-size:12px;font-weight:800;margin:0 0 6px}
-.field input{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--bg);color:var(--text);outline:none}
-.field input:focus{border-color:var(--accent2)}
-.btnrow{display:flex;gap:8px;flex-wrap:wrap}
-@media (max-width:390px){.item-main{grid-template-columns:auto 1fr}.arrow{display:none}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <title>주식 모니터</title>
+  <style>
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
+      --accent:#111827; --accent2:#2563eb; --good:#10b981; --warn:#f59e0b; --bad:#ef4444;
+      --cyan:#0ea5e9; --violet:#8b5cf6; --shadow:0 8px 24px rgba(15,23,42,.06); --radius:20px;
+      --chip:#f1f5f9; --preview:#f8fafc; --preview2:#ffffff; --bg-mix:15%;
+      --c-1:#93c5fd; --c-2:#fca5a5; --c-3:#fde047; --c-4:#86efac; --c-5:#d8b4fe; --c-6:#fdba74; --c-7:#67e8f9; --c-8:#f9a8d4;
+      --filter-active-text:#000000;
+    }
+    html[data-theme="dark"]{
+      --bg:#0d0d0d; --card:#1a1a1a; --text:#e5e7eb; --muted:#9ca3af; --line:#2c2c2c;
+      --accent:#e5e7eb; --accent2:#60a5fa; --chip:#222222; --preview:#131313; --preview2:#1a1a1a;
+      --shadow:0 10px 26px rgba(0,0,0,.55); --bg-mix:25%; --filter-active-text:#ffffff;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;background:var(--bg);color:var(--text)}
+    button,input{font:inherit}
+    button{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:10px 13px;font-weight:800;cursor:pointer}
+    button:active{transform:scale(.97)}
+    .app{max-width:430px;margin:0 auto;min-height:100vh;padding:12px 12px 16px;display:flex;flex-direction:column;gap:12px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .topbar{display:flex;flex-direction:column;gap:10px;padding-top:2px}
+    .topline{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .titlebox{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1}
+    .appname{display:none}
+    .mode-tabs{display:flex;gap:8px;overflow:auto;scrollbar-width:none}
+    .mode-tabs::-webkit-scrollbar{display:none}
+    .mode-tab{white-space:nowrap;padding:9px 13px;box-shadow:none;background:var(--chip)}
+    .mode-tab.active{background:var(--accent);color:var(--bg);border-color:transparent}
+    .mode-tab[data-mode="volume"].active{background:var(--cyan);color:#fff}
+    .mode-tab[data-mode="amount"].active{background:var(--violet);color:#fff}
+    .actions{display:flex;gap:8px;align-items:center}
+    .iconbtn{width:34px;height:34px;padding:0;display:grid;place-items:center}
+    .status-card{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:12px 14px}
+    .status-left{display:flex;flex-direction:column;gap:4px;min-width:0}
+    .status-main{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:900}
+    .status-pill{padding:4px 8px;border-radius:999px;font-size:11px;font-weight:900;border:1px solid transparent}
+    .status-pill.real{background:rgba(16,185,129,.12);color:var(--good);border-color:rgba(16,185,129,.3)}
+    .status-pill.sample{background:rgba(239,68,68,.12);color:var(--bad);border-color:rgba(239,68,68,.35)}
+    .status-time{font-size:12px;color:var(--muted)}
+    .status-msg{font-size:11px;color:var(--bad);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:bold}
+    .live-box{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-weight:800}
+    .status-indicator{width:10px;height:10px;border-radius:50%;display:inline-block;background:#ccc}
+    .status-indicator.green{background:var(--good);box-shadow:0 0 6px var(--good)}
+    .status-indicator.yellow{background:var(--warn);box-shadow:0 0 6px var(--warn)}
+    .status-indicator.red{background:var(--bad);box-shadow:0 0 6px var(--bad)}
+    .panel-head{display:flex;gap:8px;padding:14px 14px 0}
+    .leader-tabs{display:flex;gap:8px;width:100%}
+    .leader-tab{flex:1;text-align:center;border-radius:12px;background:var(--chip);color:var(--muted);box-shadow:none}
+    .leader-tab.active{background:var(--accent);color:var(--bg);border-color:transparent}
+    .filters,.sortrow{display:flex;gap:8px;overflow:auto;padding:12px 14px 0;scrollbar-width:none}
+    .filters::-webkit-scrollbar,.sortrow::-webkit-scrollbar{display:none}
+    .filter,.sort{white-space:nowrap;padding:9px 13px;border-radius:999px;border:1px solid transparent;font-size:12px;font-weight:800;color:var(--text);background:var(--chip);box-shadow:none}
+    .sort{border-color:var(--line)}
+    .sort.active{background:var(--accent);color:var(--bg);border-color:transparent}
+    .list{display:flex;flex-direction:column;gap:10px;padding:12px 14px 14px}
+    .item{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card)}
+    .item-main{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:12px;cursor:pointer}
+    .rank{width:32px;height:32px;border-radius:10px;background:color-mix(in srgb, var(--text) 10%, transparent);display:grid;place-items:center;font-size:12px;font-weight:900}
+    .item-info{min-width:0}
+    .row1{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .name{font-size:15px;font-weight:900;letter-spacing:-.02em}
+    .badge{font-size:11px;padding:4px 8px;border-radius:999px;font-weight:800;border:1px solid var(--line)}
+    .row2{margin-top:4px;display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px}
+    .arrow{width:34px;height:34px;border-radius:50%;background:color-mix(in srgb, var(--text) 5%, transparent);display:grid;place-items:center;font-weight:900;border:1px solid var(--line)}
+    .item-preview{display:none;border-top:1px solid var(--line);background:var(--preview);padding:12px}
+    .item.open .item-preview{display:block}
+    .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .pbox{background:var(--preview2);border:1px solid var(--line);border-radius:14px;padding:10px}
+    .pbox .k{font-size:11px;color:var(--muted);margin-bottom:5px}
+    .pbox .v{font-size:14px;font-weight:900}
+    .preview-note{margin-top:10px;font-size:12px;line-height:1.55}
+    .stock-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+    .stock-row{display:flex;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--preview2)}
+    .stock-left{display:flex;flex-direction:column;gap:3px;min-width:0}
+    .stock-name{font-size:13px;font-weight:800}
+    .stock-meta{font-size:11px;color:var(--muted)}
+    .stock-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+    .stock-price{font-size:13px;font-weight:800}
+    .stock-chg{font-size:11px;font-weight:800}
+    .empty{padding:28px 18px 30px;text-align:center;color:var(--muted);font-size:13px;font-weight:700}
+    @media (max-width:390px){.item-main{grid-template-columns:auto 1fr}.arrow{display:none}}
+  </style>
 </head>
 <body>
 <div class="app">
@@ -112,9 +102,6 @@ button:active{transform:scale(.97)}
       </div>
       <div class="actions">
         <button id="themeBtn" class="iconbtn" aria-label="테마 변경"></button>
-        <button id="settingBtn" class="iconbtn" aria-label="설정">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 4.3l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06A2 2 0 1 1 19.71 7l-.06.06A1.65 1.65 0 0 0 19.4 9c.38.31.77.71 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-        </button>
       </div>
     </div>
 
@@ -129,7 +116,7 @@ button:active{transform:scale(.97)}
       </div>
       <div class="live-box">
         <span id="apiIndicator" class="status-indicator yellow"></span>
-        <span id="countdownText">갱신 15초</span>
+        <span id="countdownText">갱신 30초</span>
       </div>
     </div>
   </div>
@@ -147,39 +134,21 @@ button:active{transform:scale(.97)}
   </div>
 </div>
 
-<div class="overlay" id="settingsOverlay" aria-hidden="true">
-  <div class="sheet">
-    <div class="sheet-head">
-      <h3>표시 설정</h3>
-      <button id="closeSettingBtn">닫기</button>
-    </div>
-    <div class="field"><label>하위 필터 표시 개수</label><input type="number" id="filterCount" min="1" max="30" /></div>
-    <div class="field"><label>거래대금 최소 (억원)</label><input type="number" id="thTradeAmt" min="0" step="100" /></div>
-    <div class="field"><label>거래량 최소 (주)</label><input type="number" id="thVolume2" min="0" step="100000" /></div>
-    <div class="field"><label>시가총액 최소 (조원)</label><input type="number" id="thMcap" min="0" step="0.5" /></div>
-    <div class="btnrow"><button id="resetBtn" style="width:100%">설정 초기화</button></div>
-  </div>
-</div>
-
 <script>
 const sunIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
 const moonIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 
-const SORTS = ['거래대금','거래량','상승률'];
+const LEADER_SORTS = ['거래량', '거래대금', '상승률'];
 
 const state = {
-  theme: localStorage.getItem('theme') || 'light',
+  theme: 'light',
   mode: 'leader',
   activeLeaderType: '테마',
   activeSubFilter: '전체',
-  activeSort: '거래대금',
+  activeSort: '거래량',
   openIndex: null,
-  countdown: 15,
+  countdown: 30,
   timer: null,
-  thTradeAmt: Number(localStorage.getItem('thTradeAmt') || 0),
-  thVolume2: Number(localStorage.getItem('thVolume2') || 0),
-  thMcap: Number(localStorage.getItem('thMcap') || 0),
-  filterCount: Number(localStorage.getItem('filterCount') || 10),
   leader: { categories: { 테마: [], 업종: [] }, sectors: [], meta: {} },
   volume: { items: [], meta: {} },
   amount: { items: [], meta: {} }
@@ -187,10 +156,6 @@ const state = {
 
 const el = {
   themeBtn: document.getElementById('themeBtn'),
-  settingBtn: document.getElementById('settingBtn'),
-  closeSettingBtn: document.getElementById('closeSettingBtn'),
-  resetBtn: document.getElementById('resetBtn'),
-  overlay: document.getElementById('settingsOverlay'),
   modeTabs: document.querySelectorAll('.mode-tab'),
   leaderTabs: document.querySelectorAll('.leader-tab'),
   leaderPanelHead: document.getElementById('leaderPanelHead'),
@@ -202,17 +167,12 @@ const el = {
   updatedText: document.getElementById('updatedText'),
   statusMessage: document.getElementById('statusMessage'),
   apiIndicator: document.getElementById('apiIndicator'),
-  countdownText: document.getElementById('countdownText'),
-  filterCount: document.getElementById('filterCount'),
-  thTradeAmt: document.getElementById('thTradeAmt'),
-  thVolume2: document.getElementById('thVolume2'),
-  thMcap: document.getElementById('thMcap')
+  countdownText: document.getElementById('countdownText')
 };
 
 function themeApply(t){
   document.documentElement.setAttribute('data-theme', t);
   el.themeBtn.innerHTML = t === 'light' ? moonIcon : sunIcon;
-  localStorage.setItem('theme', t);
   state.theme = t;
 }
 
@@ -279,8 +239,7 @@ function renderStatus(){
   const source = current.meta?.source === 'real' ? 'real' : 'sample';
   el.sourcePill.className = `status-pill ${source}`;
   el.sourcePill.textContent = source === 'real' ? '실시간' : '에러';
-  el.sourceText.textContent = source === 'real' ? '✅ 실데이터 연동됨' : '🚨 API 호출 실패';
-  el.sourceText.style.color = source === 'sample' ? 'var(--bad)' : 'inherit';
+  el.sourceText.textContent = source === 'real' ? '실데이터 연동됨' : 'API 호출 실패';
   el.updatedText.textContent = `${formatTime(current.meta?.updatedAt)} 기준`;
   el.statusMessage.textContent = current.meta?.message || '정상 동작 중';
   el.statusMessage.style.color = source === 'sample' ? 'var(--bad)' : 'var(--muted)';
@@ -288,21 +247,12 @@ function renderStatus(){
   el.countdownText.textContent = `갱신 ${state.countdown}초`;
 }
 
-function passesLeaderFilter(sec){
-  const amt = el.thTradeAmt.value !== '' ? parseFloat(el.thTradeAmt.value) : state.thTradeAmt;
-  const vol = el.thVolume2.value !== '' ? parseFloat(el.thVolume2.value) : state.thVolume2;
-  const mcap = el.thMcap.value !== '' ? parseFloat(el.thMcap.value) : state.thMcap;
-  return numTri(sec.volume) >= amt && Number(sec.tradeVolume || 0) >= vol && numTri(sec.marketCap) >= (mcap * 10000);
-}
-
 function getLeaderItems(){
-  let list = (state.leader.sectors || [])
-    .filter((x) => x.type === state.activeLeaderType)
-    .filter(passesLeaderFilter);
+  let list = (state.leader.sectors || []).filter((x) => x.type === state.activeLeaderType);
 
   const sorter = {
-    '거래대금': (a,b) => numTri(b.volume) - numTri(a.volume),
     '거래량': (a,b) => Number(b.tradeVolume || 0) - Number(a.tradeVolume || 0),
+    '거래대금': (a,b) => numTri(b.volume) - numTri(a.volume),
     '상승률': (a,b) => num(b.chg) - num(a.chg)
   }[state.activeSort];
 
@@ -325,7 +275,7 @@ function renderSubFilters(){
   el.leaderPanelHead.style.display = 'flex';
 
   const categoryList = state.leader.categories?.[state.activeLeaderType] || [];
-  const display = ['전체', ...categoryList.slice(0, state.filterCount)];
+  const display = ['전체', ...categoryList];
 
   display.forEach((x) => {
     const b = document.createElement('button');
@@ -357,7 +307,7 @@ function renderSorts(){
   el.sortrow.innerHTML = '';
   if (state.mode !== 'leader') return;
 
-  SORTS.forEach((x) => {
+  LEADER_SORTS.forEach((x) => {
     const b = document.createElement('button');
     b.className = 'sort' + (state.activeSort === x ? ' active' : '');
     b.textContent = x;
@@ -394,28 +344,28 @@ function renderLeaderList(){
             <span class="badge">${sec.sector}</span>
           </div>
           <div class="row2">
-            <span>거래대금 ${sec.volume}</span>
-            <span>거래량 ${formatVolume(sec.tradeVolume)}</span>
-            <span>상승률 ${sec.chg}</span>
+            <span>합산 거래대금 ${sec.volume}</span>
+            <span>합산 거래량 ${formatVolume(sec.tradeVolume)}</span>
+            <span>평균 등락률 ${sec.chg}</span>
           </div>
         </div>
         <div class="arrow">${open ? '−' : '＋'}</div>
       </div>
       <div class="item-preview">
         <div class="preview-grid">
-          <div class="pbox"><div class="k">테마/업종</div><div class="v">${sec.name}</div></div>
+          <div class="pbox"><div class="k">분류명</div><div class="v">${sec.name}</div></div>
           <div class="pbox"><div class="k">시가총액 합</div><div class="v">${sec.marketCap}</div></div>
         </div>
         <div class="preview-note">${sec.reason}</div>
         <div class="stock-list">
-          ${(sec.stocks || []).map((s) => `
+          ${(sec.stocks || []).map((s, sidx) => `
             <div class="stock-row">
               <div class="stock-left">
-                <div class="stock-name">${s.name}</div>
-                <div class="stock-meta">${s.code || ''}</div>
+                <div class="stock-name">${sidx + 1}. ${s.name}</div>
+                <div class="stock-meta">${s.code} · 거래량 ${s.volume}주 · 거래대금 ${s.amount}</div>
               </div>
               <div class="stock-right">
-                <div class="stock-price">${s.price}</div>
+                <div class="stock-price">${s.price}원</div>
                 <div class="stock-chg">${s.chg}</div>
               </div>
             </div>
@@ -463,8 +413,8 @@ function renderRankList(kind){
             <span class="badge" style="background:color-mix(in srgb, ${accent} 12%, transparent); color:${accent}; border-color:color-mix(in srgb, ${accent} 35%, transparent);">${row.market}</span>
           </div>
           <div class="row2">
-            <span>${kind === 'volume' ? '거래량' : '거래대금'} ${kind === 'volume' ? formatVolume(row.volume) : formatAmount(row.amount)}</span>
-            <span>${kind === 'volume' ? '거래대금' : '거래량'} ${kind === 'volume' ? formatAmount(row.amount) : formatVolume(row.volume)}</span>
+            <span>거래량 ${formatVolume(row.volume)}</span>
+            <span>거래대금 ${formatAmount(row.amount)}</span>
             <span>등락률 ${row.changeRate > 0 ? '+' : ''}${row.changeRate}%</span>
           </div>
         </div>
@@ -501,32 +451,6 @@ function renderAll(){
   if (state.mode === 'leader') renderLeaderList();
   if (state.mode === 'volume') renderRankList('volume');
   if (state.mode === 'amount') renderRankList('amount');
-}
-
-function saveSettings(){
-  state.thTradeAmt = el.thTradeAmt.value === '' ? state.thTradeAmt : parseFloat(el.thTradeAmt.value);
-  state.thVolume2 = el.thVolume2.value === '' ? state.thVolume2 : parseFloat(el.thVolume2.value);
-  state.thMcap = el.thMcap.value === '' ? state.thMcap : parseFloat(el.thMcap.value);
-  state.filterCount = el.filterCount.value === '' ? state.filterCount : parseInt(el.filterCount.value, 10);
-
-  localStorage.setItem('thTradeAmt', state.thTradeAmt);
-  localStorage.setItem('thVolume2', state.thVolume2);
-  localStorage.setItem('thMcap', state.thMcap);
-  localStorage.setItem('filterCount', state.filterCount);
-}
-
-function openSettings(){
-  el.filterCount.value = state.filterCount;
-  el.thTradeAmt.value = state.thTradeAmt;
-  el.thVolume2.value = state.thVolume2;
-  el.thMcap.value = state.thMcap;
-  el.overlay.classList.add('show');
-}
-
-function closeSettings(){
-  saveSettings();
-  el.overlay.classList.remove('show');
-  renderAll();
 }
 
 async function safeJson(url) {
@@ -583,20 +507,8 @@ el.leaderTabs.forEach((btn) => {
 });
 
 el.themeBtn.onclick = () => themeApply(state.theme === 'light' ? 'dark' : 'light');
-el.settingBtn.onclick = openSettings;
-el.closeSettingBtn.onclick = closeSettings;
-el.resetBtn.onclick = () => {
-  state.thTradeAmt = 0;
-  state.thVolume2 = 0;
-  state.thMcap = 0;
-  state.filterCount = 10;
-  openSettings();
-};
-el.overlay.addEventListener('click', (e) => {
-  if (e.target === el.overlay) closeSettings();
-});
 
-themeApply(state.theme);
+themeApply('light');
 renderAll();
 fetchAllData();
 startPolling();
