@@ -557,4 +557,47 @@ async function fetchAllData(){
 function startPolling(){
   clearInterval(state.timer);
   state.timer = setInterval(() => {
-    state.countdown = Math.max(0, 
+    state.countdown = Math.max(0, state.countdown - 1);
+    renderStatus();
+    if (state.countdown === 0) fetchAllData();
+  }, 1000);
+}
+
+el.modeTabs.forEach((btn) => {
+  btn.onclick = () => {
+    state.mode = btn.dataset.mode;
+    state.openIndex = null;
+    renderAll();
+  };
+});
+
+el.leaderTabs.forEach((btn) => {
+  btn.onclick = () => {
+    state.activeLeaderType = btn.dataset.type;
+    state.activeSubFilter = '전체';
+    state.openIndex = null;
+    renderAll();
+  };
+});
+
+el.themeBtn.onclick = () => themeApply(state.theme === 'light' ? 'dark' : 'light');
+el.settingBtn.onclick = openSettings;
+el.closeSettingBtn.onclick = closeSettings;
+el.resetBtn.onclick = () => {
+  state.thTradeAmt = 0;
+  state.thVolume2 = 0;
+  state.thMcap = 0;
+  state.filterCount = 10;
+  openSettings();
+};
+el.overlay.addEventListener('click', (e) => {
+  if (e.target === el.overlay) closeSettings();
+});
+
+themeApply(state.theme);
+renderAll();
+fetchAllData();
+startPolling();
+</script>
+</body>
+</html>
