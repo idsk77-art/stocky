@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="ko" data-theme="light">
+<!-- 기본을 다크 모드로 설정 -->
+<html lang="ko" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
-  <title>주식 모니터</title>
+  <title>주도섹터</title>
   <style>
     :root{
       --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
@@ -85,12 +86,13 @@
     .item-preview{display:none;border-top:1px solid var(--line);background:var(--preview);padding:12px}
     .item.open .item-preview{display:block}
     .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .pbox{background:var(--preview2);border:1px solid var(--line);border-radius:14px;padding:10px}
+    .pbox{background:var(--preview2);border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;flex-direction:column;}
     .pbox .k{font-size:11px;color:var(--muted);margin-bottom:5px}
     .pbox .v{font-size:14px;font-weight:900}
-    .preview-note{margin-top:10px;font-size:12px;line-height:1.55; color:var(--muted);}
     
     .empty{padding:28px 18px 30px;text-align:center;color:var(--muted);font-size:13px;font-weight:700}
+    .loading-pulse {animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;}
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     @media (max-width:390px){.item-main{grid-template-columns:auto 1fr}.arrow{display:none}}
   </style>
 </head>
@@ -99,7 +101,8 @@
   <div class="topbar">
     <div class="topline">
       <div class="titlebox">
-        <h1>주식 모니터</h1>
+        <!-- 제목 변경 -->
+        <h1>주도섹터</h1>
       </div>
       <div class="actions">
         <button id="themeBtn" class="iconbtn" aria-label="테마 변경"></button>
@@ -126,7 +129,10 @@
     <div class="sortrow" id="sortrow"></div>
     <div class="theme-summary" id="themeSummary"></div>
     
-    <div class="list" id="listRoot"></div>
+    <div class="list" id="listRoot">
+      <!-- 초기 로딩 스켈레톤 상태 -->
+      <div class="empty loading-pulse">데이터를 불러오는 중입니다...</div>
+    </div>
   </div>
 </div>
 
@@ -134,15 +140,17 @@
 const sunIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
 const moonIcon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 
-const SORTS = ['거래량', '거래대금', '상승률'];
+// 정렬 기준 업데이트
+const SORTS = ['거래대금', '거래량', '상승률', '시가총액'];
 
 const state = {
-  theme: 'light',
-  activeSubFilter: '전체', // 첫 화면은 테마 구분 없이 전체
-  activeSort: '거래대금',  // 첫 화면 기본 정렬: 거래대금 순
+  theme: 'dark',           // 첫 시작 다크테마
+  activeSubFilter: '전체',
+  activeSort: '거래대금',  // 초기 정렬값: 거래대금
   openIndex: null,
-  countdown: 60,         // 60초마다 갱신
+  countdown: 60,
   timer: null,
+  hasLoaded: false,
   leader: { categories: [], sectors: [], meta: {} },
   volume: { items: [], meta: {} },
   amount: { items: [], meta: {} }
@@ -193,8 +201,8 @@ function renderStatus(){
   const meta = state.leader.meta || {};
   const isReal = meta.source === 'real';
   el.sourcePill.className = `status-pill ${isReal ? 'real' : 'sample'}`;
-  el.sourcePill.textContent = isReal ? '실시간' : '에러';
-  el.sourceText.textContent = isReal ? '데이터 연동됨' : (meta.message || '호출 실패');
+  el.sourcePill.textContent = isReal ? '실시간' : '대기';
+  el.sourceText.textContent = isReal ? '데이터 연동됨' : (meta.message || '호출 대기/실패');
   el.updatedText.textContent = meta.updatedAt ? `${new Date(meta.updatedAt).toLocaleTimeString('ko-KR')} 기준` : '데이터 로딩 중...';
   el.apiIndicator.className = `status-indicator ${isReal ? 'green' : 'red'}`;
   el.countdownText.textContent = `갱신 ${state.countdown}초`;
@@ -265,15 +273,19 @@ function renderThemeSummary(sector) {
 }
 
 function renderStockList(){
+  if (!state.hasLoaded) return; // 아직 데이터가 로드되지 않았다면 스켈레톤 유지
+
   let items = [];
   let accent = 'var(--accent)';
   let badgeName = '국내주식';
   
   if (state.activeSubFilter === '전체') {
-    // "전체" 필터: 글로벌 거래량/거래대금 데이터 표시
     el.themeSummary.style.display = 'none';
-    if (state.activeSort === '거래대금') items = [...(state.amount.items || [])];
-    else items = [...(state.volume.items || [])];
+    // 전체일 때 거래량 API 배열과 거래대금 API 배열을 합쳐서 중복 제거 후 소팅
+    const merged = [...(state.amount.items || []), ...(state.volume.items || [])];
+    const uniqueMap = new Map();
+    merged.forEach(item => uniqueMap.set(item.code, item));
+    items = Array.from(uniqueMap.values());
   } else {
     // 특정 테마 선택 시
     const sector = state.leader.sectors.find(s => s.name === state.activeSubFilter);
@@ -292,6 +304,7 @@ function renderStockList(){
     if (state.activeSort === '거래량') return b.volume - a.volume;
     if (state.activeSort === '거래대금') return b.amount - a.amount;
     if (state.activeSort === '상승률') return b.changeRate - a.changeRate;
+    if (state.activeSort === '시가총액') return (b.marketCapEok || 0) - (a.marketCapEok || 0);
     return 0;
   });
 
@@ -299,7 +312,7 @@ function renderStockList(){
 
   el.listRoot.innerHTML = '';
   if (!items.length) {
-    el.listRoot.innerHTML = '<div class="empty">데이터를 불러오는 중이거나 없습니다.</div>';
+    el.listRoot.innerHTML = '<div class="empty">조건에 맞는 데이터가 없습니다.</div>';
     return;
   }
 
@@ -307,6 +320,12 @@ function renderStockList(){
     const open = state.openIndex === idx;
     const item = document.createElement('div');
     item.className = 'item' + (open ? ' open' : '');
+
+    // 전일대비 스타일링
+    let changeColor = 'inherit';
+    let changeSign = '';
+    if (row.changeRate > 0) { changeColor = 'var(--good)'; changeSign = '+'; }
+    else if (row.changeRate < 0) { changeColor = 'var(--bad)'; }
 
     item.innerHTML = `
       <div class="item-main">
@@ -319,19 +338,20 @@ function renderStockList(){
           <div class="row2">
             <span>거래량 ${formatVolume(row.volume)}</span>
             <span>거래대금 ${formatAmount(row.amount)}</span>
-            <span style="color:${row.changeRate > 0 ? 'var(--good)' : 'inherit'}">등락률 ${row.changeRate > 0 ? '+' : ''}${row.changeRate}%</span>
+            <span style="color:${changeColor}">등락률 ${changeSign}${row.changeRate}%</span>
           </div>
         </div>
         <div class="arrow">${open ? '−' : '＋'}</div>
       </div>
       <div class="item-preview">
         <div class="preview-grid">
-          <div class="pbox"><div class="k">종목코드</div><div class="v">${row.code || '-'}</div></div>
           <div class="pbox"><div class="k">현재가</div><div class="v">${formatPrice(row.price)}</div></div>
+          <div class="pbox"><div class="k">전일대비</div><div class="v" style="color:${changeColor}">${changeSign}${Number(row.changeValue || 0).toLocaleString()}원 (${changeSign}${row.changeRate}%)</div></div>
           <div class="pbox"><div class="k">거래량</div><div class="v">${formatVolume(row.volume)}</div></div>
           <div class="pbox"><div class="k">거래대금</div><div class="v">${formatAmount(row.amount)}</div></div>
+          <div class="pbox"><div class="k">시가총액</div><div class="v">${row.marketCap || '0억'}</div></div>
+          <div class="pbox"><div class="k">종목코드</div><div class="v">${row.code || '-'}</div></div>
         </div>
-        <div class="preview-note">전일대비: ${row.changeValue > 0 ? '+' : ''}${Number(row.changeValue || 0).toLocaleString()}원</div>
       </div>
     `;
 
@@ -371,7 +391,9 @@ async function fetchAllData(){
     safeJson('/api/market/amount-top')
   ]);
 
-  if (leader) state.leader = leader;
+  state.hasLoaded = true; // 최초 1회 로드 완료 마킹
+
+  if (leader && leader.categories && leader.categories.length > 0) state.leader = leader;
   if (volume) state.volume = volume;
   if (amount) state.amount = amount;
 
@@ -389,8 +411,10 @@ function startPolling(){
 
 el.themeBtn.onclick = () => themeApply(state.theme === 'light' ? 'dark' : 'light');
 
-themeApply('light');
-renderAll();
+themeApply(state.theme); // 시작 테마 (다크) 강제 적용
+
+// 초기 빈 화면 방지를 위해 상태바 업데이트 후 fetch 진행
+renderStatus();
 fetchAllData(); // 1회 즉시 호출
 startPolling(); // 카운트다운 시작
 </script>
