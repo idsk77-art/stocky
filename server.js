@@ -154,7 +154,7 @@ async function fetchKisQuote(code, fallbackName = '') {
     changeValue: toNum(out.prdy_vrss),
     volume: toNum(out.acml_vol),
     amount: toNum(out.acml_tr_pbmn),
-    marketCapEok: toNum(out.hts_avls)
+    marketCapEok: toNum(out.hts_avls) // 시가총액 (억 단위)
   };
   return cacheSet(quoteCache, code, item, 1000 * 20); // 20초 단기 캐시
 }
@@ -236,25 +236,24 @@ async function buildLeaderPayload() {
     let realQuotes = quotes.filter(Boolean);
     if (!realQuotes.length) return null;
 
-    // 테마 내 종목들을 거래량 순으로 내림차순 정렬
-    realQuotes.sort((a, b) => (b.volume || 0) - (a.volume || 0));
-
     const totalAmount = realQuotes.reduce((sum, x) => sum + (x.amount || 0), 0);
     const avgRate = realQuotes.reduce((sum, x) => sum + (x.changeRate || 0), 0) / realQuotes.length;
 
     return {
       name: theme.name,
-      reason: `네이버 테마 랭킹 · 한투 실시간 거래량 순 정렬`,
+      reason: `네이버 테마 랭킹 · 한투 실시간 시세 연동`,
       chg: formatSignedPct(avgRate),
       volume: formatAmountLabel(totalAmount),
-      stocks: realQuotes.slice(0, 10).map((x) => ({
+      stocks: realQuotes.map((x) => ({
         code: x.code,
         name: x.name,
         price: Number(x.price || 0).toLocaleString(),
         changeRate: x.changeRate,
         changeValue: x.changeValue,
         volume: x.volume,
-        amount: x.amount
+        amount: x.amount,
+        marketCapEok: x.marketCapEok,
+        marketCap: formatMarketCapLabel(x.marketCapEok)
       }))
     };
   });
@@ -290,7 +289,10 @@ async function buildRankPayload(kind) {
   const items = quotes.filter(Boolean).sort((a, b) => {
     if (kind === 'volume') return (b.volume || 0) - (a.volume || 0);
     return (b.amount || 0) - (a.amount || 0);
-  }).slice(0, 10);
+  }).slice(0, 10).map((x) => ({
+    ...x,
+    marketCap: formatMarketCapLabel(x.marketCapEok)
+  }));
 
   const payload = { items, meta: { source: 'real', updatedAt: nowIso() } };
   return cacheSet(dataCache, key, payload, 1000 * 20);
