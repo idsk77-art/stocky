@@ -9,9 +9,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const KIS_BASE_URL =
-  process.env.KIS_BASE_URL || 'https://openapi.koreainvestment.com:9443';
+// 모의투자/실전투자 도메인 환경변수로 설정 가능 (기본값: 실전투자)
+const KIS_BASE_URL = process.env.KIS_BASE_URL || 'https://openapi.koreainvestment.com:9443';
 
+// ── Access Token 캐싱 ─────────────────────────────────────────
 let cachedToken = null;
 let tokenExpireAt = 0;
 
@@ -46,12 +47,17 @@ async function getAccessToken() {
     throw new Error(`토큰 응답 파싱 실패: ${text}`);
   }
 
+  // 1분당 1회 제한 에러(EGW00133) 발생 시, 기존 캐시가 있다면 그걸 반환
   if (!res.ok || !json.access_token) {
+    if (json.error_code === 'EGW00133' && cachedToken) {
+      console.log('토큰 1분 제한 걸림, 기존 캐시된 토큰 재사용');
+      return cachedToken;
+    }
     throw new Error(`토큰 발급 실패(${res.status}): ${text}`);
   }
 
   cachedToken = json.access_token;
-  tokenExpireAt = now + 1000 * 60 * 60 * 20;
+  tokenExpireAt = now + 1000 * 60 * 60 * 20; // 20시간 후 만료 (원래 만료시간 24시간)
   return cachedToken;
 }
 
@@ -66,6 +72,7 @@ function kisHeaders(token, trId) {
   };
 }
 
+// ── KIS API 호출 공통 함수 ────────────────────────────────────
 async function kisGet(pathname, params, trId) {
   const token = await getAccessToken();
   const url = `${KIS_BASE_URL}${pathname}?${new URLSearchParams(params).toString()}`;
@@ -94,21 +101,12 @@ async function kisGet(pathname, params, trId) {
   return json;
 }
 
+// ── 종목 데이터 정규화 ─────────────────────────────────────────
 function normalizeRankItem(row, market) {
   return {
     market,
-    code:
-      row.stck_shrn_iscd ||
-      row.mksc_shrn_iscd ||
-      row.iscd ||
-      row.stck_iscd ||
-      '',
-    name:
-      row.hts_kor_isnm ||
-      row.stck_shrn_iscd_name ||
-      row.iscd_name ||
-      row.prdt_name ||
-      '종목명없음',
+    code: row.stck_shrn_iscd || row.mksc_shrn_iscd || row.iscd || row.stck_iscd || '',
+    name: row.hts_kor_isnm || row.stck_shrn_iscd_name || row.iscd_name || row.prdt_name || '종목명없음',
     price: toNum(row.stck_prpr),
     changeRate: Number(row.prdy_ctrt || 0),
     changeValue: toNum(row.prdy_vrss),
@@ -119,7 +117,9 @@ function normalizeRankItem(row, market) {
   };
 }
 
+// ── 거래량/거래대금 데이터 조회 (코스피 + 코스닥 병합) ──────────
 async function fetchMergedVolumeRank() {
+  // 에러 발생했던 누락 필드(FID_RANK_SORT_CLS_CODE) 추가 완료
   const commonParams = {
     FID_COND_SCR_DIV_CODE: '20171',
     FID_INPUT_ISCD: '0000',
@@ -130,9 +130,11 @@ async function fetchMergedVolumeRank() {
     FID_INPUT_PRICE_1: '',
     FID_INPUT_PRICE_2: '',
     FID_VOL_CNT: '',
-    FID_INPUT_DATE_1: ''
+    FID_INPUT_DATE_1: '',
+    FID_RANK_SORT_CLS_CODE: '0' // 0: 거래량 순 (이 파라미터가 빠져서 에러가 났음)
   };
 
+  // KOSPI(J), KOSDAQ(Q) 각각 호출
   const [kospi, kosdaq] = await Promise.all([
     kisGet(
       '/uapi/domestic-stock/v1/quotations/volume-rank',
@@ -157,6 +159,7 @@ async function fetchMergedVolumeRank() {
   };
 }
 
+// ── 샘플 데이터 (폴백용) ───────────────────────────────────────
 const SAMPLE_LEADER_DATA = {
   categories: {
     테마: ['MLCC', '2차전지', '로봇', '바이오', 'AI', '우주항공', '원전', '신재생', '보안', '초전도체'],
@@ -164,121 +167,27 @@ const SAMPLE_LEADER_DATA = {
   },
   sectors: [
     {
-      type: '테마',
-      name: '삼화콘덴서',
-      sector: 'MLCC',
-      reason: 'AI/전장용 수요 급증',
-      chg: '+29.9%',
-      volume: '5,362억',
-      marketCap: '1.6조',
-      roi: '+29.9%',
-      tradeVolume: 5362000,
-      strength: 150,
-      programNet: 120000,
-      stocks: [
-        { name: '삼화콘덴서', price: '102,000', chg: '+29.9%' },
-        { name: '아비코전자', price: '11,900', chg: '+8.1%' }
-      ]
+      type: '테마', name: '삼화콘덴서', sector: 'MLCC', reason: 'AI/전장용 수요 급증', chg: '+29.9%', volume: '5,362억', marketCap: '1.6조', roi: '+29.9%', tradeVolume: 5362000, strength: 150, programNet: 120000,
+      stocks: [ { name: '삼화콘덴서', price: '102,000', chg: '+29.9%' }, { name: '아비코전자', price: '11,900', chg: '+8.1%' } ]
     },
     {
-      type: '테마',
-      name: '에코프로',
-      sector: '2차전지',
-      reason: 'ESS·리사이클 기대',
-      chg: '+8.5%',
-      volume: '8.7조',
-      marketCap: '38조',
-      roi: '+12.5%',
-      tradeVolume: 12000000,
-      strength: 120,
-      programNet: 320000,
-      stocks: [
-        { name: '에코프로', price: '121,000', chg: '+12.5%' },
-        { name: '에코프로비엠', price: '238,000', chg: '+11.2%' }
-      ]
-    },
-    {
-      type: '테마',
-      name: '레인보우로보틱스',
-      sector: '로봇',
-      reason: '자동화 투자 확대',
-      chg: '+6.1%',
-      volume: '1.3조',
-      marketCap: '11조',
-      roi: '+5.8%',
-      tradeVolume: 4500000,
-      strength: 110,
-      programNet: 56000,
-      stocks: [
-        { name: '레인보우로보틱스', price: '251,000', chg: '+5.8%' },
-        { name: '두산로보틱스', price: '64,200', chg: '+2.9%' }
-      ]
-    },
-    {
-      type: '업종',
-      name: '삼성전자',
-      sector: '반도체',
-      reason: '메모리 턴어라운드',
-      chg: '+9.7%',
-      volume: '12.5조',
-      marketCap: '458조',
-      roi: '+1.8%',
-      tradeVolume: 15000000,
-      strength: 125,
-      programNet: 920000,
-      stocks: [
-        { name: '삼성전자', price: '72,000', chg: '+1.8%' },
-        { name: 'SK하이닉스', price: '168,000', chg: '+2.3%' }
-      ]
-    },
-    {
-      type: '업종',
-      name: 'SK하이닉스',
-      sector: '반도체',
-      reason: 'HBM 독점적 지위',
-      chg: '+9.1%',
-      volume: '8.2조',
-      marketCap: '122조',
-      roi: '+2.6%',
-      tradeVolume: 8000000,
-      strength: 130,
-      programNet: 650000,
-      stocks: [
-        { name: 'SK하이닉스', price: '168,000', chg: '+2.6%' },
-        { name: '한미반도체', price: '182,000', chg: '+6.4%' }
-      ]
-    },
-    {
-      type: '업종',
-      name: '현대차',
-      sector: '자동차',
-      reason: '사상 최대 실적',
-      chg: '+2.1%',
-      volume: '3.1조',
-      marketCap: '55조',
-      roi: '+1.5%',
-      tradeVolume: 3500000,
-      strength: 110,
-      programNet: 120000,
-      stocks: [
-        { name: '현대차', price: '245,000', chg: '+1.5%' },
-        { name: '기아', price: '115,000', chg: '+1.8%' }
-      ]
+      type: '업종', name: '삼성전자', sector: '반도체', reason: '메모리 턴어라운드', chg: '+9.7%', volume: '12.5조', marketCap: '458조', roi: '+1.8%', tradeVolume: 15000000, strength: 125, programNet: 920000,
+      stocks: [ { name: '삼성전자', price: '72,000', chg: '+1.8%' }, { name: 'SK하이닉스', price: '168,000', chg: '+2.3%' } ]
     }
   ]
 };
 
 const SAMPLE_VOLUME_ITEMS = [
   { market: 'KOSPI', code: '005930', name: '삼성전자', price: 72000, changeRate: 1.69, changeValue: 1200, changeSign: '2', volume: 85230000, amount: 6138000000 },
-  { market: 'KOSDAQ', code: '247540', name: '에코프로비엠', price: 238000, changeRate: 2.15, changeValue: 5000, changeSign: '2', volume: 31200000, amount: 7425600000 },
-  { market: 'KOSPI', code: '000660', name: 'SK하이닉스', price: 168000, changeRate: 2.44, changeValue: 4000, changeSign: '2', volume: 22100000, amount: 3712800000 }
+  { market: 'KOSDAQ', code: '247540', name: '에코프로비엠', price: 238000, changeRate: 2.15, changeValue: 5000, changeSign: '2', volume: 31200000, amount: 7425600000 }
 ];
 
 const SAMPLE_AMOUNT_ITEMS = [
   { market: 'KOSPI', code: '005490', name: 'POSCO홀딩스', price: 380000, changeRate: 2.15, changeValue: 8000, changeSign: '2', volume: 42100000, amount: 15998000000 },
-  { market: 'KOSDAQ', code: '247540', name: '에코프로비엠', price: 238000, changeRate: 2.15, changeValue: 5000, changeSign: '2', volume: 31200000, amount: 7425600000 },
   { market: 'KOSPI', code: '373220', name: 'LG에너지솔루션', price: 398000, changeRate: 1.79, changeValue: 7000, changeSign: '2', volume: 17500000, amount: 6965000000 }
 ];
+
+// ── API 라우터 ───────────────────────────────────────────────
 
 app.get('/api/data', async (req, res) => {
   res.json({
@@ -295,15 +204,15 @@ app.get('/api/market/volume-top', async (req, res) => {
   try {
     const merged = await fetchMergedVolumeRank();
     const items = [...merged.items]
-      .sort((a, b) => b.volume - a.volume)
-      .slice(0, 10);
+      .sort((a, b) => b.volume - a.volume) // 거래량 기준 정렬
+      .slice(0, 10); // 상위 10개 자르기
 
     res.json({
       items,
       meta: {
         source: 'real',
         updatedAt: merged.updatedAt,
-        message: '한국투자증권 거래량 실데이터'
+        message: '한국투자증권 실시간 연동 성공'
       }
     });
   } catch (error) {
@@ -313,7 +222,7 @@ app.get('/api/market/volume-top', async (req, res) => {
       meta: {
         source: 'sample',
         updatedAt: nowIso(),
-        message: `샘플 데이터로 대체: ${error.message}`
+        message: `API 에러: ${error.message}`
       }
     });
   }
@@ -323,15 +232,15 @@ app.get('/api/market/amount-top', async (req, res) => {
   try {
     const merged = await fetchMergedVolumeRank();
     const items = [...merged.items]
-      .sort((a, b) => b.amount - a.amount)
-      .slice(0, 10);
+      .sort((a, b) => b.amount - a.amount) // 거래대금 기준 정렬
+      .slice(0, 10); // 상위 10개 자르기
 
     res.json({
       items,
       meta: {
         source: 'real',
         updatedAt: merged.updatedAt,
-        message: '한국투자증권 거래대금 실데이터'
+        message: '한국투자증권 실시간 연동 성공'
       }
     });
   } catch (error) {
@@ -341,17 +250,14 @@ app.get('/api/market/amount-top', async (req, res) => {
       meta: {
         source: 'sample',
         updatedAt: nowIso(),
-        message: `샘플 데이터로 대체: ${error.message}`
+        message: `API 에러: ${error.message}`
       }
     });
   }
 });
 
 app.get('/api/health', async (req, res) => {
-  res.json({
-    ok: true,
-    updatedAt: nowIso()
-  });
+  res.json({ ok: true, updatedAt: nowIso() });
 });
 
 app.listen(PORT, () => {
