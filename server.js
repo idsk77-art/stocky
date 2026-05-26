@@ -14,16 +14,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const KIS_BASE_URL = process.env.KIS_BASE_URL || 'https://openapi.koreainvestment.com:9443';
 const NAVER_FINANCE_BASE = 'https://finance.naver.com';
-const NAVER_STOCK_BASE = 'https://stock.naver.com';
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36';
 
 let cachedToken = null;
 let tokenExpireAt = 0;
 let tokenFetchPromise = null;
 
-const htmlCache = new Map();
-const dataCache = new Map();
+// 네이버 테마 데이터를 30초마다 갱신하여 저장할 전역 변수
+let globalNaverThemes = []; 
+
 const quoteCache = new Map();
+const dataCache = new Map();
 
 const EXCLUDE_PATTERNS = [
   /KODEX/i, /TIGER/i, /KOSEF/i, /KINDEX/i, /KBSTAR/i, /ARIRANG/i, /HANARO/i,
@@ -34,10 +35,7 @@ const EXCLUDE_PATTERNS = [
 function nowIso() { return new Date().toISOString(); }
 function sleep(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
 function normalizeText(s) { return String(s || '').replace(/\s+/g, ' ').trim(); }
-function toNum(v) {
-  if (v === null || v === undefined || v === '') return 0;
-  return Number(String(v).replace(/[^0-9.-]/g, '')) || 0;
-}
+function toNum(v) { return Number(String(v).replace(/[^0-9.-]/g, '')) || 0; }
 function formatSignedPct(n) { return `${Number(n || 0) > 0 ? '+' : ''}${Number(n || 0).toFixed(2)}%`; }
 function formatAmountLabel(won) {
   const n = Number(won || 0);
@@ -91,6 +89,9 @@ async function mapLimit(items, limit, worker) {
   return results;
 }
 
+// ----------------------------------------------------
+// 1. 한국투자증권 API 통신부
+// ----------------------------------------------------
 async function getAccessToken() {
   const now = Date.now();
   if (cachedToken && now < tokenExpireAt) return cachedToken;
@@ -109,7 +110,7 @@ async function getAccessToken() {
       if (!res.ok || !json.access_token) throw new Error(`토큰 발급 실패(${res.status}): ${text}`);
       
       cachedToken = json.access_token;
-      tokenExpireAt = now + 1000 * 60 * 60 * 20;
+      tokenExpireAt = now + 1000 * 60 * 60 * 20; // 20시간
       return cachedToken;
     } finally {
       tokenFetchPromise = null;
@@ -118,26 +119,24 @@ async function getAccessToken() {
   return tokenFetchPromise;
 }
 
-function kisHeaders(token, trId) {
-  return {
-    'content-type': 'application/json; charset=utf-8',
-    authorization: `Bearer ${token}`,
-    appkey: process.env.APP_KEY,
-    appsecret: process.env.APP_SECRET,
-    tr_id: trId,
-    custtype: 'P'
-  };
-}
-
 async function kisGet(pathname, params, trId) {
   const token = await getAccessToken();
   const url = `${KIS_BASE_URL}${pathname}?${new URLSearchParams(params).toString()}`;
-  const res = await fetch(url, { method: 'GET', headers: kisHeaders(token, trId) });
+  const res = await fetch(url, { 
+    method: 'GET', 
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      authorization: `Bearer ${token}`,
+      appkey: process.env.APP_KEY,
+      appsecret: process.env.APP_SECRET,
+      tr_id: trId,
+      custtype: 'P'
+    } 
+  });
   const text = await res.text();
   let json = {};
-  try { json = JSON.parse(text); } catch (e) { throw new Error(`KIS JSON 실패: ${text}`); }
-  if (!res.ok) throw new Error(`KIS HTTP ${res.status}: ${text}`);
-  if (json.rt_cd && json.rt_cd !== '0') throw new Error(`KIS rt_cd ${json.rt_cd}: ${json.msg1 || text}`);
+  try { json = JSON.parse(text); } catch (e) {}
+  if (!res.ok) throw new Error(`KIS HTTP ${res.status}`);
   return json;
 }
 
@@ -148,7 +147,7 @@ async function fetchKisQuote(code, fallbackName = '') {
   const data = await kisGet('/uapi/domestic-stock/v1/quotations/inquire-price', { FID_COND_MRKT_DIV_CODE: 'J', FID_INPUT_ISCD: code }, 'FHKST01010100');
   const out = data.output || {};
   const item = {
-    market: '국내주식', code,
+    code,
     name: out.hts_kor_isnm || fallbackName || code,
     price: toNum(out.stck_prpr),
     changeRate: Number(out.prdy_ctrt || 0),
@@ -157,123 +156,114 @@ async function fetchKisQuote(code, fallbackName = '') {
     amount: toNum(out.acml_tr_pbmn),
     marketCapEok: toNum(out.hts_avls)
   };
-  return cacheSet(quoteCache, code, item, 1000 * 30);
+  return cacheSet(quoteCache, code, item, 1000 * 20); // 20초 단기 캐시
 }
 
-async function fetchHtml(url, referer = NAVER_FINANCE_BASE) {
-  const cached = cacheGet(htmlCache, url);
-  if (cached) return cached;
 
-  const res = await fetch(url, { headers: { 'user-agent': UA, 'referer': referer } });
-  if (!res.ok) throw new Error(`HTML fetch 실패(${res.status}): ${url}`);
+// ----------------------------------------------------
+// 2. 네이버 크롤링 백그라운드 워커 (30초마다 갱신)
+// ----------------------------------------------------
+async function fetchHtml(url) {
+  const res = await fetch(url, { headers: { 'user-agent': UA, 'referer': NAVER_FINANCE_BASE } });
+  if (!res.ok) throw new Error(`HTML fetch 실패(${res.status})`);
 
   const buffer = Buffer.from(await res.arrayBuffer());
   const contentType = String(res.headers.get('content-type') || '');
-  let html = '';
-  
   if (/euc-kr|cp949|ms949/i.test(contentType) || /charset=["']?(euc-kr|cp949|ms949)/i.test(buffer.toString('utf8'))) {
-    html = iconv.decode(buffer, 'euc-kr');
-  } else {
-    html = buffer.toString('utf8');
+    return iconv.decode(buffer, 'euc-kr');
   }
-  return cacheSet(htmlCache, url, html, 1000 * 30);
+  return buffer.toString('utf8');
 }
 
-// 테마/업종 1~10위 추출
-async function fetchThemeIndustryList(kind) {
-  const key = `rankList:${kind}`;
-  const cached = cacheGet(dataCache, key);
-  if (cached) return cached;
+async function updateNaverThemesBackground() {
+  try {
+    const html = await fetchHtml(`${NAVER_FINANCE_BASE}/sise/theme.naver`);
+    const $ = cheerio.load(html);
+    const themes = [];
 
-  const url = kind === '테마' ? `${NAVER_FINANCE_BASE}/sise/theme.naver` : `${NAVER_FINANCE_BASE}/sise/sise_group.naver?type=upjong`;
-  const html = await fetchHtml(url);
-  const $ = cheerio.load(html);
-  const rows = [];
+    $('table.type_1 tr').each((_, tr) => {
+      const $a = $(tr).find('td.col_type1 a');
+      if ($a.length > 0) {
+        const href = $a.attr('href') || '';
+        const name = normalizeText($a.text());
+        if (name && href) themes.push({ name, href: `${NAVER_FINANCE_BASE}${href}` });
+      }
+    });
 
-  $('table.type_1 tr').each((_, tr) => {
-    const $a = $(tr).find('td.col_type1 a');
-    if ($a.length > 0) {
-      const href = $a.attr('href') || '';
-      const name = normalizeText($a.text());
-      if (name && href) rows.push({ type: kind, name, href: `${NAVER_FINANCE_BASE}${href}` });
+    const topThemes = themes.slice(0, 10); // 상위 10개 테마 추출
+
+    // 각 테마별 구성 종목 크롤링
+    for (let t of topThemes) {
+      const detailHtml = await fetchHtml(t.href);
+      const $detail = cheerio.load(detailHtml);
+      const members = [];
+      $detail('table.type_5 tbody tr').each((_, tr) => {
+        const $a = $detail(tr).find('td.name div.name_area a');
+        if ($a.length > 0) {
+          const m = ($a.attr('href') || '').match(/code=(\d{6})/);
+          const name = normalizeText($a.text());
+          if (m && isRealDomesticStockName(name)) members.push({ code: m[1], name });
+        }
+      });
+      t.members = uniqueBy(members, (x) => x.code).slice(0, 15);
+      await sleep(150); // 서버 부하 방지
     }
-  });
 
-  return cacheSet(dataCache, key, rows.slice(0, 10), 1000 * 60 * 5); // 1~10위까지만 제한
+    globalNaverThemes = topThemes;
+    console.log(`[Background] 네이버 테마 갱신 완료 (${new Date().toLocaleTimeString()})`);
+  } catch (e) {
+    console.error(`[Background] 네이버 갱신 에러: ${e.message}`);
+  }
 }
 
-async function fetchMembersFromDetail(url) {
-  const html = await fetchHtml(url);
-  const $ = cheerio.load(html);
-  const members = [];
 
-  $('table.type_5 tbody tr').each((_, tr) => {
-    const $a = $(tr).find('td.name div.name_area a');
-    if ($a.length > 0) {
-      const m = ($a.attr('href') || '').match(/code=(\d{6})/);
-      const name = normalizeText($a.text());
-      if (m && isRealDomesticStockName(name)) members.push({ code: m[1], name });
-    }
+// ----------------------------------------------------
+// 3. 클라이언트 API 로직 (한투 실시간 시세 연동)
+// ----------------------------------------------------
+async function buildLeaderPayload() {
+  if (!globalNaverThemes || globalNaverThemes.length === 0) {
+    throw new Error('네이버 데이터 로딩 중입니다.');
+  }
+
+  // 캐싱된 네이버 테마 리스트를 기반으로 한투 실시간 시세 조회
+  const sectors = await mapLimit(globalNaverThemes, 4, async (theme) => {
+    if (!theme.members || !theme.members.length) return null;
+
+    const quotes = await mapLimit(theme.members, 5, async (member) => {
+      try { return await fetchKisQuote(member.code, member.name); } catch (e) { return null; }
+    });
+
+    let realQuotes = quotes.filter(Boolean);
+    if (!realQuotes.length) return null;
+
+    // 테마 내 종목들을 거래량 순으로 내림차순 정렬
+    realQuotes.sort((a, b) => (b.volume || 0) - (a.volume || 0));
+
+    const totalAmount = realQuotes.reduce((sum, x) => sum + (x.amount || 0), 0);
+    const avgRate = realQuotes.reduce((sum, x) => sum + (x.changeRate || 0), 0) / realQuotes.length;
+
+    return {
+      name: theme.name,
+      reason: `네이버 테마 랭킹 · 한투 실시간 거래량 순 정렬`,
+      chg: formatSignedPct(avgRate),
+      volume: formatAmountLabel(totalAmount),
+      stocks: realQuotes.slice(0, 10).map((x) => ({
+        code: x.code,
+        name: x.name,
+        price: Number(x.price || 0).toLocaleString(),
+        changeRate: x.changeRate,
+        changeValue: x.changeValue,
+        volume: x.volume,
+        amount: x.amount
+      }))
+    };
   });
-
-  return uniqueBy(members, (x) => x.code).slice(0, 15);
-}
-
-async function buildLeaderItem(rankItem) {
-  const members = await fetchMembersFromDetail(rankItem.href);
-  if (!members.length) return null;
-
-  const quotes = await mapLimit(members, 5, async (member) => {
-    try { return await fetchKisQuote(member.code, member.name); } catch (e) { return null; }
-  });
-
-  let realQuotes = quotes.filter(Boolean);
-  if (!realQuotes.length) return null;
-
-  realQuotes.sort((a, b) => (b.volume || 0) - (a.volume || 0));
-
-  const totalAmount = realQuotes.reduce((sum, x) => sum + (x.amount || 0), 0);
-  const avgRate = realQuotes.reduce((sum, x) => sum + (x.changeRate || 0), 0) / realQuotes.length;
 
   return {
-    type: rankItem.type,
-    name: rankItem.name,
-    sector: rankItem.name,
-    reason: `네이버 ${rankItem.type} 정보 · 한국투자증권 실시간 연동`,
-    chg: formatSignedPct(avgRate),
-    volume: formatAmountLabel(totalAmount),
-    // 통일된 주식 스키마 적용
-    stocks: realQuotes.slice(0, 10).map((x) => ({
-      market: '국내주식',
-      code: x.code,
-      name: x.name,
-      price: x.price,
-      changeRate: x.changeRate,
-      changeValue: x.changeValue,
-      volume: x.volume,
-      amount: x.amount
-    }))
-  };
-}
-
-async function buildLeaderPayload() {
-  const cached = cacheGet(dataCache, 'leaderPayload');
-  if (cached) return cached;
-
-  const [themes, industries] = await Promise.all([ fetchThemeIndustryList('테마'), fetchThemeIndustryList('업종') ]);
-  const allItems = [...themes, ...industries];
-
-  const sectors = await mapLimit(allItems, 4, async (item) => {
-    await sleep(50);
-    return buildLeaderItem(item);
-  });
-
-  const payload = {
-    categories: { 테마: themes.map((x) => x.name), 업종: industries.map((x) => x.name) },
+    categories: globalNaverThemes.map((x) => x.name),
     sectors: sectors.filter(Boolean),
     meta: { source: 'real', updatedAt: nowIso(), message: '정상 데이터 연동' }
   };
-  return cacheSet(dataCache, 'leaderPayload', payload, 1000 * 30);
 }
 
 async function buildRankPayload(kind) {
@@ -300,12 +290,14 @@ async function buildRankPayload(kind) {
   const items = quotes.filter(Boolean).sort((a, b) => {
     if (kind === 'volume') return (b.volume || 0) - (a.volume || 0);
     return (b.amount || 0) - (a.amount || 0);
-  }).slice(0, 15);
+  }).slice(0, 10);
 
   const payload = { items, meta: { source: 'real', updatedAt: nowIso() } };
   return cacheSet(dataCache, key, payload, 1000 * 20);
 }
 
+
+// --- 라우트 ---
 app.get('/', (req, res) => {
   const filePath = path.join(__dirname, 'public', 'index.html');
   if (fs.existsSync(filePath)) return res.sendFile(filePath);
@@ -314,7 +306,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/data', async (req, res) => {
   try { res.json(await buildLeaderPayload()); } 
-  catch (error) { res.json({ categories: { 테마: [], 업종: [] }, sectors: [], meta: { source: 'sample', message: `에러: ${error.message}` }}); }
+  catch (error) { res.json({ categories: [], sectors: [], meta: { source: 'sample', message: `대기중: ${error.message}` }}); }
 });
 app.get('/api/market/volume-top', async (req, res) => {
   try { res.json(await buildRankPayload('volume')); } 
@@ -325,8 +317,16 @@ app.get('/api/market/amount-top', async (req, res) => {
   catch (error) { res.json({ items: [], meta: { source: 'sample', message: `에러: ${error.message}` }}); }
 });
 
+
 app.listen(PORT, async () => {
   console.log(`server listening on ${PORT}`);
-  try { await getAccessToken(); console.log('KIS token ready'); } 
-  catch (err) { console.error('초기 토큰 발급 실패:', err.message); }
+  try { 
+    await getAccessToken(); 
+    console.log('KIS token ready'); 
+    
+    // 서버 시작 시 네이버 크롤링 최초 1회 실행 후 30초 간격 무한 반복
+    await updateNaverThemesBackground();
+    setInterval(updateNaverThemesBackground, 30000);
+
+  } catch (err) { console.error('초기 설정 실패:', err.message); }
 });
