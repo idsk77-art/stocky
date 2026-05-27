@@ -186,7 +186,7 @@
 
     <!-- 거래량 -->
     <div class="field">
-      <label>거래량 <span>기본값: 500만주</span></label>
+      <label>거래량 <span>기본값: 100만주</span></label>
       <div class="field-row">
         <label class="toggle-wrap"><input type="checkbox" id="togVolume" checked><span class="toggle-slider"></span></label>
         <input type="number" id="fVolume" value="500" min="0" step="50">
@@ -242,7 +242,7 @@ const SORTS=['거래대금','거래량','상승률','시가총액'];
 /* 기본 필터 조건 */
 const DEFAULT_FILTER={
   amountOn:true, amount:2000,        // 억
-  volumeOn:true, volume:500,         // 만주
+  volumeOn:true, volume:100,         // 만주
   mcapOn:true,   mcap:1,             // 조
   strengthOn:true, strength:100,     // %
   programPlus:true
